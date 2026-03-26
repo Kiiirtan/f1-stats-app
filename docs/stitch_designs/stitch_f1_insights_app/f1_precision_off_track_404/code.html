@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Space+Grotesk:wght@700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "inverse-on-surface": "#303038",
+              "primary": "#ffb4a8",
+              "surface-container-highest": "#34343d",
+              "surface-dim": "#13131b",
+              "primary-fixed": "#ffdad4",
+              "on-surface-variant": "#e9bcb5",
+              "on-primary-fixed": "#410100",
+              "on-error-container": "#ffdad6",
+              "secondary-fixed-dim": "#ffb4a8",
+              "on-background": "#e4e1ed",
+              "on-secondary-container": "#efa69b",
+              "surface-container-lowest": "#0d0d15",
+              "inverse-primary": "#c00500",
+              "tertiary-container": "#0163ff",
+              "on-tertiary-fixed-variant": "#003ea7",
+              "surface-bright": "#393841",
+              "secondary": "#ffb4a8",
+              "on-secondary-fixed": "#360e09",
+              "error-container": "#93000a",
+              "secondary-container": "#6f3a32",
+              "on-secondary": "#51221b",
+              "primary-fixed-dim": "#ffb4a8",
+              "surface-container-high": "#292932",
+              "inverse-surface": "#e4e1ed",
+              "outline": "#af8781",
+              "on-tertiary-container": "#f4f4ff",
+              "outline-variant": "#5e3f3a",
+              "surface": "#13131b",
+              "secondary-fixed": "#ffdad4",
+              "on-secondary-fixed-variant": "#6c3830",
+              "background": "#13131b",
+              "on-primary-fixed-variant": "#930300",
+              "on-surface": "#e4e1ed",
+              "surface-tint": "#ffb4a8",
+              "on-primary-container": "#fff2f0",
+              "error": "#ffb4ab",
+              "on-primary": "#680200",
+              "tertiary-fixed": "#dbe1ff",
+              "primary-container": "#e10600",
+              "tertiary": "#b4c5ff",
+              "on-tertiary": "#002a77",
+              "surface-container": "#1f1f27",
+              "on-tertiary-fixed": "#00174a",
+              "tertiary-fixed-dim": "#b4c5ff",
+              "surface-container-low": "#1b1b23",
+              "surface-variant": "#34343d",
+              "on-error": "#690005",
+              "f1-cyan": "#66FCF1"
+            },
+            fontFamily: {
+              "headline": ["Space Grotesk"],
+              "body": ["Inter"],
+              "label": ["Space Grotesk"]
+            },
+            borderRadius: {"DEFAULT": "0px", "lg": "0px", "xl": "0px", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .text-glow-cyan {
+            text-shadow: 0 0 15px rgba(102, 252, 241, 0.6);
+        }
+        .kinetic-monolith-bg {
+            background: radial-gradient(circle at center, rgba(102, 252, 241, 0.1) 0%, rgba(19, 19, 27, 0) 70%);
+        }
+    </style>
+</head>
+<body class="bg-surface font-body text-on-surface selection:bg-primary-container selection:text-on-primary-container">
+<!-- TopNavBar Shell -->
+<nav class="fixed top-0 w-full z-50 rounded-none bg-[#13131b] flex justify-between items-center px-8 h-16 w-full">
+<div class="text-2xl font-bold italic uppercase tracking-[-0.05rem] text-[#E10600]">
+            F1 PRECISION
+        </div>
+<div class="hidden md:flex gap-8 items-center">
+<a class="font-['Space_Grotesk'] font-bold italic uppercase tracking-tighter text-white/70 hover:text-white transition-colors" href="#">DRIVERS</a>
+<a class="font-['Space_Grotesk'] font-bold italic uppercase tracking-tighter text-white/70 hover:text-white transition-colors" href="#">RACES</a>
+<a class="font-['Space_Grotesk'] font-bold italic uppercase tracking-tighter text-white/70 hover:text-white transition-colors" href="#">RESULTS</a>
+<a class="font-['Space_Grotesk'] font-bold italic uppercase tracking-tighter text-white/70 hover:text-white transition-colors" href="#">TELEMETRY</a>
+</div>
+<div class="flex items-center gap-6">
+<span class="material-symbols-outlined text-white/70 hover:text-white cursor-pointer transition-all duration-100 ease-linear hover:bg-[#34343d] p-2">search</span>
+<button class="font-['Space_Grotesk'] font-bold italic uppercase tracking-tighter text-[#E10600] text-sm hover:opacity-80 transition-all active:scale-95 duration-75">
+                LOGIN
+            </button>
+</div>
+</nav>
+<!-- Main Content Canvas -->
+<main class="relative min-h-screen flex flex-col items-center justify-center overflow-hidden px-6">
+<!-- Massive Watermark Background -->
+<div class="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
+<span class="font-headline font-bold italic text-f1-cyan opacity-10 select-none tracking-tighter leading-none" style="font-size: 14rem;">
+                404
+            </span>
+</div>
+<!-- 404 Section with Technical Glow -->
+<section class="relative z-10 w-full max-w-2xl text-center kinetic-monolith-bg py-24 flex flex-col items-center">
+<!-- Icon/Indicator -->
+<div class="mb-8 flex items-center justify-center">
+<div class="w-16 h-1 w-1 bg-f1-cyan animate-pulse"></div>
+<span class="material-symbols-outlined text-f1-cyan mx-4 text-4xl" style="font-variation-settings: 'FILL' 1;">warning</span>
+<div class="w-16 h-1 w-1 bg-f1-cyan animate-pulse"></div>
+</div>
+<!-- Heading -->
+<h1 class="font-headline font-bold italic uppercase tracking-tighter mb-4 text-6xl md:text-8xl">
+<span class="text-white">OFF</span>
+<span class="text-f1-cyan text-glow-cyan ml-2">TRACK</span>
+</h1>
+<!-- Subtext -->
+<p class="text-white/40 max-w-[400px] mb-12 font-medium leading-relaxed">
+                Looks like you've taken a wrong turn. This page doesn't exist on the circuit. Check your telemetry or return to the main hub.
+            </p>
+<!-- CTA Cluster -->
+<div class="flex flex-col sm:flex-row gap-4 w-full justify-center">
+<a class="bg-primary-container text-on-primary-container px-8 py-4 font-headline font-bold italic uppercase tracking-tight text-sm flex items-center justify-center transition-all duration-100 ease-linear hover:scale-105 active:scale-95" href="/">
+<span class="material-symbols-outlined mr-2 text-base">directions_run</span>
+                    BACK TO PIT LANE
+                </a>
+<a class="border border-f1-cyan/40 text-f1-cyan px-8 py-4 font-headline font-bold italic uppercase tracking-tight text-sm flex items-center justify-center transition-all duration-100 ease-linear hover:bg-f1-cyan/10 active:scale-95" href="/drivers">
+<span class="material-symbols-outlined mr-2 text-base">groups</span>
+                    VIEW DRIVERS
+                </a>
+</div>
+<!-- Technical Detail Metadata -->
+<div class="mt-16 grid grid-cols-2 md:grid-cols-4 gap-8 opacity-20">
+<div class="text-left border-l border-f1-cyan/30 pl-3">
+<p class="font-headline text-[0.6875rem] font-bold italic uppercase tracking-widest text-f1-cyan">ERROR_CODE</p>
+<p class="font-mono text-xs">ERR_NULL_SECTOR_404</p>
+</div>
+<div class="text-left border-l border-f1-cyan/30 pl-3">
+<p class="font-headline text-[0.6875rem] font-bold italic uppercase tracking-widest text-f1-cyan">LATENCY</p>
+<p class="font-mono text-xs">0.0034 MS</p>
+</div>
+<div class="text-left border-l border-f1-cyan/30 pl-3">
+<p class="font-headline text-[0.6875rem] font-bold italic uppercase tracking-widest text-f1-cyan">VECTOR</p>
+<p class="font-mono text-xs">UNKNOWN_TRAJECTORY</p>
+</div>
+<div class="text-left border-l border-f1-cyan/30 pl-3">
+<p class="font-headline text-[0.6875rem] font-bold italic uppercase tracking-widest text-f1-cyan">STATUS</p>
+<p class="font-mono text-xs">DISCONNECTED</p>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer Shell -->
+<footer class="bg-[#0a0a0e] w-full rounded-none border-t border-white/5 flex flex-col md:flex-row justify-between items-center px-8 py-12 w-full z-10 relative">
+<div class="flex flex-col items-center md:items-start mb-8 md:mb-0">
+<div class="text-[#E10600] font-black italic mb-2 tracking-tighter">F1 PRECISION</div>
+<p class="font-['Space_Grotesk'] font-bold italic uppercase text-[0.6875rem] text-white/40 tracking-widest">
+                © 2024 F1 PRECISION. KINETIC MONOLITH SPEC.
+            </p>
+</div>
+<div class="flex gap-8">
+<a class="font-['Space_Grotesk'] font-bold italic uppercase text-[0.6875rem] text-white/40 hover:text-[#FFB4A8] transition-colors tracking-widest" href="#">PRIVACY</a>
+<a class="font-['Space_Grotesk'] font-bold italic uppercase text-[0.6875rem] text-white/40 hover:text-[#FFB4A8] transition-colors tracking-widest" href="#">TERMS</a>
+<a class="font-['Space_Grotesk'] font-bold italic uppercase text-[0.6875rem] text-white/40 hover:text-[#FFB4A8] transition-colors tracking-widest" href="#">API</a>
+<a class="font-['Space_Grotesk'] font-bold italic uppercase text-[0.6875rem] text-white/40 hover:text-[#FFB4A8] transition-colors tracking-widest" href="#">SUPPORT</a>
+</div>
+</footer>
+<!-- Image generation prompt placeholder (decorative image background) -->
+<div class="hidden">
+<img data-alt="Dark dramatic close-up of a carbon fiber Formula 1 car wing in low key lighting with sharp highlights and motion blur" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBgtkFk-Z-53tgJELdfjbQ_pwTbB3J4OqkcDro6mG758kcl0HyfDvToWALM-10ZFq4YTRjVlza95_TrQKIFaiN6JI5L21eev2WZEuCxpxNknOMpasppB9shFqgPGZuiQB3_6_HCQxinFiENQJTSMB3Ovd_3I3mdAkJYxk4q3JyXc5pRGK1vl8y0lGyM5AUOBtJjwdjxTUOq3E1DAmiJcINda7u4LHBXMFuasYWLPmovSdC0fs6GCSmDjFjDx6F_TlG2CFe5_HA9Cj8"/>
+</div>
+</body></html>

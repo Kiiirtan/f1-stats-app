@@ -1,0 +1,6 @@
+﻿src/components/features/DriverCard.tsx(2,49): error TS2307: Cannot find module '../data/api' or its corresponding type declarations.
+src/components/features/DriverCard.tsx(3,32): error TS2307: Cannot find module '../data/driverImages' or its corresponding type declarations.
+src/components/features/LoginModal.tsx(2,25): error TS2307: Cannot find module '../context/AuthContext' or its corresponding type declarations.
+src/components/features/SearchModal.tsx(3,81): error TS2307: Cannot find module '../data/api' or its corresponding type declarations.
+src/components/ui/CursorGlow.tsx(1,30): error TS2307: Cannot find module '../hooks/useMousePosition' or its corresponding type declarations.
+src/components/ui/ScrollReveal.tsx(2,23): error TS2307: Cannot find module '../hooks/useInView' or its corresponding type declarations.

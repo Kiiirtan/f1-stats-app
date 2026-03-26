@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>F1 PRECISION | Pit Wall Telemetry</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;900&amp;family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary-fixed": "#ffdad4",
+              "on-tertiary-fixed-variant": "#003ea7",
+              "inverse-surface": "#e4e1ee",
+              "inverse-on-surface": "#302f39",
+              "secondary-fixed": "#e3e2e6",
+              "on-surface-variant": "#e9bcb5",
+              "on-background": "#e4e1ee",
+              "surface-container-low": "#1b1b24",
+              "secondary": "#c7c6ca",
+              "background": "#13131b",
+              "on-tertiary-container": "#f4f4ff",
+              "tertiary-fixed": "#dbe1ff",
+              "surface": "#13131b",
+              "error": "#ffb4ab",
+              "on-primary": "#680200",
+              "on-surface": "#e4e1ee",
+              "primary-container": "#e10600",
+              "on-secondary-container": "#b8b8bc",
+              "surface-dim": "#13131b",
+              "surface-container-high": "#292933",
+              "primary": "#ffb4a8",
+              "on-tertiary": "#002a77",
+              "outline-variant": "#5e3f3a",
+              "surface-tint": "#ffb4a8",
+              "primary-fixed-dim": "#ffb4a8",
+              "on-error": "#690005",
+              "on-secondary": "#2f3034",
+              "on-primary-fixed": "#410100",
+              "tertiary": "#b4c5ff",
+              "surface-container-highest": "#34343e",
+              "error-container": "#93000a",
+              "on-error-container": "#ffdad6",
+              "outline": "#af8781",
+              "secondary-fixed-dim": "#c7c6ca",
+              "inverse-primary": "#c00500",
+              "surface-container": "#1f1f28",
+              "tertiary-container": "#0163ff",
+              "surface-bright": "#393842",
+              "secondary-container": "#48494c",
+              "on-tertiary-fixed": "#00174a",
+              "tertiary-fixed-dim": "#b4c5ff",
+              "on-primary-container": "#fff2f0",
+              "surface-container-lowest": "#0d0d16",
+              "on-primary-fixed-variant": "#930300",
+              "on-secondary-fixed": "#1a1c1f",
+              "surface-variant": "#34343e",
+              "on-secondary-fixed-variant": "#46474a"
+            },
+            fontFamily: {
+              "headline": ["Space Grotesk"],
+              "body": ["Inter"],
+              "label": ["Space Grotesk"]
+            },
+            borderRadius: {"DEFAULT": "0px", "lg": "0px", "xl": "0px", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      ::-webkit-scrollbar { width: 4px; height: 4px; }
+      ::-webkit-scrollbar-track { background: #13131b; }
+      ::-webkit-scrollbar-thumb { background: #e10600; }
+      .text-glow { text-shadow: 0 0 20px rgba(225, 6, 0, 0.4); }
+      .bg-glass { backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body selection:bg-primary-container selection:text-on-primary-container overflow-x-hidden">
+<!-- TopNavBar -->
+<header class="fixed top-0 w-full z-50 bg-[#13131b]/70 backdrop-blur-xl border-b border-[#E10600]/10 shadow-[0_24px_48px_rgba(0,0,0,0.5)] h-16 flex justify-between items-center px-8 w-full">
+<div class="text-2xl font-black italic tracking-tighter text-[#E10600]">F1 PRECISION</div>
+<nav class="hidden md:flex items-center space-x-8 font-['Space_Grotesk'] uppercase tracking-wider font-bold text-sm">
+<a class="text-[#c7c6ca] hover:text-[#e4e1ee] transition-colors" href="#">Drivers</a>
+<a class="text-[#c7c6ca] hover:text-[#e4e1ee] transition-colors" href="#">Races</a>
+<a class="text-[#c7c6ca] hover:text-[#e4e1ee] transition-colors" href="#">Results</a>
+<a class="text-[#c7c6ca] hover:text-[#e4e1ee] transition-colors" href="#">Telemetry</a>
+</nav>
+<div class="flex items-center space-x-6">
+<button class="material-symbols-outlined text-[#c7c6ca] hover:text-[#E10600] transition-colors">search</button>
+<button class="bg-[#E10600] text-white px-6 py-2 text-xs font-bold tracking-widest hover:bg-[#ff1a12] transition-all duration-200 active:scale-95">LOGIN</button>
+</div>
+</header>
+<!-- SideNavBar (Desktop Only) -->
+<aside class="fixed left-0 top-16 bottom-0 w-64 bg-[#13131b] border-r border-[#1b1b24] hidden lg:flex flex-col z-40">
+<div class="p-6 border-b border-[#1b1b24]">
+<div class="flex items-center space-x-3">
+<div class="w-2 h-2 bg-[#E10600] animate-pulse"></div>
+<span class="font-['Space_Grotesk'] text-xs font-medium uppercase tracking-widest text-[#e4e1ee]">PIT WALL</span>
+</div>
+<p class="text-[10px] text-[#c7c6ca] mt-1 opacity-60">Telemetry Active</p>
+</div>
+<nav class="flex-grow py-4">
+<div class="border-l-4 border-[#E10600] bg-[#1b1b24] text-[#e4e1ee] font-bold py-4 px-6 flex items-center space-x-4 cursor-pointer">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+<span class="font-['Space_Grotesk'] text-xs uppercase tracking-widest">Dashboard</span>
+</div>
+<div class="text-[#c7c6ca] py-4 px-6 hover:bg-[#1b1b24]/50 hover:text-[#E10600] transition-all flex items-center space-x-4 cursor-pointer">
+<span class="material-symbols-outlined text-sm">timer</span>
+<span class="font-['Space_Grotesk'] text-xs uppercase tracking-widest">Live Timing</span>
+</div>
+<div class="text-[#c7c6ca] py-4 px-6 hover:bg-[#1b1b24]/50 hover:text-[#E10600] transition-all flex items-center space-x-4 cursor-pointer">
+<span class="material-symbols-outlined text-sm">leaderboard</span>
+<span class="font-['Space_Grotesk'] text-xs uppercase tracking-widest">Standings</span>
+</div>
+<div class="text-[#c7c6ca] py-4 px-6 hover:bg-[#1b1b24]/50 hover:text-[#E10600] transition-all flex items-center space-x-4 cursor-pointer">
+<span class="material-symbols-outlined text-sm">history</span>
+<span class="font-['Space_Grotesk'] text-xs uppercase tracking-widest">Archives</span>
+</div>
+</nav>
+<div class="p-6 mt-auto">
+<button class="w-full border border-[#E10600]/30 text-[#E10600] py-3 text-[10px] font-bold tracking-[0.2em] hover:bg-[#E10600] hover:text-white transition-all">
+                UPGRADE PRO
+            </button>
+<div class="mt-4 flex items-center space-x-4 text-[#c7c6ca] hover:text-[#e4e1ee] cursor-pointer transition-colors group">
+<span class="material-symbols-outlined text-sm group-hover:rotate-45 transition-transform">settings</span>
+<span class="font-['Space_Grotesk'] text-xs uppercase tracking-widest">Settings</span>
+</div>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="lg:ml-64 pt-16 min-h-screen">
+<!-- Hero Section -->
+<section class="relative h-[819px] w-full overflow-hidden bg-surface-container-lowest">
+<div class="absolute inset-0 z-0">
+<div class="absolute inset-0 bg-gradient-to-r from-background via-transparent to-transparent z-10"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-background to-transparent z-10"></div>
+<img class="w-full h-full object-cover opacity-40 grayscale hover:grayscale-0 transition-all duration-700" data-alt="Cinematic F1 racing car motion blur on track" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDi4ZUeVIbMfKqmpyFIPTctkSHv-2G1wO10v1GSCkqFSU_7g34dOBO4nA-Nj5RNm7_pC6TeTMYaojcpkeznGHnDd1_fC5JqAW12kDDOef47L3GXbwj9KlBzyXcBM6WxWxsD7Hxa25bP4DOsQLid1Weyw79VqyIGX4ZvBIU1sR7Qvs_HsLZqJ0UcoQbOP6BhCe6S2yximD3jLRllOsBng6VV1tPbYQoLrIBXRo24-jD8YJwC0KUyEPhyWa4EOnFQy8MRI4-b4va7UMc"/>
+</div>
+<div class="relative z-20 h-full flex flex-col justify-center px-12 lg:px-24">
+<div class="flex items-center space-x-4 mb-6">
+<span class="bg-primary-container text-white px-3 py-1 text-[10px] font-black tracking-widest uppercase">LATEST RACE</span>
+<span class="text-secondary text-xs font-label uppercase tracking-widest">GRAND PRIX MONACO 2024</span>
+</div>
+<h1 class="font-headline font-black text-6xl md:text-8xl lg:text-9xl leading-[0.85] italic uppercase tracking-tighter -ml-2 mb-8 max-w-4xl text-glow">
+                    KINETIC<br/><span class="text-primary-container">PRECISION.</span>
+</h1>
+<div class="flex flex-col md:flex-row items-start md:items-center space-y-6 md:space-y-0 md:space-x-12">
+<button class="bg-primary-container text-white px-10 py-5 text-sm font-black tracking-[0.2em] hover:scale-105 transition-transform duration-300">
+                        EXPLORE THE SEASON
+                    </button>
+<div class="border-l border-outline-variant pl-8 py-2">
+<p class="font-headline text-2xl font-bold">1:12.421</p>
+<p class="text-[10px] uppercase tracking-widest text-secondary mt-1">FASTEST LAP — M. VERSTAPPEN</p>
+</div>
+</div>
+</div>
+<div class="absolute bottom-12 right-12 z-20 hidden md:block">
+<div class="bg-surface-container-high/40 bg-glass p-8 border-l-4 border-primary-container min-w-[300px]">
+<h3 class="font-headline font-bold text-xs uppercase tracking-widest mb-4">DRS DATA STREAM</h3>
+<div class="space-y-4">
+<div class="flex justify-between items-center text-[10px]">
+<span class="text-secondary uppercase">VELOCITY</span>
+<span class="font-mono text-primary">324 KM/H</span>
+</div>
+<div class="w-full bg-surface-container-highest h-1">
+<div class="bg-primary-container h-full w-4/5"></div>
+</div>
+<div class="flex justify-between items-center text-[10px]">
+<span class="text-secondary uppercase">G-FORCE</span>
+<span class="font-mono">4.8 G</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Driver Grid -->
+<section class="py-24 px-8 lg:px-16 bg-surface">
+<div class="flex justify-between items-end mb-16 border-b border-outline-variant/20 pb-8">
+<div>
+<h2 class="font-headline text-4xl font-black uppercase italic tracking-tighter">DRIVER STANDINGS</h2>
+<p class="text-secondary text-xs uppercase tracking-widest mt-2">WORLD CHAMPIONSHIP 2024 FIELD</p>
+</div>
+<a class="text-primary-container text-xs font-bold tracking-widest hover:underline underline-offset-8" href="#">VIEW ALL ATHLETES</a>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+<!-- Driver Card 1 -->
+<div class="group relative bg-surface-container-low overflow-hidden cursor-pointer">
+<div class="aspect-[3/4] overflow-hidden">
+<img class="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-110 transition-all duration-500" data-alt="Modern F1 helmet closeup with carbon fiber textures" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDxvn-YY4ul6QxbOF-bOVzcH5thi9BxcC3JV39EZNefQFQTI_YWmoddHXsbZFQGhy58vXKOvx0SqumId-66w0jIEGt_Mo25-y1kCTmhYxdtiZLpsrdsCx92OyaC76O0xO7Hir0dQSeOYljeCt9IW7eB5kfg74jkLx4el0sh_-8Dc5f7oyPrZ6oFi4qv0fTvuJrfbDvPeHw2Reb_3pmbD2mQHKquQm8-j--08xZi2yncjrUUyL3XEudtT3zZtLn3SxF4x2Sv0nypI88"/>
+</div>
+<div class="absolute inset-0 bg-gradient-to-t from-background to-transparent opacity-80"></div>
+<div class="absolute bottom-0 p-6 w-full">
+<div class="flex justify-between items-end mb-2">
+<div>
+<p class="text-primary-container font-headline font-black text-4xl">01</p>
+<h3 class="font-headline font-bold text-lg leading-tight uppercase">MAX<br/>VERSTAPPEN</h3>
+</div>
+<span class="bg-surface-container-highest px-3 py-1 text-[10px] font-bold">RBPT</span>
+</div>
+<div class="h-1 w-0 group-hover:w-full bg-primary-container transition-all duration-300"></div>
+</div>
+</div>
+<!-- Driver Card 2 -->
+<div class="group relative bg-surface-container-low overflow-hidden cursor-pointer">
+<div class="aspect-[3/4] overflow-hidden">
+<img class="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-110 transition-all duration-500" data-alt="F1 cockpit steering wheel close up technical details" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCHv6KTfF5GDl9NFSwwpNQ_mSVRz_qNz-AR1URouzvrPUAuQ7Jw_HF3QUtfHTHIkBJg1LULB1to_kB0x-WiUN3mavVLmEQl0SvgfqY6oxAvR8VaI3w1fZJJCJ5AGb29JjyyyIzkBssUD-x5TZ_k_7r002DEKDALpYbMeKmd7bOBPJ3KKoJCsooZYDX1OpI69JqZFeFlYC9BU2BDgph22pXHm7G2yiHiJFPZGlZevaBenXcwnkbzo9uw71-ODy8b4wpmkyC8Ci9o_f0"/>
+</div>
+<div class="absolute inset-0 bg-gradient-to-t from-background to-transparent opacity-80"></div>
+<div class="absolute bottom-0 p-6 w-full">
+<div class="flex justify-between items-end mb-2">
+<div>
+<p class="text-primary-container font-headline font-black text-4xl">44</p>
+<h3 class="font-headline font-bold text-lg leading-tight uppercase">LEWIS<br/>HAMILTON</h3>
+</div>
+<span class="bg-surface-container-highest px-3 py-1 text-[10px] font-bold">MERC</span>
+</div>
+<div class="h-1 w-0 group-hover:w-full bg-primary-container transition-all duration-300"></div>
+</div>
+</div>
+<!-- Driver Card 3 -->
+<div class="group relative bg-surface-container-low overflow-hidden cursor-pointer">
+<div class="aspect-[3/4] overflow-hidden">
+<img class="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-110 transition-all duration-500" data-alt="F1 race car red aerodynamic wing detail" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA8BBWV48kDcDy15PRiQxoXQs0BauiY4dXhJF3C0neOUMrmn1VyBFfWrAOqwATwTBfdQx125C9OoAn4BVwy40XF8_Tu0RsASSZGX_3PIICiVp8L1FVE5XEjAaj9Q7XX_3V9MIs2yQwO6pvfTKok-fLGYQvLCHBFh0zYuwZHxX2PPzEwnhkm-dap6OhuGmB4Xp4ovusMpBmsG_8gqkdfEg09XBDrtSQmsooZCllXT2EatV9DGXoqVgnHnjiLg8S7S8ItHRx1SJ_YlCI"/>
+</div>
+<div class="absolute inset-0 bg-gradient-to-t from-background to-transparent opacity-80"></div>
+<div class="absolute bottom-0 p-6 w-full">
+<div class="flex justify-between items-end mb-2">
+<div>
+<p class="text-primary-container font-headline font-black text-4xl">16</p>
+<h3 class="font-headline font-bold text-lg leading-tight uppercase">CHARLES<br/>LECLERC</h3>
+</div>
+<span class="bg-surface-container-highest px-3 py-1 text-[10px] font-bold">FERR</span>
+</div>
+<div class="h-1 w-0 group-hover:w-full bg-primary-container transition-all duration-300"></div>
+</div>
+</div>
+<!-- Driver Card 4 -->
+<div class="group relative bg-surface-container-low overflow-hidden cursor-pointer">
+<div class="aspect-[3/4] overflow-hidden">
+<img class="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-110 transition-all duration-500" data-alt="F1 carbon fiber chassis textures detail" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCJTr-CqduCqmnN1ieHYgP6fRECUJ3JUr8jdrncjYJJM6OZr0Orum75XIO3kJykbnyH_U6qHXV5alGf0XBy8PT8oLGZj8aIDZ9P5yu47C0KxvvZESil0G472bv6acZUtCAEOxz813PfMFBL1tgkmlxsNGwxBsRZkVsK-TBPbupsNc5jyvpQdT2-UPuZGdH8-S0dNkCoT865MEcd5oO8IjdTO_Rm2Lk4CWfRJoaBHlD0N3e84WbiRDGPQEDMN2_GrUZgFSE0sPdOpFg"/>
+</div>
+<div class="absolute inset-0 bg-gradient-to-t from-background to-transparent opacity-80"></div>
+<div class="absolute bottom-0 p-6 w-full">
+<div class="flex justify-between items-end mb-2">
+<div>
+<p class="text-primary-container font-headline font-black text-4xl">04</p>
+<h3 class="font-headline font-bold text-lg leading-tight uppercase">LANDO<br/>NORRIS</h3>
+</div>
+<span class="bg-surface-container-highest px-3 py-1 text-[10px] font-bold">MCLA</span>
+</div>
+<div class="h-1 w-0 group-hover:w-full bg-primary-container transition-all duration-300"></div>
+</div>
+</div>
+</div>
+</section>
+<!-- Race Timeline (Horizontal Scroll) -->
+<section class="py-12 bg-surface-container-lowest overflow-hidden border-y border-[#1b1b24]">
+<div class="px-8 lg:px-16 mb-8 flex items-center space-x-4">
+<span class="w-12 h-[2px] bg-primary-container"></span>
+<h2 class="font-headline font-bold text-xs uppercase tracking-[0.3em]">SEASON CALENDAR</h2>
+</div>
+<div class="flex overflow-x-auto pb-8 px-8 lg:px-16 space-x-8 no-scrollbar">
+<!-- Timeline Item -->
+<div class="flex-shrink-0 w-80 group">
+<div class="bg-surface-container-low p-6 border-b-2 border-transparent group-hover:border-primary-container transition-all">
+<p class="text-[10px] text-secondary font-black tracking-widest uppercase">ROUND 05</p>
+<h4 class="font-headline text-2xl font-black mt-2">MONACO</h4>
+<p class="text-xs text-secondary mt-1">24 - 26 MAY</p>
+<div class="mt-8 flex justify-between items-center">
+<span class="bg-primary-container/10 text-primary-container text-[9px] px-2 py-1 font-bold">COMPLETED</span>
+<span class="material-symbols-outlined text-secondary text-sm">arrow_forward</span>
+</div>
+</div>
+</div>
+<!-- Timeline Item -->
+<div class="flex-shrink-0 w-80 group">
+<div class="bg-surface-container-low p-6 border-b-2 border-transparent group-hover:border-primary-container transition-all">
+<p class="text-[10px] text-secondary font-black tracking-widest uppercase">ROUND 06</p>
+<h4 class="font-headline text-2xl font-black mt-2">CANADA</h4>
+<p class="text-xs text-secondary mt-1">07 - 09 JUN</p>
+<div class="mt-8 flex justify-between items-center">
+<span class="bg-surface-container-highest text-[#c7c6ca] text-[9px] px-2 py-1 font-bold">UPCOMING</span>
+<span class="material-symbols-outlined text-secondary text-sm">event</span>
+</div>
+</div>
+</div>
+<!-- Timeline Item -->
+<div class="flex-shrink-0 w-80 group">
+<div class="bg-surface-container-low p-6 border-b-2 border-transparent group-hover:border-primary-container transition-all opacity-60">
+<p class="text-[10px] text-secondary font-black tracking-widest uppercase">ROUND 07</p>
+<h4 class="font-headline text-2xl font-black mt-2">SPAIN</h4>
+<p class="text-xs text-secondary mt-1">21 - 23 JUN</p>
+<div class="mt-8 flex justify-between items-center">
+<span class="bg-surface-container-highest text-[#c7c6ca] text-[9px] px-2 py-1 font-bold">LOCKED</span>
+<span class="material-symbols-outlined text-secondary text-sm">lock</span>
+</div>
+</div>
+</div>
+<!-- Timeline Item -->
+<div class="flex-shrink-0 w-80 group">
+<div class="bg-surface-container-low p-6 border-b-2 border-transparent group-hover:border-primary-container transition-all opacity-60">
+<p class="text-[10px] text-secondary font-black tracking-widest uppercase">ROUND 08</p>
+<h4 class="font-headline text-2xl font-black mt-2">AUSTRIA</h4>
+<p class="text-xs text-secondary mt-1">28 - 30 JUN</p>
+<div class="mt-8 flex justify-between items-center">
+<span class="bg-surface-container-highest text-[#c7c6ca] text-[9px] px-2 py-1 font-bold">LOCKED</span>
+<span class="material-symbols-outlined text-secondary text-sm">lock</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Results Table -->
+<section class="py-24 px-8 lg:px-16">
+<h2 class="font-headline text-2xl font-black uppercase italic tracking-tighter mb-12">RACE RESULTS : MONACO</h2>
+<div class="w-full overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="border-b border-outline-variant/30 text-[10px] font-label uppercase tracking-widest text-secondary">
+<th class="py-4 px-4 font-black">POS</th>
+<th class="py-4 px-4 font-black">DRIVER</th>
+<th class="py-4 px-4 font-black">CONSTRUCTOR</th>
+<th class="py-4 px-4 font-black">LAPS</th>
+<th class="py-4 px-4 font-black">TIME/RETIRED</th>
+<th class="py-4 px-4 text-right font-black">PTS</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/10">
+<tr class="group hover:bg-surface-container transition-colors">
+<td class="py-6 px-4 font-headline font-black text-primary-container">01</td>
+<td class="py-6 px-4">
+<span class="font-headline font-bold uppercase">M. VERSTAPPEN</span>
+</td>
+<td class="py-6 px-4 text-xs uppercase tracking-widest opacity-60">Red Bull Racing</td>
+<td class="py-6 px-4 font-mono text-xs">78</td>
+<td class="py-6 px-4 font-mono text-xs">1:48:51.980</td>
+<td class="py-6 px-4 text-right font-headline font-bold">25</td>
+</tr>
+<tr class="group hover:bg-surface-container transition-colors">
+<td class="py-6 px-4 font-headline font-black">02</td>
+<td class="py-6 px-4">
+<span class="font-headline font-bold uppercase">C. LECLERC</span>
+</td>
+<td class="py-6 px-4 text-xs uppercase tracking-widest opacity-60">Ferrari</td>
+<td class="py-6 px-4 font-mono text-xs">78</td>
+<td class="py-6 px-4 font-mono text-xs">+8.471s</td>
+<td class="py-6 px-4 text-right font-headline font-bold">18</td>
+</tr>
+<tr class="group hover:bg-surface-container transition-colors">
+<td class="py-6 px-4 font-headline font-black">03</td>
+<td class="py-6 px-4">
+<span class="font-headline font-bold uppercase">S. PEREZ</span>
+</td>
+<td class="py-6 px-4 text-xs uppercase tracking-widest opacity-60">Red Bull Racing</td>
+<td class="py-6 px-4 font-mono text-xs">78</td>
+<td class="py-6 px-4 font-mono text-xs">+12.110s</td>
+<td class="py-6 px-4 text-right font-headline font-bold">15</td>
+</tr>
+<tr class="group hover:bg-surface-container transition-colors">
+<td class="py-6 px-4 font-headline font-black">04</td>
+<td class="py-6 px-4">
+<span class="font-headline font-bold uppercase">L. NORRIS</span>
+</td>
+<td class="py-6 px-4 text-xs uppercase tracking-widest opacity-60">McLaren</td>
+<td class="py-6 px-4 font-mono text-xs">78</td>
+<td class="py-6 px-4 font-mono text-xs">+14.650s</td>
+<td class="py-6 px-4 text-right font-headline font-bold">12</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="mt-12 flex justify-center">
+<button class="text-[10px] font-bold tracking-[0.3em] uppercase border border-outline-variant/30 px-8 py-4 hover:border-primary-container hover:text-primary-container transition-all">
+                    LOAD FULL CLASSIFICATION
+                </button>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="lg:ml-64 w-full border-t border-[#1b1b24] py-12 bg-[#0d0d16] flex flex-col items-center justify-center space-y-8 px-4">
+<div class="text-lg font-black text-[#E10600]">F1 PRECISION</div>
+<div class="flex flex-wrap justify-center gap-8">
+<a class="font-['Inter'] text-[10px] uppercase tracking-[0.2em] text-[#c7c6ca] hover:text-[#E10600] transition-colors" href="#">Privacy Policy</a>
+<a class="font-['Inter'] text-[10px] uppercase tracking-[0.2em] text-[#c7c6ca] hover:text-[#E10600] transition-colors" href="#">Terms of Service</a>
+<a class="font-['Inter'] text-[10px] uppercase tracking-[0.2em] text-[#c7c6ca] hover:text-[#E10600] transition-colors" href="#">Cookie Preferences</a>
+<a class="font-['Inter'] text-[10px] uppercase tracking-[0.2em] text-[#c7c6ca] hover:text-[#E10600] transition-colors" href="#">Contact</a>
+</div>
+<div class="text-center">
+<p class="font-['Inter'] text-[10px] uppercase tracking-[0.2em] text-[#c7c6ca] opacity-50">
+                © 2024 FORMULA 1 PRECISION TELEMETRY. ALL RIGHTS RESERVED.
+            </p>
+</div>
+</footer>
+</body></html>

@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>F1 PRO | Lewis Hamilton - Scuderia Ferrari</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;900&amp;family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "ferrari-red": "#E8002D",
+              "ferrari-dark": "#1a0003",
+              "tertiary-dim": "#ff4d4d",
+              "outline-variant": "#474751",
+              "on-background": "#efecf9",
+              "inverse-surface": "#fcf8ff",
+              "on-tertiary-container": "#4d0000",
+              "on-surface": "#efecf9",
+              "primary-fixed": "#E8002D",
+              "surface-dim": "#0a0a0c",
+              "surface-variant": "#252532",
+              "on-secondary-fixed-variant": "#6b0014",
+              "secondary-container": "#7d001a",
+              "on-error-container": "#ffa8a3",
+              "error-container": "#9f0519",
+              "on-tertiary": "#550000",
+              "surface": "#0a0a0c",
+              "tertiary": "#ff7070",
+              "surface-container-lowest": "#000000",
+              "outline": "#757480",
+              "secondary": "#ff1034",
+              "on-tertiary-fixed": "#350000",
+              "primary-dim": "#cc0028",
+              "on-error": "#490006",
+              "tertiary-container": "#f95959",
+              "surface-container-low": "#101014",
+              "primary": "#E8002D",
+              "surface-container-highest": "#252532",
+              "on-secondary-fixed": "#47000e",
+              "background": "#0a0a0c",
+              "error": "#ff716c",
+              "inverse-primary": "#760017",
+              "surface-bright": "#2b2b39",
+              "on-primary": "#ffffff",
+              "on-primary-fixed": "#40000c",
+              "secondary-fixed": "#ff788f",
+              "primary-fixed-dim": "#cc0028",
+              "on-secondary-container": "#ffedf0",
+              "on-surface-variant": "#acaab6",
+              "on-secondary": "#540011",
+              "tertiary-fixed-dim": "#ff6565",
+              "secondary-fixed-dim": "#ff1034",
+              "on-tertiary-fixed-variant": "#710000",
+              "inverse-on-surface": "#55545f",
+              "primary-container": "#E8002D",
+              "surface-container": "#15151c",
+              "surface-tint": "#E8002D",
+              "error-dim": "#d7383b",
+              "on-primary-fixed-variant": "#ffffff",
+              "tertiary-fixed": "#ff8080",
+              "secondary-dim": "#ee002e",
+              "on-primary-container": "#ffffff",
+              "surface-container-high": "#1a1a24"
+            },
+            fontFamily: {
+              "headline": ["Space Grotesk"],
+              "body": ["Inter"],
+              "label": ["Space Grotesk"]
+            },
+            borderRadius: {"DEFAULT": "0px", "lg": "0px", "xl": "0px", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>.material-symbols-outlined {
+    font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24
+    }
+.glass-header {
+    backdrop-filter: blur(20px)
+    }
+.text-neon-glow {
+    text-shadow: 0 0 20px rgba(232, 0, 45, 0.6)
+    }
+.card-red-glow {
+    box-shadow: inset 0 0 30px rgba(232, 0, 45, 0.05);
+    border-left: 2px solid transparent
+    }
+.card-red-glow:hover {
+    box-shadow: 0 0 40px rgba(232, 0, 45, 0.15);
+    border-left: 2px solid #E8002D
+    }
+.bg-noise {
+    background-image: url(https://lh3.googleusercontent.com/aida-public/AB6AXuDeYPyI6wOomytqeq6TTHTiYuaK_QxWUR5cC5wWyzVBc-8LGlERq7PyFVcDxsf0meynHsfQXxBVGhIrql7t1ie9gq-2-7XEuRaDQrgk9t9fduUFFLfkdIfheguJib3mpQK_VCsqdqwOnL-oX5NucSmY9Hlg3W5S9ZapTEAYbMVkXOF-n6ihwv4icXZXMIVIWdAcG0cNP5-yyvP8LdwKXL-4pl5nDfejTugElA--cdaoNMmEAHM3ENxlafo1mC6rtcieWRWDM0soXNk);
+    opacity: 0.03
+    }
+::-webkit-scrollbar {
+    width: 4px
+    }
+::-webkit-scrollbar-track {
+    background: #0a0a0c
+    }
+::-webkit-scrollbar-thumb {
+    background: #252532
+    }</style>
+</head>
+<body class="bg-surface text-on-surface font-body selection:bg-primary selection:text-on-primary relative">
+<!-- Atmospheric Background Layers -->
+<div class="fixed inset-0 pointer-events-none z-0">
+<div class="absolute inset-0 bg-noise"></div>
+<img alt="Technical Layout" class="absolute inset-0 w-full h-full object-cover opacity-[0.03] mix-blend-luminosity" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBFAbjZEbugifkUefPcHQaoIS3rUs2lRz9BmJQ2up4svY8tdZGiW8jT13HCwrpZK0KJiJu1qPL6YgUH1FZLnNkBhn2sqrWHrHVHI-rF_62xkuLLXIHzaxWLaLkagM6llQtJ9UGl2xj9pTAi8EGV0y3PRN4H_-NkgpUyIQ0FObYdtnbFmUp5TyZm1pSz__SgvrAdZ3NdyuwqIBhsSfWQWUl2Ji-h5RdADRHb2FqyuopkNYc-FMJKNqodWkSwG8qlGY9ou1lG-izh95s"/>
+</div>
+<!-- TopNavBar Shell -->
+<nav class="fixed top-0 w-full z-50 flex justify-between items-center px-8 h-20 bg-surface/80 backdrop-blur-xl border-b border-outline-variant/10 shadow-[0_20px_40px_rgba(232,0,45,0.05)]">
+<div class="flex items-center gap-6">
+<div class="text-2xl font-black italic tracking-tighter text-primary font-['Space_Grotesk'] uppercase">
+                F1 PRO
+            </div>
+<div class="h-6 w-[1px] bg-outline-variant/20 hidden md:block"></div>
+<img alt="Ferrari Logo" class="h-8 invert brightness-0" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCb0UTrZwdPPH_5jQMKIoHd-j3iFqZNS_ysdXLiLT-HXlfIdGws7600-1JIQUi0NGX7S7P8osxeCMTkPo_opEAlBbyRHaxNpKm4s0uiFonnrjS-5PgnA0JEXjIOKLG9naY71v0jj53hDdpe99cJ9PmoSZq8AbMqKWD5vzorrzO7CEIvkRQFCGs4dQxJ2p94lH67g1HvcbF9q8HnqUdGeeODXlxIrTS3TXnEm5qe0gWCVDzj-QXmTGMvoI1_T0cOmkXUMHNDZDKaTJ4"/>
+</div>
+<div class="hidden md:flex items-center gap-12 font-['Space_Grotesk'] tracking-tight uppercase font-bold">
+<a class="text-primary border-b-2 border-primary pb-1" href="#">Drivers</a>
+<a class="text-[#acaab6] hover:text-white transition-colors" href="#">Races</a>
+<a class="text-[#acaab6] hover:text-white transition-colors" href="#">Results</a>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 hover:text-primary transition-all duration-300">
+<span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
+</button>
+</div>
+</nav>
+<main class="relative z-10 pt-20">
+<!-- Hero Section -->
+<section class="relative h-[921px] overflow-hidden flex items-end">
+<div class="absolute inset-0 z-0">
+<!-- Photorealistic Cinematic Image -->
+<img alt="Lewis Hamilton Ferrari Profile" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBOQBAgnhxPvfMOKppof8eJvpia5EJdylm9-9O8OJvalnxaOdTX-PdOSYI4BtWDWtiryngfqZdkkvVBNZwbY7NQkmsnmleDhGXJ1CGD9x2JuGL2SgRPnnhuNtLpfKFvMprtH5i-_-Hlh51zVqJcDk8-f1Fi6RDHBH1OJlf_6gixwmMBDnOeeDubeaqi7U_3sLOGgEGeA4x60yHPKklMStcDpqGW4vqXDN1lZoOEMgrh7OnH6JgPqgRvNfFTQlODaM5f4TDyQdVacZY" style="filter: contrast(1.1) brightness(0.8) grayscale(0.2);"/>
+<!-- Ferrari Red Gradient Transition -->
+<div class="absolute inset-0 bg-gradient-to-t from-surface via-surface/40 to-transparent"></div>
+<div class="absolute inset-0 bg-gradient-to-r from-ferrari-red/30 via-transparent to-transparent"></div>
+<!-- 2026 Livery Element (Abstract Carbon/Red) -->
+<div class="absolute right-0 top-0 h-full w-1/3 bg-gradient-to-l from-ferrari-red/10 to-transparent skew-x-[-15deg] translate-x-1/2"></div>
+</div>
+<div class="relative z-10 w-full px-8 pb-24 md:pb-32 grid grid-cols-12">
+<div class="col-span-12 md:col-span-8">
+<div class="flex items-center gap-4 mb-6">
+<img alt="Scuderia Ferrari" class="h-10 invert" src="https://lh3.googleusercontent.com/aida-public/AB6AXuASQInM-Atm7iqkVTSbT1qoPDYzNd9oGBs8a7tN1oLl1WGv8bysVeeBBC5Nn0_Qa2U846Rbo0EzHpwtlz0HS9Ho5nS94qxVuwp-7vhKqWiTLM9teSEyVsCPol_z3g17GegfU0JYzcMunQWyFy8e7zadoMU3txZRAjA4k8qRARXn9XWUTnEU9U2-4xZc4dO_4hokJ5swaCxW-9FxpOTKQNGWIuGO-bJ0wehtwkaFUVaBzpW9sVKL6sgiNui0mrflLEZtRYQiysHNvoQ"/>
+<span class="bg-primary/20 text-white border border-primary/40 px-3 py-1 font-label text-xs tracking-[0.3em] uppercase backdrop-blur-sm">
+                            Scuderia Ferrari HP
+                        </span>
+<div class="h-[1px] w-24 bg-primary/50"></div>
+</div>
+<h1 class="font-headline text-7xl md:text-9xl font-black italic uppercase leading-[0.85] tracking-tighter mb-8 -ml-1">
+                        LEWIS<br/>
+<span class="text-neon-glow text-primary">HAMILTON</span>
+</h1>
+<div class="flex items-baseline gap-6 bg-surface-container/40 p-6 backdrop-blur-md border-l-4 border-primary inline-flex">
+<span class="font-headline text-6xl font-light text-primary italic">44</span>
+<div class="flex flex-col">
+<span class="font-label text-xs tracking-[0.2em] uppercase text-on-surface-variant">World Standing</span>
+<span class="font-headline text-2xl font-bold uppercase">2026 Title Challenger</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Stats Grid -->
+<section class="bg-surface-container-low px-8 py-24 relative overflow-hidden">
+<div class="absolute top-0 right-0 w-96 h-96 bg-primary/5 blur-[100px] rounded-full -translate-y-1/2 translate-x-1/2"></div>
+<div class="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-0 border-l border-t border-outline-variant/10 relative z-10">
+<!-- Wins -->
+<div class="p-12 border-r border-b border-outline-variant/10 group card-red-glow transition-all duration-500 bg-surface/40 backdrop-blur-sm">
+<span class="font-label text-xs tracking-widest text-on-surface-variant uppercase block mb-6">Race Victories</span>
+<div class="flex items-baseline gap-2">
+<span class="font-headline text-7xl font-bold text-on-surface group-hover:text-primary transition-colors">103</span>
+<span class="material-symbols-outlined text-primary text-sm animate-pulse" data-icon="trending_up">trending_up</span>
+</div>
+</div>
+<!-- Podiums -->
+<div class="p-12 border-r border-b border-outline-variant/10 group card-red-glow transition-all duration-500 bg-surface/40 backdrop-blur-sm">
+<span class="font-label text-xs tracking-widest text-on-surface-variant uppercase block mb-6">Podium Finishes</span>
+<div class="flex items-baseline gap-2">
+<span class="font-headline text-7xl font-bold text-on-surface group-hover:text-primary transition-colors">197</span>
+</div>
+</div>
+<!-- Poles -->
+<div class="p-12 border-r border-b border-outline-variant/10 group card-red-glow transition-all duration-500 bg-surface/40 backdrop-blur-sm">
+<span class="font-label text-xs tracking-widest text-on-surface-variant uppercase block mb-6">Pole Positions</span>
+<div class="flex items-baseline gap-2">
+<span class="font-headline text-7xl font-bold text-on-surface group-hover:text-primary transition-colors">104</span>
+</div>
+</div>
+<!-- Points -->
+<div class="p-12 border-r border-b border-outline-variant/10 group card-red-glow transition-all duration-500 bg-surface/40 backdrop-blur-sm">
+<span class="font-label text-xs tracking-widest text-on-surface-variant uppercase block mb-6">Career Points</span>
+<div class="flex items-baseline gap-2">
+<span class="font-headline text-7xl font-bold text-on-surface group-hover:text-primary transition-colors">4639</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Major Wins Section (Flags & Circuits) -->
+<section class="px-8 py-24 bg-surface-container relative">
+<div class="max-w-7xl mx-auto">
+<div class="flex items-center justify-between mb-16">
+<h2 class="font-headline text-3xl font-bold uppercase tracking-widest border-l-4 border-primary pl-6">Legendary Victories</h2>
+<span class="font-label text-[10px] text-on-surface-variant uppercase tracking-[0.5em]">Career Archive</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+<!-- Win 1: Silverstone -->
+<div class="group relative overflow-hidden aspect-[4/5] bg-surface-container-high border border-outline-variant/10">
+<img alt="Silverstone Circuit" class="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:scale-110 transition-transform duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBnrqnCef_-psT0I17swYNQXWFK39IJ_ZRcsau_91UPfCdTpEVgQP2e7LQv4lTUGFH-Q2NRc2NBGes7d9Ym4tmwbqASSPeD64pwSbSa3FMPf4k5TC2ZwbeVIg_gbpv44H25Xbbd0Ex1u3muM5Hlj7Xbibt5RVHQSvyY4icGP6HxNKJt_TNN2BpAlSQve9w6b-7IWCZdd6-9hoefCdd_-rESaZcQKdnez8v6IxFkOLvxXGNPx4lgsNQO8nKxnWmyEfhniHshS1vlH44"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
+<div class="absolute bottom-0 p-8 w-full">
+<div class="flex items-center gap-2 mb-4">
+<span class="text-2xl">🇬🇧</span>
+<span class="font-label text-[10px] uppercase tracking-widest text-primary font-bold">Silverstone</span>
+</div>
+<h4 class="font-headline text-xl font-bold uppercase leading-tight">British GP<br/>Classic Victory</h4>
+</div>
+</div>
+<!-- Win 2: Monza -->
+<div class="group relative overflow-hidden aspect-[4/5] bg-surface-container-high border border-outline-variant/10">
+<img alt="Monza Circuit" class="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:scale-110 transition-transform duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC_YJlMhqbM2ZUWvWS8D2h6EJvHxqT9OwKlqLKongWSRi2YNj5rN1kdBLJ4Hb7N7KdBNCkPND3d89Rp9--fXh3hKOESI3O03egrEigQfbkIrPyrg--rcdhRIN-I5QieDQ2FWDI288t1bQ2sakQeG_hVQcKxreQhQ7pDIDByRtdeZusXwFzqpMHGY5AHIUhL7_uStjThyqGaAG7_WrreFJBFWFD0x6yAdp3b7lXm6jQWxvHhf27ACsd0Qw3xbY0YNxqR255G6qVQmL0"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
+<div class="absolute bottom-0 p-8 w-full">
+<div class="flex items-center gap-2 mb-4">
+<span class="text-2xl">🇮🇹</span>
+<span class="font-label text-[10px] uppercase tracking-widest text-primary font-bold">Monza</span>
+</div>
+<h4 class="font-headline text-xl font-bold uppercase leading-tight">Italian GP<br/>Tifosi Tribute</h4>
+</div>
+</div>
+<!-- Win 3: Monaco -->
+<div class="group relative overflow-hidden aspect-[4/5] bg-surface-container-high border border-outline-variant/10">
+<img alt="Monaco Circuit" class="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:scale-110 transition-transform duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBxom2qWZUDCwKvGiZM0DKbnkYdY0uMPk4PqzC1xgl3c46HIvH_5Pma2e3VpIY3mcWAa6fMW1JTGG_wGOXVRaT1l56OtgGKoKzvW5_1wMpNT7BPvAMOAPpC-K8a669_Fg6qbVKbCgcnNPZ0u65gC1ERS6lNeH54xRVVTV1CYTiXRvjtbG2P4HEWO1d1NukoX4ax-9HcMe0nnPSDWVdhxjeBoMu5viF7KPmIgnMhMObbgkCfMwabUBmUCFxpAmfqVCOEjLA3sXxVmzU"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
+<div class="absolute bottom-0 p-8 w-full">
+<div class="flex items-center gap-2 mb-4">
+<span class="text-2xl">🇲🇨</span>
+<span class="font-label text-[10px] uppercase tracking-widest text-primary font-bold">Monte Carlo</span>
+</div>
+<h4 class="font-headline text-xl font-bold uppercase leading-tight">Monaco GP<br/>Street Master</h4>
+</div>
+</div>
+<!-- Win 4: Suzuka -->
+<div class="group relative overflow-hidden aspect-[4/5] bg-surface-container-high border border-outline-variant/10">
+<img alt="Suzuka Circuit" class="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:scale-110 transition-transform duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDL1RGQYbTMWtXky1EY5wGcseZVJ-0QRwnAB9nt1D54abcVPYLOh9S4ERXS14njusBUbI3LSMY0xnYTMqsAVFQAC_POQuCP_E26sd4GeSSgdg4ErQyo0HFKcwL_JZdxIHg8znrurl208oAxhF_9vrNgPD5KLT3jDF7oXxtiyTY9_LA5eIZagEmU25JzJuQehHJPrcEdMRvkQHuF4i8TB09NJafhSqaiBmK5MlcyDn-Ec6hWoO7FSAZ0IKtaYHppBC6ifcL2OAv_5eQ"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
+<div class="absolute bottom-0 p-8 w-full">
+<div class="flex items-center gap-2 mb-4">
+<span class="text-2xl">🇯🇵</span>
+<span class="font-label text-[10px] uppercase tracking-widest text-primary font-bold">Suzuka</span>
+</div>
+<h4 class="font-headline text-xl font-bold uppercase leading-tight">Japanese GP<br/>Legendary Flow</h4>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Telemetry & Performance -->
+<section class="px-8 py-32 bg-surface overflow-hidden">
+<div class="max-w-7xl mx-auto">
+<div class="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
+<div class="max-w-xl">
+<h2 class="font-headline text-4xl font-bold uppercase tracking-tight mb-4">Precision Telemetry</h2>
+<p class="text-on-surface-variant font-body text-sm leading-relaxed">
+                            Analyzing the structural kineticism of the 2026 Ferrari F1-X chassis across the Imola circuit. High-velocity data extraction reveals dominant sector performance.
+                        </p>
+</div>
+<div class="flex gap-4">
+<button class="px-6 py-3 bg-primary text-white font-label text-xs font-bold uppercase tracking-widest hover:brightness-110 transition-all shadow-[0_0_20px_rgba(232,0,45,0.3)]">Export Data</button>
+<button class="px-6 py-3 border border-outline-variant/30 text-on-surface font-label text-xs font-bold uppercase tracking-widest hover:border-primary transition-all backdrop-blur-sm">Live Feed</button>
+</div>
+</div>
+<!-- Telemetry Visuals -->
+<div class="grid grid-cols-12 gap-8">
+<!-- Main Speed Trace -->
+<div class="col-span-12 lg:col-span-8 bg-surface-container-high p-8 relative overflow-hidden card-red-glow">
+<div class="flex justify-between items-center mb-12">
+<span class="font-label text-[10px] tracking-[0.3em] uppercase text-primary font-bold">Velocity Map // Sector 01-03</span>
+<span class="text-on-surface-variant text-[10px] font-mono">358.4 KM/H PEAK</span>
+</div>
+<div class="h-64 flex items-end gap-[2px]">
+<!-- Red Telemetry Visualization -->
+<div class="flex-1 bg-primary/20 h-[40%] hover:h-[45%] transition-all duration-500 group relative">
+<div class="absolute top-0 w-full h-1 bg-primary shadow-[0_0_10px_rgba(232,0,45,1)] opacity-0 group-hover:opacity-100 transition-opacity"></div>
+</div>
+<div class="flex-1 bg-primary/30 h-[60%] hover:h-[65%] transition-all duration-500 group relative"></div>
+<div class="flex-1 bg-primary/20 h-[55%] hover:h-[60%] transition-all duration-500 group relative"></div>
+<div class="flex-1 bg-primary/40 h-[80%] hover:h-[85%] transition-all duration-500 group relative"></div>
+<div class="flex-1 bg-primary/50 h-[95%] hover:h-[100%] transition-all duration-500 group relative">
+<div class="absolute top-0 w-full h-1 bg-primary shadow-[0_0_15px_rgba(232,0,45,1)]"></div>
+</div>
+<div class="flex-1 bg-primary/30 h-[70%] hover:h-[75%] transition-all duration-500 group relative"></div>
+<div class="flex-1 bg-primary/20 h-[45%] hover:h-[50%] transition-all duration-500 group relative"></div>
+<div class="flex-1 bg-primary/40 h-[75%] hover:h-[80%] transition-all duration-500 group relative"></div>
+<div class="flex-1 bg-primary/25 h-[50%] hover:h-[55%] transition-all duration-500 group relative"></div>
+<div class="flex-1 bg-primary/15 h-[30%] hover:h-[35%] transition-all duration-500 group relative"></div>
+<div class="flex-1 bg-primary/50 h-[88%] hover:h-[93%] transition-all duration-500 group relative"></div>
+<div class="flex-1 bg-primary/30 h-[65%] hover:h-[70%] transition-all duration-500 group relative"></div>
+<div class="flex-1 bg-primary/40 h-[78%] hover:h-[83%] transition-all duration-500 group relative"></div>
+</div>
+<div class="mt-8 flex justify-between font-mono text-[10px] text-outline">
+<span>0.0s</span>
+<span>15.0s</span>
+<span>30.0s</span>
+<span>45.0s</span>
+<span>60.0s</span>
+<span>LAP RECORD PACE</span>
+</div>
+</div>
+<!-- Side Stats -->
+<div class="col-span-12 lg:col-span-4 flex flex-col gap-8">
+<div class="bg-surface-container-high p-8 flex-1 card-red-glow">
+<span class="font-label text-[10px] tracking-widest uppercase text-on-surface-variant mb-6 block">Tyre Degradation</span>
+<div class="flex items-center gap-6">
+<div class="relative w-20 h-20">
+<svg class="w-full h-full -rotate-90" viewbox="0 0 36 36">
+<path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#252532" stroke-width="3"></path>
+<path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#E8002D" stroke-dasharray="82, 100" stroke-width="3"></path>
+</svg>
+<div class="absolute inset-0 flex items-center justify-center font-headline font-bold text-lg">82%</div>
+</div>
+<div>
+<span class="block font-headline text-lg font-bold">HARD (C1)</span>
+<span class="text-[10px] uppercase text-on-surface-variant font-label">Scuderia Spec</span>
+</div>
+</div>
+</div>
+<div class="bg-surface-container-high p-8 flex-1 card-red-glow">
+<span class="font-label text-[10px] tracking-widest uppercase text-on-surface-variant mb-6 block">G-Force (Lateral)</span>
+<div class="flex items-end justify-between">
+<span class="font-headline text-4xl font-black italic">5.4G</span>
+<div class="w-24 h-8 bg-surface flex items-center px-1">
+<div class="h-2 bg-primary w-4/5 shadow-[0_0_8px_#E8002D]"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Dynamic Card Section -->
+<section class="px-8 pb-32">
+<div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+<div class="bg-surface-container-lowest p-10 border border-outline-variant/10 group card-red-glow transition-all duration-500">
+<span class="material-symbols-outlined text-primary mb-8" data-icon="trophy" style="font-variation-settings: 'FILL' 1;">trophy</span>
+<h3 class="font-headline text-2xl font-bold uppercase mb-4">World Titles</h3>
+<p class="text-on-surface-variant text-sm leading-relaxed mb-12">Matched only by the greatest. A legacy spanning decades of elite-tier competition and relentless pursuit.</p>
+<span class="font-headline text-5xl font-black italic text-outline/20 group-hover:text-primary/20 transition-colors">07</span>
+</div>
+<div class="bg-surface-container-lowest p-10 border border-outline-variant/10 group card-red-glow transition-all duration-500">
+<span class="material-symbols-outlined text-primary mb-8" data-icon="speed">speed</span>
+<h3 class="font-headline text-2xl font-bold uppercase mb-4">Top Velocity</h3>
+<p class="text-on-surface-variant text-sm leading-relaxed mb-12">Peak performance reached during the 2026 Italian Grand Prix qualifying session at Monza.</p>
+<span class="font-headline text-5xl font-black italic text-outline/20 group-hover:text-primary/20 transition-colors">362.1</span>
+</div>
+<div class="bg-surface-container-lowest p-10 border border-outline-variant/10 group card-red-glow transition-all duration-500">
+<span class="material-symbols-outlined text-primary mb-8" data-icon="query_stats">query_stats</span>
+<h3 class="font-headline text-2xl font-bold uppercase mb-4">Avg Start Pos</h3>
+<p class="text-on-surface-variant text-sm leading-relaxed mb-12">Consistent front-row performance ensuring strategic dominance from the very first corner.</p>
+<span class="font-headline text-5xl font-black italic text-outline/20 group-hover:text-primary/20 transition-colors">2.4</span>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer Shell -->
+<footer class="bg-[#000000] w-full py-16 px-8 flex flex-col md:flex-row justify-between items-center gap-6 font-['Inter'] text-[10px] tracking-[0.3em] uppercase border-t border-ferrari-red/10">
+<div class="flex items-center gap-4">
+<img alt="Ferrari" class="h-6 invert opacity-50" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCz-ij_yN2U9q7EOi3WYQY4KaXv2eEqdi7AaOhgEZKlf5XK-sHqiBQ_V08qJEG3j7DMA-nzM0gd2OTZ8rPlH85n_jft84cerX8MlEq7ZK2BTr8SipY_uI5-hHBR6X85dNbGI0YftPB9FdDSLNn6tsUzlsptpxurYJijhUvG7GFebFZMjZQQfj58a76CSSXbRebS8xz8SE6HIai-ekNH_VqMVZAPRjLts4aY1qz4R7atFR0J9CwLd8RHh6xJqRHuC0Pd7LR2gOq_ULY"/>
+<div class="text-[#acaab6]">
+                © 2024 SCUDERIA FERRARI HP | PRECISION KINETICISM
+            </div>
+</div>
+<div class="flex gap-10">
+<a class="text-[#acaab6] hover:text-primary transition-colors" href="#">Privacy Policy</a>
+<a class="text-[#acaab6] hover:text-primary transition-colors" href="#">Terms of Service</a>
+<a class="text-[#acaab6] hover:text-primary transition-colors" href="#">Contact</a>
+<a class="text-[#acaab6] hover:text-primary transition-colors" href="#">Media Hub</a>
+</div>
+<div class="flex gap-4">
+<a class="w-10 h-10 flex items-center justify-center hover:text-primary transition-all border border-outline-variant/20 rounded-full" href="#">
+<span class="material-symbols-outlined" data-icon="share">share</span>
+</a>
+<a class="w-10 h-10 flex items-center justify-center hover:text-primary transition-all border border-outline-variant/20 rounded-full" href="#">
+<span class="material-symbols-outlined" data-icon="rss_feed">rss_feed</span>
+</a>
+</div>
+</footer>
+</body></html>

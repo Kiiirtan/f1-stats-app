@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>F1 PRECISION | OFFICIAL 2026 CONSTRUCTOR STANDINGS</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "on-tertiary-container": "#f4f4ff",
+                        "inverse-surface": "#e4e1ed",
+                        "on-primary-fixed-variant": "#930300",
+                        "primary": "#ffb4a8",
+                        "tertiary-fixed-dim": "#b4c5ff",
+                        "tertiary-container": "#0163ff",
+                        "surface-container-lowest": "#0d0d15",
+                        "surface-container-high": "#292932",
+                        "on-background": "#e4e1ed",
+                        "surface-dim": "#13131b",
+                        "on-tertiary-fixed": "#00174a",
+                        "secondary-fixed-dim": "#ffb4a8",
+                        "secondary": "#ffb4a8",
+                        "surface-tint": "#ffb4a8",
+                        "secondary-fixed": "#ffdad4",
+                        "error-container": "#93000a",
+                        "surface-bright": "#393841",
+                        "tertiary": "#b4c5ff",
+                        "on-error": "#690005",
+                        "on-secondary": "#51221b",
+                        "on-tertiary": "#002a77",
+                        "surface-container-highest": "#34343d",
+                        "surface-container-low": "#1b1b23",
+                        "on-primary-fixed": "#410100",
+                        "surface-variant": "#34343d",
+                        "on-primary-container": "#fff2f0",
+                        "primary-fixed-dim": "#ffb4a8",
+                        "outline": "#af8781",
+                        "on-secondary-fixed-variant": "#6c3830",
+                        "on-secondary-container": "#efa69b",
+                        "primary-fixed": "#ffdad4",
+                        "on-error-container": "#ffdad6",
+                        "background": "#13131b",
+                        "tertiary-fixed": "#dbe1ff",
+                        "on-primary": "#680200",
+                        "on-surface-variant": "#e9bcb5",
+                        "on-surface": "#e4e1ed",
+                        "secondary-container": "#6f3a32",
+                        "inverse-primary": "#c00500",
+                        "outline-variant": "#5e3f3a",
+                        "error": "#ffb4ab",
+                        "on-secondary-fixed": "#360e09",
+                        "on-tertiary-fixed-variant": "#003ea7",
+                        "surface-container": "#1f1f27",
+                        "surface": "#13131b",
+                        "primary-container": "#e10600",
+                        "inverse-on-surface": "#303038"
+                    },
+                    fontFamily: {
+                        "headline": ["Space Grotesk"],
+                        "body": ["Inter"],
+                        "label": ["Space Grotesk"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0px",
+                        "lg": "0px",
+                        "xl": "0px",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #13131b; }
+        ::-webkit-scrollbar-thumb { background: #e10600; }
+        
+        .kinetic-gradient {
+            background: linear-gradient(45deg, #e10600 0%, #ffb4a8 100%);
+        }
+
+        .car-indicator {
+            clip-path: polygon(0 40%, 40% 40%, 45% 0, 75% 0, 80% 40%, 100% 40%, 100% 100%, 0 100%);
+        }
+        
+        .glow-bar {
+            position: relative;
+            overflow: visible;
+        }
+        
+        .glow-bar::after {
+            content: "";
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 24px;
+            height: 12px;
+            background: currentColor;
+            clip-path: polygon(0% 50%, 20% 20%, 80% 20%, 100% 50%, 80% 80%, 20% 80%);
+            filter: drop-shadow(0 0 8px currentColor);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body selection:bg-primary-container selection:text-white overflow-x-hidden">
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full z-50 flex justify-between items-center px-6 h-16 bg-[#13131b]/95 backdrop-blur-md border-b border-white/5">
+<div class="flex items-center gap-8">
+<span class="text-2xl font-black italic uppercase text-[#E10600] tracking-tighter">F1 PRECISION</span>
+<div class="hidden md:flex gap-6">
+<a class="font-['Space_Grotesk'] font-bold italic uppercase tracking-[-0.05rem] text-white/60 hover:text-white transition-colors duration-100" href="#">DRIVERS</a>
+<a class="font-['Space_Grotesk'] font-bold italic uppercase tracking-[-0.05rem] text-white/60 hover:text-white transition-colors duration-100" href="#">RACES</a>
+<a class="font-['Space_Grotesk'] font-bold italic uppercase tracking-[-0.05rem] text-[#E10600] border-b-2 border-[#E10600] pb-1" href="#">RESULTS</a>
+<a class="font-['Space_Grotesk'] font-bold italic uppercase tracking-[-0.05rem] text-white/60 hover:text-white transition-colors duration-100" href="#">TELEMETRY</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="material-symbols-outlined text-white/60 hover:text-white transition-transform duration-100 ease-in-quint scale-95 active:scale-90">settings</button>
+<button class="material-symbols-outlined text-white/60 hover:text-white transition-transform duration-100 ease-in-quint scale-95 active:scale-90">account_circle</button>
+</div>
+</nav>
+<main class="pt-24 pb-12 px-6 max-w-7xl mx-auto">
+<!-- Hero Section -->
+<header class="mb-16 border-l-[12px] border-primary-container pl-8 py-4">
+<div class="flex items-center gap-3 mb-4">
+<span class="font-label font-bold italic uppercase text-[#E10600] tracking-widest text-sm">OFFICIAL FIA DATA</span>
+<span class="h-px w-12 bg-white/20"></span>
+<span class="font-label font-bold italic uppercase text-white/40 tracking-widest text-sm">2026 SEASON</span>
+</div>
+<h1 class="font-headline font-black italic uppercase text-6xl md:text-9xl text-white leading-[0.85] tracking-tighter mb-6">
+                CONSTRUCTOR<br/><span class="text-primary-container">CHAMPIONSHIP</span>
+</h1>
+<p class="text-on-surface-variant max-w-2xl text-lg font-light border-t border-white/10 pt-6">
+                The pinnacle of automotive engineering. 10 teams, 20 drivers, one goal: The 2026 World Constructors' Title.
+            </p>
+</header>
+<!-- Standings List -->
+<section class="grid gap-3">
+<!-- Row 1: Red Bull -->
+<div class="group relative bg-surface-container-low hover:bg-surface-container transition-all duration-300 border-l-[6px] border-[#3671C6] overflow-hidden">
+<div class="flex flex-col md:flex-row items-center justify-between p-6 gap-6 relative z-10">
+<div class="flex items-center gap-8 w-full md:w-auto">
+<span class="font-headline font-black italic text-5xl text-[#3671C6]/30 w-16">01</span>
+<div class="flex items-center gap-6">
+<div class="w-12 h-12 bg-white/5 flex items-center justify-center">
+<span class="material-symbols-outlined text-[#3671C6] scale-125">sports_score</span>
+</div>
+<div>
+<div class="flex items-center gap-3">
+<h3 class="font-headline font-bold uppercase text-2xl text-white group-hover:text-[#3671C6] transition-colors">Red Bull Racing</h3>
+<img alt="Austria" class="w-5 h-3 object-cover opacity-80" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDCZjfpdUPw14LiK49P-UZNaIhYxmb0vYxrwioZ_cT7VvAhuqQa2rFzQpUmW90aM-Maqsxe5zwPt-ot5d1JrfPyeJ0JcaVm9ZTaIHvBf9hqNhF1G0i2Sq3iiv9X5FWt64fuMRlwzoPPe9oiDWGOkgjToGRzdELoZruesxqo6vR0ws2FhD8X5_7jvznMGN141qMih-hZim8Ow-kfQOTIPj5N-lkGLFW8zkgDOMYquRC-_J8pvCKJKyw8EqQ2AJlNaanvAMOOwihKHOA"/>
+</div>
+<p class="font-label font-bold italic uppercase text-[0.6875rem] text-white/40 tracking-widest">Oracle Red Bull Racing • MK-26</p>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-12 w-full md:w-auto justify-end relative">
+<div class="hidden lg:block absolute right-64 opacity-10 group-hover:opacity-30 transition-opacity duration-500">
+<svg fill="none" height="60" viewbox="0 0 240 60" width="240" xmlns="http://www.w3.org/2000/svg">
+<path d="M230 45H100L80 15H10L0 35H50L60 45H100" stroke="#3671C6" stroke-linecap="round" stroke-width="2"></path>
+</svg>
+</div>
+<div class="text-right">
+<span class="font-headline font-black italic text-4xl text-[#3671C6]">150</span>
+<p class="font-label font-bold italic uppercase text-[0.6875rem] text-white/40">POINTS</p>
+</div>
+<div class="text-right border-l border-white/10 pl-8">
+<span class="font-headline font-black italic text-4xl text-white">6</span>
+<p class="font-label font-bold italic uppercase text-[0.6875rem] text-white/40">WINS</p>
+</div>
+</div>
+</div>
+<div class="h-1.5 w-full bg-surface-container-lowest relative">
+<div class="h-full bg-[#3671C6] shadow-[0_0_15px_rgba(54,113,198,0.6)] glow-bar text-[#3671C6]" style="width: 100%"></div>
+</div>
+</div>
+<!-- Row 2: Ferrari -->
+<div class="group relative bg-surface-container-low hover:bg-surface-container transition-all duration-300 border-l-[6px] border-[#E8002D] overflow-hidden">
+<div class="flex flex-col md:flex-row items-center justify-between p-6 gap-6 relative z-10">
+<div class="flex items-center gap-8 w-full md:w-auto">
+<span class="font-headline font-black italic text-5xl text-[#E8002D]/30 w-16">02</span>
+<div class="flex items-center gap-6">
+<div class="w-12 h-12 bg-white/5 flex items-center justify-center">
+<span class="material-symbols-outlined text-[#E8002D] scale-125">shield</span>
+</div>
+<div>
+<div class="flex items-center gap-3">
+<h3 class="font-headline font-bold uppercase text-2xl text-white group-hover:text-[#E8002D] transition-colors">Scuderia Ferrari</h3>
+<img alt="Italy" class="w-5 h-3 object-cover opacity-80" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBgqB4QCDZg6h0srlBAmdSKOQ3RZJmodLxFAAzGgSlrbXui91dD1gDEpxreoj2PmY_f1FigoLUH6fZLlwPVJkI1tLFw7f4whJm1d6X2UqUA8QggZgVaMc-iuzSSLygSqWkP5H2-yBQC0Weeaye6BlY4OaHrVYaORPL-4eTWIh4o5q37G-yzGiQRaqJajgT89XLSqObRuifM4gtFIjv95u6RpvMb06davjpVYxz3Oj-ToWeqg9omLIkKFvQaqUUEiQhzQ57t7KuNwik"/>
+</div>
+<p class="font-label font-bold italic uppercase text-[0.6875rem] text-white/40 tracking-widest">Scuderia Ferrari HP • SF-26</p>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-12 w-full md:w-auto justify-end">
+<div class="text-right">
+<span class="font-headline font-black italic text-4xl text-[#E8002D]">130</span>
+<p class="font-label font-bold italic uppercase text-[0.6875rem] text-white/40">POINTS</p>
+</div>
+<div class="text-right border-l border-white/10 pl-8">
+<span class="font-headline font-black italic text-4xl text-white">3</span>
+<p class="font-label font-bold italic uppercase text-[0.6875rem] text-white/40">WINS</p>
+</div>
+</div>
+</div>
+<div class="h-1.5 w-full bg-surface-container-lowest relative">
+<div class="h-full bg-[#E8002D] shadow-[0_0_15px_rgba(232,0,45,0.6)] glow-bar text-[#E8002D]" style="width: 86.6%"></div>
+</div>
+</div>
+<!-- Row 3: McLaren -->
+<div class="group relative bg-surface-container-low hover:bg-surface-container transition-all duration-300 border-l-[6px] border-[#FF8000] overflow-hidden">
+<div class="flex flex-col md:flex-row items-center justify-between p-6 gap-6 relative z-10">
+<div class="flex items-center gap-8 w-full md:w-auto">
+<span class="font-headline font-black italic text-5xl text-[#FF8000]/30 w-16">03</span>
+<div class="flex items-center gap-6">
+<div class="w-12 h-12 bg-white/5 flex items-center justify-center">
+<span class="material-symbols-outlined text-[#FF8000] scale-125">speed</span>
+</div>
+<div>
+<div class="flex items-center gap-3">
+<h3 class="font-headline font-bold uppercase text-2xl text-white group-hover:text-[#FF8000] transition-colors">McLaren</h3>
+<img alt="United Kingdom" class="w-5 h-3 object-cover opacity-80" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDv1oxBrkMw8AoL5zWirb4ixMQ6mzVRYhn220VaDoCf0HBrYO-7pBDO-WbrDgtpwFWryuEHHj91WqedSPfh6ipl1V2YtGQCahjA1hfcLQAHR4kwNWG7rKWB9OS19AtZP2ATL28_oupX1iOb4g7MCKQJACYbn5Tknm864ozFDKbF8gKJqmYrtZjd3NCK2vKxiJrS7c_vyWrZrOCt4n7PzUb3gLJ6u2Egf7v62spvQsQATj9z3yOPmp5uD93kGFjvgD5-2vCmgYxZ3dw"/>
+</div>
+<p class="font-label font-bold italic uppercase text-[0.6875rem] text-white/40 tracking-widest">McLaren Formula 1 Team • MCL26</p>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-12 w-full md:w-auto justify-end">
+<div class="text-right">
+<span class="font-headline font-black italic text-4xl text-[#FF8000]">110</span>
+<p class="font-label font-bold italic uppercase text-[0.6875rem] text-white/40">POINTS</p>
+</div>
+<div class="text-right border-l border-white/10 pl-8">
+<span class="font-headline font-black italic text-4xl text-white">2</span>
+<p class="font-label font-bold italic uppercase text-[0.6875rem] text-white/40">WINS</p>
+</div>
+</div>
+</div>
+<div class="h-1.5 w-full bg-surface-container-lowest relative">
+<div class="h-full bg-[#FF8000] shadow-[0_0_15px_rgba(255,128,0,0.6)] glow-bar text-[#FF8000]" style="width: 73.3%"></div>
+</div>
+</div>
+<!-- Row 4: Mercedes -->
+<div class="group relative bg-surface-container-low hover:bg-surface-container transition-all duration-300 border-l-[6px] border-[#27F4D2] overflow-hidden">
+<div class="flex flex-col md:flex-row items-center justify-between p-6 gap-6 relative z-10">
+<div class="flex items-center gap-8 w-full md:w-auto">
+<span class="font-headline font-black italic text-5xl text-[#27F4D2]/30 w-16">04</span>
+<div class="flex items-center gap-6">
+<div class="w-12 h-12 bg-white/5 flex items-center justify-center">
+<span class="material-symbols-outlined text-[#27F4D2] scale-125">bolt</span>
+</div>
+<div>
+<div class="flex items-center gap-3">
+<h3 class="font-headline font-bold uppercase text-2xl text-white group-hover:text-[#27F4D2] transition-colors">Mercedes-AMG</h3>
+<img alt="Germany" class="w-5 h-3 object-cover opacity-80" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBWz4CkQ4WoDZ3bpE9lliyHt0wMrdAvtlLpFwOfBHq61UB5WHrphEHJuoZsanqqaNsznmeQ7O4IWSLd774BmNuMnlhqz9Ezwo_gFLnWsPSmZ59zFLHfR5l0i6ZeYxK-ZkzoL-BG5PS1LoyWCKN1vBm5CxXBmTMHdC8FEN1bHFD20mwz28li-72HB5VLKvlpWzbrUXW2wPy9tuiXokovRxr3oOfhrVKfN8XEsDMQ7OrH1l3GFTfixAxmELS4AFhAfjUzNagSwk6AwlU"/>
+</div>
+<p class="font-label font-bold italic uppercase text-[0.6875rem] text-white/40 tracking-widest">Mercedes-AMG PETRONAS F1 • W17</p>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-12 w-full md:w-auto justify-end">
+<div class="text-right">
+<span class="font-headline font-black italic text-4xl text-[#27F4D2]">90</span>
+<p class="font-label font-bold italic uppercase text-[0.6875rem] text-white/40">POINTS</p>
+</div>
+<div class="text-right border-l border-white/10 pl-8">
+<span class="font-headline font-black italic text-4xl text-white">0</span>
+<p class="font-label font-bold italic uppercase text-[0.6875rem] text-white/40">WINS</p>
+</div>
+</div>
+</div>
+<div class="h-1.5 w-full bg-surface-container-lowest relative">
+<div class="h-full bg-[#27F4D2] shadow-[0_0_15px_rgba(39,244,210,0.6)] glow-bar text-[#27F4D2]" style="width: 60%"></div>
+</div>
+</div>
+<!-- Row 5: Aston Martin -->
+<div class="group relative bg-surface-container-low hover:bg-surface-container transition-all duration-300 border-l-[6px] border-[#229971] overflow-hidden">
+<div class="flex flex-col md:flex-row items-center justify-between p-6 gap-6 relative z-10">
+<div class="flex items-center gap-8 w-full md:w-auto">
+<span class="font-headline font-black italic text-5xl text-[#229971]/30 w-16">05</span>
+<div class="flex items-center gap-6">
+<div class="w-12 h-12 bg-white/5 flex items-center justify-center">
+<span class="material-symbols-outlined text-[#229971] scale-125">token</span>
+</div>
+<div>
+<div class="flex items-center gap-3">
+<h3 class="font-headline font-bold uppercase text-2xl text-white group-hover:text-[#229971] transition-colors">Aston Martin</h3>
+<img alt="United Kingdom" class="w-5 h-3 object-cover opacity-80" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBCSJy2oKn1_AR3_M1Jpr7-qyKqOq4OfLhMwbHieCIhRjhbdYDEik3LRLkxXT3nwPtPbaxkPZTX_k57amMHMMjJYXe8jgYsgkF_Fm7ik5vr4H99_M6y8V_iwXThWHQ48K-_cpSTfVOaXYcf7UXYWKvrxXdJYqjhYX_-xZqA9Vi9scjZmzgsTXbAllwe8jF7NNut7MIhAnJGlb0kHGTLjeEP90o-xglCUX5ICMKNG9urY5BwKgA3J8yj3UV_WReCsiI_wNspqthwGTA"/>
+</div>
+<p class="font-label font-bold italic uppercase text-[0.6875rem] text-white/40 tracking-widest">Aston Martin Aramco F1 • AMR26</p>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-12 w-full md:w-auto justify-end">
+<div class="text-right">
+<span class="font-headline font-black italic text-4xl text-[#229971]">70</span>
+<p class="font-label font-bold italic uppercase text-[0.6875rem] text-white/40">POINTS</p>
+</div>
+<div class="text-right border-l border-white/10 pl-8">
+<span class="font-headline font-black italic text-4xl text-white">0</span>
+<p class="font-label font-bold italic uppercase text-[0.6875rem] text-white/40">WINS</p>
+</div>
+</div>
+</div>
+<div class="h-1.5 w-full bg-surface-container-lowest relative">
+<div class="h-full bg-[#229971] shadow-[0_0_15px_rgba(34,153,113,0.6)] glow-bar text-[#229971]" style="width: 46.6%"></div>
+</div>
+</div>
+<!-- Row 6: Alpine -->
+<div class="group relative bg-surface-container-low hover:bg-surface-container transition-all duration-300 border-l-[6px] border-[#2293D1] overflow-hidden">
+<div class="flex flex-col md:flex-row items-center justify-between p-6 gap-6 relative z-10">
+<div class="flex items-center gap-8 w-full md:w-auto">
+<span class="font-headline font-black italic text-5xl text-[#2293D1]/30 w-16">06</span>
+<div class="flex items-center gap-6">
+<div class="w-12 h-12 bg-white/5 flex items-center justify-center">
+<span class="material-symbols-outlined text-[#2293D1] scale-125">auto_awesome</span>
+</div>
+<div>
+<div class="flex items-center gap-3">
+<h3 class="font-headline font-bold uppercase text-2xl text-white group-hover:text-[#2293D1] transition-colors">Alpine</h3>
+<img alt="France" class="w-5 h-3 object-cover opacity-80" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAFoirutnoB0y4sV7Bxv2ZcHwmrjGu9Py3b0K70rpRG8rIk6oMt2Zks8SY8AYc1xG2zAy_dbysNVKZY1wCT9nVbcCya2GOj6EiZdQ9x9W-nTrgs53nArJzGrvupfWmnMc5MUj-yvXlw95Rd45vc69g3n6QQHdVOiiMAghJa6fesvByGkZaLMlvbJ2FL3YvNyhTv5wl2DoshrmjuyUDzIjLtl9G4PD-piOJc-1HqMs5eceAROh3VGRVG_5cn2uuGayy75wpYA52_wSI"/>
+</div>
+<p class="font-label font-bold italic uppercase text-[0.6875rem] text-white/40 tracking-widest">BWT Alpine F1 Team • A526</p>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-12 w-full md:w-auto justify-end">
+<div class="text-right">
+<span class="font-headline font-black italic text-4xl text-[#2293D1]">55</span>
+<p class="font-label font-bold italic uppercase text-[0.6875rem] text-white/40">POINTS</p>
+</div>
+<div class="text-right border-l border-white/10 pl-8">
+<span class="font-headline font-black italic text-4xl text-white">0</span>
+<p class="font-label font-bold italic uppercase text-[0.6875rem] text-white/40">WINS</p>
+</div>
+</div>
+</div>
+<div class="h-1.5 w-full bg-surface-container-lowest relative">
+<div class="h-full bg-[#2293D1] shadow-[0_0_15px_rgba(34,147,209,0.6)] glow-bar text-[#2293D1]" style="width: 36.6%"></div>
+</div>
+</div>
+<!-- Row 7: Williams -->
+<div class="group relative bg-surface-container-low hover:bg-surface-container transition-all duration-300 border-l-[6px] border-[#1868DB] overflow-hidden">
+<div class="flex flex-col md:flex-row items-center justify-between p-6 gap-6 relative z-10">
+<div class="flex items-center gap-8 w-full md:w-auto">
+<span class="font-headline font-black italic text-5xl text-[#1868DB]/30 w-16">07</span>
+<div class="flex items-center gap-6">
+<div class="w-12 h-12 bg-white/5 flex items-center justify-center">
+<span class="material-symbols-outlined text-[#1868DB] scale-125">history_edu</span>
+</div>
+<div>
+<div class="flex items-center gap-3">
+<h3 class="font-headline font-bold uppercase text-2xl text-white group-hover:text-[#1868DB] transition-colors">Williams Racing</h3>
+<img alt="United Kingdom" class="w-5 h-3 object-cover opacity-80" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBiVJylk5zKojeBmNk64h7dTsSYygabCSFRIvgtOoYxAPsrL98pQPM1OouY_g3fb44U_ZKrUkckYDLajLPQ2C_nDjbgC5qPQ9AEZWX3z-dDYnj7IVBk97Me_PeHspyDhmRrlWkA9o1jOhzlFeBGjqWWLRWknxp8hB0Aw0puBN9OT8TURXtSVYdzeSHhkf4TrcNY0B6gNA2mU94x1hNL4r3F7MiW9e9NgvOIdAAzK8RarNhz64JF_OSzd6-Y8GsJNwxoGIATr1Q5_xE"/>
+</div>
+<p class="font-label font-bold italic uppercase text-[0.6875rem] text-white/40 tracking-widest">Williams Racing • FW48</p>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-12 w-full md:w-auto justify-end">
+<div class="text-right">
+<span class="font-headline font-black italic text-4xl text-[#1868DB]">40</span>
+<p class="font-label font-bold italic uppercase text-[0.6875rem] text-white/40">POINTS</p>
+</div>
+<div class="text-right border-l border-white/10 pl-8">
+<span class="font-headline font-black italic text-4xl text-white">0</span>
+<p class="font-label font-bold italic uppercase text-[0.6875rem] text-white/40">WINS</p>
+</div>
+</div>
+</div>
+<div class="h-1.5 w-full bg-surface-container-lowest relative">
+<div class="h-full bg-[#1868DB] shadow-[0_0_15px_rgba(24,104,219,0.6)] glow-bar text-[#1868DB]" style="width: 26.6%"></div>
+</div>
+</div>
+<!-- Row 8: RB -->
+<div class="group relative bg-surface-container-low hover:bg-surface-container transition-all duration-300 border-l-[6px] border-[#6692FF] overflow-hidden">
+<div class="flex flex-col md:flex-row items-center justify-between p-6 gap-6 relative z-10">
+<div class="flex items-center gap-8 w-full md:w-auto">
+<span class="font-headline font-black italic text-5xl text-[#6692FF]/30 w-16">08</span>
+<div class="flex items-center gap-6">
+<div class="w-12 h-12 bg-white/5 flex items-center justify-center">
+<span class="material-symbols-outlined text-[#6692FF] scale-125">cycle</span>
+</div>
+<div>
+<div class="flex items-center gap-3">
+<h3 class="font-headline font-bold uppercase text-2xl text-white group-hover:text-[#6692FF] transition-colors">RB Formula One</h3>
+<img alt="Italy" class="w-5 h-3 object-cover opacity-80" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD1CSkaS_Z8UTlA5lOHpO0ITQw3Zq9r57W0t3oMCQuCb4Wi32aAqkp3RPKfu8cxFaAvpdkUA_pjZ1KUUbZOa7TMryQfh6xge4_H-o5I-B_sROQccRXNjhtZ9HB2R2F14u6smHWxDivypN_GueLyVLd5EHbf8whWUkvPm_GCkBnf9uXrlRHyEhFZ4FBIyYoW2e4p5iOG6CPH_xyOW8GHTxoArTmYmY4UzLcO5IYq1bRzYzZ8DeD9O4GSaYOfARgI82u4LWgA-uObzlo"/>
+</div>
+<p class="font-label font-bold italic uppercase text-[0.6875rem] text-white/40 tracking-widest">Visa Cash App RB F1 Team • VCARB02</p>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-12 w-full md:w-auto justify-end">
+<div class="text-right">
+<span class="font-headline font-black italic text-4xl text-[#6692FF]">30</span>
+<p class="font-label font-bold italic uppercase text-[0.6875rem] text-white/40">POINTS</p>
+</div>
+<div class="text-right border-l border-white/10 pl-8">
+<span class="font-headline font-black italic text-4xl text-white">0</span>
+<p class="font-label font-bold italic uppercase text-[0.6875rem] text-white/40">WINS</p>
+</div>
+</div>
+</div>
+<div class="h-1.5 w-full bg-surface-container-lowest relative">
+<div class="h-full bg-[#6692FF] shadow-[0_0_15px_rgba(102,146,255,0.6)] glow-bar text-[#6692FF]" style="width: 20%"></div>
+</div>
+</div>
+<!-- Row 9: Haas -->
+<div class="group relative bg-surface-container-low hover:bg-surface-container transition-all duration-300 border-l-[6px] border-[#B6BABD] overflow-hidden">
+<div class="flex flex-col md:flex-row items-center justify-between p-6 gap-6 relative z-10">
+<div class="flex items-center gap-8 w-full md:w-auto">
+<span class="font-headline font-black italic text-5xl text-[#B6BABD]/30 w-16">09</span>
+<div class="flex items-center gap-6">
+<div class="w-12 h-12 bg-white/5 flex items-center justify-center">
+<span class="material-symbols-outlined text-[#B6BABD] scale-125">stat_0</span>
+</div>
+<div>
+<div class="flex items-center gap-3">
+<h3 class="font-headline font-bold uppercase text-2xl text-white group-hover:text-[#B6BABD] transition-colors">Haas F1 Team</h3>
+<img alt="United States" class="w-5 h-3 object-cover opacity-80" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCEuGH_1TnhX1N6RQzi0vizGzsYKuUIkEnkR-GOaNFUh_BQ_MHIPSMJbu-mUiPamTOMLUqRC_KwxJx2BE3DPtIhXda9YfCjU8Jzyg8W3POXbuPAytFhIZ6lBgK6dBpsaHKxs5bWFXd6apO8PbB7GJfLa8skP7k6f3TR7onmCzl_wJ358Y2VC0h35L55IyoS5EmyJ6oDUAZcxvf9CZmdYXp_tbw10h2FrDXN5wQnc2XajsMlKVBflx0J9JOtDaGx_LKQObGN-TwlYpw"/>
+</div>
+<p class="font-label font-bold italic uppercase text-[0.6875rem] text-white/40 tracking-widest">MoneyGram Haas F1 Team • VF-26</p>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-12 w-full md:w-auto justify-end">
+<div class="text-right">
+<span class="font-headline font-black italic text-4xl text-[#B6BABD]">20</span>
+<p class="font-label font-bold italic uppercase text-[0.6875rem] text-white/40">POINTS</p>
+</div>
+<div class="text-right border-l border-white/10 pl-8">
+<span class="font-headline font-black italic text-4xl text-white">0</span>
+<p class="font-label font-bold italic uppercase text-[0.6875rem] text-white/40">WINS</p>
+</div>
+</div>
+</div>
+<div class="h-1.5 w-full bg-surface-container-lowest relative">
+<div class="h-full bg-[#B6BABD] shadow-[0_0_15px_rgba(182,186,189,0.6)] glow-bar text-[#B6BABD]" style="width: 13.3%"></div>
+</div>
+</div>
+<!-- Row 10: Cadillac -->
+<div class="group relative bg-surface-container-low hover:bg-surface-container transition-all duration-300 border-l-[6px] border-[#C0C0C0] overflow-hidden">
+<div class="flex flex-col md:flex-row items-center justify-between p-6 gap-6 relative z-10">
+<div class="flex items-center gap-8 w-full md:w-auto">
+<span class="font-headline font-black italic text-5xl text-[#C0C0C0]/30 w-16">10</span>
+<div class="flex items-center gap-6">
+<div class="w-12 h-12 bg-white/5 flex items-center justify-center">
+<span class="material-symbols-outlined text-[#C0C0C0] scale-125">diamond</span>
+</div>
+<div>
+<div class="flex items-center gap-3">
+<h3 class="font-headline font-bold uppercase text-2xl text-white group-hover:text-[#C0C0C0] transition-colors">Cadillac Racing</h3>
+<img alt="United States" class="w-5 h-3 object-cover opacity-80" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAzf4jMZYncEU3aWNo_AR8enMncjkXOfP0iURLw8NZmLoqUZa9BDaoP3tFjq5_R4GXx_NzhyHo-aAg8Y2BMDhL2RA8FEOmRHnV22ca6XWnkDqE9SXE9_rGNBqFKmNHQ1gCIWayxYBRkO4lZGluZgm1VsqTst-0Bf-tz-pHhixg1k4wY0PEaS10-lj-hM0vf8PWxhPcIy5xh3zHp0mqCePiHPF0wEBcToCVYopUQxmH8ICZPYapr_DY6K5l6_RGAhHaAjiXmm_-Jsf0"/>
+</div>
+<p class="font-label font-bold italic uppercase text-[0.6875rem] text-white/40 tracking-widest">Cadillac Racing F1 • V-Series.26</p>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-12 w-full md:w-auto justify-end">
+<div class="text-right">
+<span class="font-headline font-black italic text-4xl text-[#C0C0C0]">10</span>
+<p class="font-label font-bold italic uppercase text-[0.6875rem] text-white/40">POINTS</p>
+</div>
+<div class="text-right border-l border-white/10 pl-8">
+<span class="font-headline font-black italic text-4xl text-white">0</span>
+<p class="font-label font-bold italic uppercase text-[0.6875rem] text-white/40">WINS</p>
+</div>
+</div>
+</div>
+<div class="h-1.5 w-full bg-surface-container-lowest relative">
+<div class="h-full bg-[#C0C0C0] shadow-[0_0_15px_rgba(192,192,192,0.6)] glow-bar text-[#C0C0C0]" style="width: 6.6%"></div>
+</div>
+</div>
+</section>
+<!-- Stats Grid Breakdown (Bento Style) -->
+<section class="mt-24 grid grid-cols-1 md:grid-cols-3 gap-6">
+<div class="md:col-span-2 bg-surface-container-low border border-white/5 p-8 flex flex-col justify-between h-[320px]">
+<div>
+<span class="font-label font-bold italic uppercase text-[#E10600] text-xs tracking-[0.2em]">ENGINEERING INSIGHT</span>
+<h2 class="font-headline font-black italic uppercase text-4xl text-white mt-4 leading-none">TECHNICAL<br/>SUPREMACY</h2>
+</div>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-8 mt-8">
+<div class="border-t border-white/10 pt-4">
+<p class="text-[0.6875rem] text-white/40 font-bold italic uppercase tracking-tighter">Reliability Index</p>
+<p class="text-3xl font-headline font-bold text-white mt-1">98.4%</p>
+</div>
+<div class="border-t border-white/10 pt-4">
+<p class="text-[0.6875rem] text-white/40 font-bold italic uppercase tracking-tighter">Pit Stop Avg</p>
+<p class="text-3xl font-headline font-bold text-white mt-1">2.14<span class="text-xs ml-1 font-light opacity-40 uppercase italic">sec</span></p>
+</div>
+<div class="border-t border-white/10 pt-4">
+<p class="text-[0.6875rem] text-white/40 font-bold italic uppercase tracking-tighter">Top Speed</p>
+<p class="text-3xl font-headline font-bold text-white mt-1">354<span class="text-xs ml-1 font-light opacity-40 uppercase italic">km/h</span></p>
+</div>
+<div class="border-t border-white/10 pt-4">
+<p class="text-[0.6875rem] text-white/40 font-bold italic uppercase tracking-tighter">Lateral G-Force</p>
+<p class="text-3xl font-headline font-bold text-white mt-1">5.8<span class="text-xs ml-1 font-light opacity-40 uppercase italic">g</span></p>
+</div>
+</div>
+</div>
+<div class="bg-[#1b1b23] border border-white/5 relative overflow-hidden h-[320px] group">
+<img alt="Engineering Focus" class="absolute inset-0 w-full h-full object-cover opacity-30 group-hover:scale-110 transition-transform duration-700" data-alt="Close-up of a high-tech Formula 1 steering wheel with glowing buttons and carbon fiber texture in a dark garage setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAicppLYrmQxUPQ6mvGDEGfDf2kua1pFK3ezmxx6r0zmCE_JVlPPb8W8q5Eb_xqAgllNut_W9LfwawpV7V-XHsnL9t1Qk-Bz3ECG7vJUTyDerJbEY2Z6s1ltpAuUkuoD_3awf7iiXQEuMkxEf2sRGmGkhHf9zVoIDTSbeQTZ_iDn2IZCrm0xaouTe4JJNluvhWDA-CTuZ-W_dEKX-5oa4F97SkWu0e2B4mP9TRn1K_ghkrNEnEEpmI-gEPjlMVKtb3Iy4Na-CVwfgU"/>
+<div class="absolute inset-0 bg-gradient-to-t from-[#13131b] via-[#13131b]/60 to-transparent p-8 flex flex-col justify-end">
+<span class="font-label font-bold italic uppercase text-[#E10600] text-xs tracking-widest">INNOVATION HUB</span>
+<h3 class="font-headline font-black italic uppercase text-3xl text-white mt-3">2026 POWER UNIT</h3>
+<p class="text-sm text-white/60 mt-2 font-light leading-relaxed">Official FIA architecture specifications for the upcoming regulatory shift.</p>
+<div class="mt-6 flex items-center gap-2 group-hover:translate-x-2 transition-transform">
+<span class="text-[0.6875rem] font-bold italic uppercase text-white tracking-widest">Explore Tech Docs</span>
+<span class="material-symbols-outlined text-[#E10600] text-sm">arrow_forward_ios</span>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="w-full py-12 px-6 bg-[#0a0a0e] border-t-4 border-[#E10600]">
+<div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start md:items-center">
+<div class="flex flex-col gap-3 mb-8 md:mb-0">
+<span class="text-[#E10600] font-black italic text-2xl tracking-tighter">F1 PRECISION</span>
+<p class="font-['Space_Grotesk'] font-bold italic uppercase text-[0.6875rem] tracking-widest text-white/20">Official 2026 Media Portal • All Rights Reserved</p>
+</div>
+<div class="flex flex-wrap gap-x-8 gap-y-4">
+<a class="font-['Space_Grotesk'] font-bold italic uppercase text-[0.75rem] tracking-wider text-white/40 hover:text-[#E10600] transition-colors" href="#">PRIVACY POLICY</a>
+<a class="font-['Space_Grotesk'] font-bold italic uppercase text-[0.75rem] tracking-wider text-white/40 hover:text-[#E10600] transition-colors" href="#">LEGAL TERMS</a>
+<a class="font-['Space_Grotesk'] font-bold italic uppercase text-[0.75rem] tracking-wider text-white/40 hover:text-[#E10600] transition-colors" href="#">FIA PORTAL</a>
+<a class="font-['Space_Grotesk'] font-bold italic uppercase text-[0.75rem] tracking-wider text-white/40 hover:text-[#E10600] transition-colors" href="#">CONTACT</a>
+</div>
+</div>
+<div class="max-w-7xl mx-auto mt-12 pt-8 border-t border-white/5 flex justify-between items-center opacity-30">
+<div class="flex gap-4">
+<span class="material-symbols-outlined text-sm">rss_feed</span>
+<span class="material-symbols-outlined text-sm">share</span>
+</div>
+<span class="font-label font-bold text-[0.6rem] uppercase tracking-widest">Version 26.1.4_AERODYNAMIC_MONOLITH</span>
+</div>
+</footer>
+</body></html>

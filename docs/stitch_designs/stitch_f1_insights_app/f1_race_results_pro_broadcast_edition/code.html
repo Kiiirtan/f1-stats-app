@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>F1 PRECISION | Race Results</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=Inter:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "on-background": "#e4e1ed",
+                        "surface-tint": "#ffb4a8",
+                        "on-error": "#690005",
+                        "tertiary-container": "#0163ff",
+                        "tertiary": "#b4c5ff",
+                        "on-primary-container": "#fff2f0",
+                        "inverse-surface": "#e4e1ed",
+                        "on-tertiary-fixed-variant": "#003ea7",
+                        "on-secondary-fixed-variant": "#8e1208",
+                        "surface-container-lowest": "#0d0d15",
+                        "on-surface-variant": "#e9bcb5",
+                        "tertiary-fixed": "#dbe1ff",
+                        "outline": "#af8781",
+                        "on-tertiary-container": "#f4f4ff",
+                        "on-secondary-container": "#ff9a8a",
+                        "background": "#13131b",
+                        "primary-container": "#e10600",
+                        "on-primary": "#680200",
+                        "on-secondary": "#680200",
+                        "tertiary-fixed-dim": "#b4c5ff",
+                        "outline-variant": "#5e3f3a",
+                        "primary-fixed": "#ffdad4",
+                        "primary": "#ffb4a8",
+                        "on-primary-fixed": "#410100",
+                        "surface-container-highest": "#34343d",
+                        "inverse-primary": "#c00500",
+                        "inverse-on-surface": "#303038",
+                        "primary-fixed-dim": "#ffb4a8",
+                        "surface-container": "#1f1f27",
+                        "surface-bright": "#393841",
+                        "on-surface": "#e4e1ed",
+                        "error-container": "#93000a",
+                        "on-error-container": "#ffdad6",
+                        "secondary": "#ffb4a8",
+                        "secondary-fixed": "#ffdad4",
+                        "secondary-fixed-dim": "#ffb4a8",
+                        "on-secondary-fixed": "#410100",
+                        "on-tertiary": "#002a77",
+                        "error": "#ffb4ab",
+                        "surface": "#13131b",
+                        "surface-dim": "#13131b",
+                        "surface-container-low": "#1b1b23",
+                        "secondary-container": "#8e1208",
+                        "on-primary-fixed-variant": "#930300",
+                        "on-tertiary-fixed": "#00174a",
+                        "surface-container-high": "#292932",
+                        "surface-variant": "#34343d"
+                    },
+                    fontFamily: {
+                        "headline": ["Space Grotesk"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0px", "lg": "0px", "xl": "0px", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>.material-symbols-outlined {
+    font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
+    vertical-align: middle
+    }
+body {
+    background-color: #13131b;
+    color: #e4e1ed;
+    font-family: "Inter", sans-serif
+    }
+.f1-glow {
+    box-shadow: 0 0 20px rgba(225, 6, 0, 0.4)
+    }
+.no-scrollbar::-webkit-scrollbar {
+    display: none
+    }
+.no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none
+    }
+.header-bg {
+    background-image: linear-gradient(90deg, rgba(31, 31, 39, 0.95) 30%, rgba(31, 31, 39, 0.7) 100%), url(https://lh3.googleusercontent.com/aida-public/AB6AXuBswWb9zTSB08MCqZkVTRxMLHUb8lBJHNBO-ytnfGYKMo4j1-k2g-H6QPdRLNfx5ppqv-jzr82YnbIP24tsjHFK-JWLUG2XvVJ0fHb2Qywk7K4pSnXJgCnfv2PBMEJIevt3017y7qD5ifwaJsNZ8kw33LI32n9uxB90FcIa_ZVdnKIK-UceEBcD7R7ptCZBRoGslA-KSCyhMLx4w6BtP9msOqCZR76CQ-AZeW7mLhgt6Xp3_sVpMU9laMejJJuULNpc8UhibOu337Q);
+    background-size: cover;
+    background-position: center
+    }
+.team-border-redbull {
+    border-left: 4px solid #3671C6
+    }
+.team-border-ferrari {
+    border-left: 4px solid #E80020
+    }
+.team-border-mclaren {
+    border-left: 4px solid #FF8000
+    }
+.team-border-mercedes {
+    border-left: 4px solid #27F4D2
+    }
+.team-border-aston {
+    border-left: 4px solid #229971
+    }
+.team-border-rb {
+    border-left: 4px solid #6692FF
+    }
+.team-border-haas {
+    border-left: 4px solid #B6BABD
+    }
+.team-border-williams {
+    border-left: 4px solid #64C4FF
+    }
+.team-border-alpine {
+    border-left: 4px solid #0093CC
+    }
+.team-border-sauber {
+    border-left: 4px solid #52E252
+    }</style>
+</head>
+<body class="bg-background text-on-surface selection:bg-primary-container selection:text-on-primary-container">
+<!-- TopNavBar (Shared Component) -->
+<nav class="bg-[#13131b] dark:bg-[#13131b] docked full-width top-0 z-50 border-b-0 flat no shadows tonal layering flex justify-between items-center w-full px-6 py-4 max-w-none sticky">
+<div class="text-2xl font-black italic uppercase text-[#e10600] tracking-widest">
+        F1 PRECISION
+    </div>
+<div class="hidden md:flex items-center gap-8">
+<a class="font-['Inter'] text-xs font-medium uppercase text-[#e4e1ed] opacity-70 hover:bg-[#1f1f27] hover:text-[#e10600] transition-colors duration-150 scale-95 duration-75 active:opacity-80" href="#">Drivers</a>
+<a class="font-['Inter'] text-xs font-medium uppercase text-[#e4e1ed] opacity-70 hover:bg-[#1f1f27] hover:text-[#e10600] transition-colors duration-150 scale-95 duration-75 active:opacity-80" href="#">Races</a>
+<a class="font-['Inter'] text-xs font-medium uppercase text-[#e10600] border-b-2 border-[#e10600] pb-1 hover:bg-[#1f1f27] hover:text-[#e10600] transition-colors duration-150 scale-95 duration-75 active:opacity-80" href="#">Results</a>
+<a class="font-['Inter'] text-xs font-medium uppercase text-[#e4e1ed] opacity-70 hover:bg-[#1f1f27] hover:text-[#e10600] transition-colors duration-150 scale-95 duration-75 active:opacity-80" href="#">Telemetry</a>
+</div>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-[#e4e1ed] opacity-70 cursor-pointer hover:text-[#e10600]">search</span>
+<span class="material-symbols-outlined text-[#e4e1ed] opacity-70 cursor-pointer hover:text-[#e10600]">account_circle</span>
+<span class="material-symbols-outlined text-[#e4e1ed] opacity-70 cursor-pointer hover:text-[#e10600]">settings</span>
+</div>
+</nav>
+<main class="max-w-7xl mx-auto px-6 py-12">
+<!-- Page Title -->
+<header class="mb-12 relative flex items-center justify-between">
+<div>
+<p class="text-primary-container font-label text-[10px] uppercase tracking-[0.3em] font-bold mb-2">Full Results</p>
+<h1 class="font-headline text-6xl md:text-8xl font-bold italic uppercase tracking-tighter leading-none flex items-center gap-4">
+                Race <span class="text-primary-container">Battles</span>
+</h1>
+</div>
+<div class="opacity-20 hidden lg:block">
+<svg class="w-64" fill="currentColor" viewbox="0 0 100 20">
+<path d="M0 15 L20 15 L30 10 L70 10 L80 15 L100 15 L100 18 L0 18 Z"></path>
+<circle cx="25" cy="16" r="3"></circle>
+<circle cx="75" cy="16" r="3"></circle>
+<rect height="2" width="30" x="35" y="5"></rect>
+</svg>
+</div>
+</header>
+<!-- Race Selector Tabs -->
+<div class="flex gap-1 overflow-x-auto no-scrollbar mb-8 pb-2">
+<button class="flex-none bg-primary-container text-on-primary-container px-6 py-4 flex flex-col items-center gap-2 f1-glow group transition-all min-w-[100px]">
+<img alt="Australia" class="w-10 h-6 object-cover shadow-sm border border-white/20" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDDGcfBYq58-NthdxWIxmiXinrEn38ZfLh0Db1k20H68zcZ8QsHQDy5M5fzD6OMOHNDapxxyfFKVvp0FKvDJf04I-_jLnZIFs1TeKuZPwKiB71DhJRUq-H-PRdFTclOt7TpPtpMufuF3cqBlLs3B_3wrQNVQq-2BoGE6ICo_SGBduogLSAqt2Mb6JfjeAzFVGg-9lNL4UAxPZ24kqTgbU-lGbUKDYB8qpNlKoimdT5ptyAyevZkZ7IsBmMDlFcrMk2MXFWuqMIzlrU"/>
+<span class="font-headline font-bold text-xs tracking-tighter uppercase">R1</span>
+</button>
+<button class="flex-none bg-surface-container-low text-on-surface opacity-60 px-6 py-4 flex flex-col items-center gap-2 hover:opacity-100 hover:bg-surface-container transition-all min-w-[100px]">
+<img alt="China" class="w-10 h-6 object-cover shadow-sm grayscale opacity-50 group-hover:grayscale-0" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBfhIMKUOt3Ym3taDLdXep3pkvaNgm_u2UNUWHQjHSAi96s8CXyMTQkiva58alh3myNWfl83M6j7aEabN2Z31Zfx_Lt6p7KXu5BQCbgXqaY_nH1CviHL5giheqMZyE8drXvBXF53sQf_HXuCuESZE12z41m0bL5r5SDuGyW59Zquj-KPwrVDxGUSYj-wcbsjhabEaAZyziSAe7C_Ndd4kADjw4yTbjFAc2As99CbEvBFLjyDJbt1W4jrErgg5-7LCO6hWGSx8LO3LM"/>
+<span class="font-headline font-bold text-xs tracking-tighter uppercase">R2</span>
+</button>
+<button class="flex-none bg-surface-container-low text-on-surface opacity-60 px-6 py-4 flex flex-col items-center gap-2 hover:opacity-100 hover:bg-surface-container transition-all min-w-[100px]">
+<img alt="Japan" class="w-10 h-6 object-cover shadow-sm grayscale opacity-50 group-hover:grayscale-0" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCmy_0LYIobPuyECiLc9ZBGlIJzd6hcgb-aURnu_j-iRNQWSyCVn8F2WSnQG7bmQREvaqw5HfMFmXdwz3CVRcAg0cXQUEJXIQgs-0Y-ccMMNz4UOdetUW1Tz2PgxsY8ytlOtffuMwdvhPfbUzxpELn4ozomNM1OBNwtLjEYxmMuqW3loA3ebBl-EE_AH4J5DSI5BQbFYDxH_SNycp17rwcf2QrlybEEhbfFZObfKBVLm8YLURDmHxF2XrOv5NY3F3CJjTDQrIRLaGU"/>
+<span class="font-headline font-bold text-xs tracking-tighter uppercase">R3</span>
+</button>
+<button class="flex-none bg-surface-container-low text-on-surface opacity-60 px-6 py-4 flex flex-col items-center gap-2 hover:opacity-100 hover:bg-surface-container transition-all min-w-[100px]">
+<img alt="UAE" class="w-10 h-6 object-cover shadow-sm grayscale opacity-50 group-hover:grayscale-0" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDi19WmWmRPEooSXrNXzUcUSl9naVeJlF1uiGiMj_wycwRakLY9r16sbQsjVSsOlItVx1h9Yspp_LgtbdGEyLs-DI41LssFDgbPX5i2GRGLBIRcd__3e-X68aN2XWjWJfvDwFHE7gFtsGmG1RhO2DCjXc9qIDfTYyfjfgw9El7z19CrnWNWLnKt4d8Hx64sC14eOb848xaEN3br_xd65RXr60ibdqbxjt5vVOv1H9pyaLSEm0MwFGEJF94jO7plOLMiuLNJRknlMKM"/>
+<span class="font-headline font-bold text-xs tracking-tighter uppercase">R4</span>
+</button>
+<button class="flex-none bg-surface-container-low text-on-surface opacity-60 px-6 py-4 flex flex-col items-center gap-2 hover:opacity-100 hover:bg-surface-container transition-all min-w-[100px]">
+<img alt="USA" class="w-10 h-6 object-cover shadow-sm grayscale opacity-50 group-hover:grayscale-0" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB118WwbY8wf6LkYTfYnToOPu52v2hq0xsg2-FXlfMs-ct-eOAso5icIIMwNRnBDJTvm0I-PyRWPkP7EJERI-CHeY3snPggME6GkfNWNF9wiFcM2T0H7GjEGJmFKtzGHqthJdIIq32zNrNvILo4e7sZ2GZdz-2r0DB6qBd2P5l4zNxAUzysAQ_2Udlld8E5P_KZKJQ1DY24o2l0NFOvYhzsMlsib7_M0UVxU2fqhGPTQe2Gpm3YhO3Rp-v8fAD28tdduPRrWeIFBAM"/>
+<span class="font-headline font-bold text-xs tracking-tighter uppercase">R5</span>
+</button>
+<button class="flex-none bg-surface-container-low text-on-surface opacity-60 px-6 py-4 flex flex-col items-center gap-2 hover:opacity-100 hover:bg-surface-container transition-all min-w-[100px]">
+<img alt="Italy" class="w-10 h-6 object-cover shadow-sm grayscale opacity-50 group-hover:grayscale-0" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB4ivFFOIJA-hsow0xKeCMon2wszlNisHgPsjb7vo8SyrOTI-hN9hGthxO_3I-ZbYElgZWHFTqy-p9GFJonjbB4R6DmVeDDSaGMFeQCLxhAIHq3JQqJCpEyX0cSoxb8QBtdqHR1Hsa3S3teEJo45NS1WiZhW96V6ikccYXhADOHSvjr552MReaWrtp1IHSbT-7d4Afyg8Vkapl_kFeiHIwaEXvL2XvstwY1knLwzKbpWI2IP4iz5xGgp0XrJMNTe_Z5kE8d7ZRHjAI"/>
+<span class="font-headline font-bold text-xs tracking-tighter uppercase">R6</span>
+</button>
+<button class="flex-none bg-surface-container-low text-on-surface opacity-60 px-6 py-4 flex flex-col items-center gap-2 hover:opacity-100 hover:bg-surface-container transition-all min-w-[100px]">
+<img alt="Monaco" class="w-10 h-6 object-cover shadow-sm grayscale opacity-50 group-hover:grayscale-0" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDZoY-xtDkE3i_x4-z3qsv6-yMpYrtqBpKH5CweE30NRKYR8Vvn4RIheK8ln-yhhBio34aAEelf3qwAbN4lGfBohqXG_Fp2rYahBhtIh4SyMMjd_Yll9ZS4OnUOkbqPPXKmBavSSWNF2_6ys7IS6kOTiAsBmcgSPkN4rJ3YuQ2_VolyipXo68jsx4RURg9VWDsXirt9UdrUL7tA-7P9q9SCr6fb7nJmjq3p1eWedCWc63dLt5SYPST-DoCYPsGnYtAx69OfrnNUz2Y"/>
+<span class="font-headline font-bold text-xs tracking-tighter uppercase">R7</span>
+</button>
+<button class="flex-none bg-surface-container-low text-on-surface opacity-60 px-6 py-4 flex flex-col items-center gap-2 hover:opacity-100 hover:bg-surface-container transition-all min-w-[100px]">
+<img alt="Canada" class="w-10 h-6 object-cover shadow-sm grayscale opacity-50 group-hover:grayscale-0" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCDXr7NSyUj6rxe9yO8QaTfVh6GUGPoSBXfYNZ2tCly0hY5C5e04Q_tLV8NX9JFvYs10QhWfF2v8JPHomKMO5un0MmrLypO92JFbSjbRI1hvN0hwh3UdtdvF7EF7s0xg8lMdbOx5ubFfgTKUvL6JepuNz-UCwN52oOmqMizNQ8JB5brmXoY8MoPMUgnKMHoJQdWYnO49OVehSboODybOLOxnOHFTGHb2V1aVTyPist5iBWPJzQrN2Va66RuI11zNoymSPb-3r7tJrY"/>
+<span class="font-headline font-bold text-xs tracking-tighter uppercase">R8</span>
+</button>
+</div>
+<!-- Selected Race Results Card -->
+<section class="bg-surface-container overflow-hidden">
+<!-- Card Header with Background and Map -->
+<div class="px-8 py-10 header-bg flex flex-col md:flex-row md:items-center justify-between gap-6 border-l-4 border-primary-container">
+<div class="z-10">
+<div class="flex items-center gap-3 mb-2">
+<img alt="Australia" class="w-8 h-5 object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBcUH0fXvepkljlWuBMxv0LbHZN-8hzTLYrBHFoFuFHMMBFkWTT0tvUmb_g9f_CvpXX_t-QJ0ml7V_yWR-hQrQzd-Hc5CM4agTc47akMm2uvi56vkOQ_Sxck9HY6Yzj_XnzYT4OO2bFQKS38F8rN-Z_ZrFWj98t4OeXpbWLbxFLH4HG2KxYDqv5yTT8Wgggq484xtaxjC2KiWehsqX1OYcQjhztjxdiQpoj0KNuOPJpMej-Y9mLTr-5WFowDC_ACO7sJubHyPhk1hQ"/>
+<h2 class="font-headline text-3xl md:text-5xl font-black italic uppercase tracking-tighter text-white">
+                        Australian Grand Prix
+                    </h2>
+</div>
+<p class="text-white/70 font-label text-sm uppercase tracking-widest">Albert Park Circuit • 24 MAR 2024</p>
+</div>
+<div class="flex items-center gap-10 z-10">
+<div class="hidden xl:block">
+<!-- Subtle Circuit Map -->
+<svg class="w-32 h-32 text-white/40" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 100 100">
+<path d="M20,50 Q40,10 80,40 Q95,60 70,85 Q40,95 20,70 Z" stroke-dasharray="2,2"></path>
+<circle cx="20" cy="50" fill="currentColor" r="2"></circle>
+</svg>
+</div>
+<div class="flex gap-4">
+<div class="bg-black/60 backdrop-blur-sm p-4 min-w-[120px] border border-white/10">
+<p class="text-[10px] text-white/50 uppercase mb-1">Status</p>
+<p class="font-headline font-bold text-xl uppercase italic text-white">Finalized</p>
+</div>
+<div class="bg-black/60 backdrop-blur-sm p-4 min-w-[120px] border border-white/10">
+<p class="text-[10px] text-white/50 uppercase mb-1">Attendance</p>
+<p class="font-headline font-bold text-xl uppercase italic text-white">452,000</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Results Table -->
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low border-b border-surface-container-highest">
+<th class="px-6 py-4 font-label text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Pos</th>
+<th class="px-6 py-4 font-label text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Driver</th>
+<th class="px-6 py-4 font-label text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Team</th>
+<th class="px-6 py-4 font-label text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">+/-</th>
+<th class="px-6 py-4 font-label text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Laps</th>
+<th class="px-6 py-4 font-label text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Time/Status</th>
+<th class="px-6 py-4 font-label text-[10px] font-bold uppercase tracking-widest text-on-surface-variant text-right">Pts</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-container-low">
+<!-- Row 1 -->
+<tr class="hover:bg-surface-container-high transition-colors team-border-redbull" style="border-left-color: #FFD700; border-left-width: 6px;">
+<td class="px-6 py-5 font-headline font-black text-2xl italic text-[#FFD700]">P1</td>
+<td class="px-6 py-5">
+<div class="flex items-center gap-3">
+<img alt="VER" class="w-8 h-8 rounded-full border border-white/10" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBWh5CNfhVV_R1_ekcy52b_HZ0-xWHxUaxK4rP1gJO6Omri14h7ZZ14dC2tWLJrJqaXx72iB4LR9bfyOFn5sAjjTDtgt6I2mzOcnwuII_mlydcITbPzaTLRdnzDwXnVkon47A2aYy8-80wpz-McRZDPQkdTcOx1Cwkm0TTo5bnnMWaT8UD5h4tovSTH2hvTRsADKRgYtYvUzu36j7ZaDvQpI3WIbCVaPu_MUdPd1RqnFHLYuQud2V0a5Jnpx8JqKqxlQB3ToqFgFmo"/>
+<div>
+<a class="font-bold text-on-surface hover:text-primary-container block" href="#">Max Verstappen</a>
+<span class="font-mono text-[10px] text-on-surface-variant uppercase">VER</span>
+</div>
+</div>
+</td>
+<td class="px-6 py-5">
+<div class="flex items-center gap-2 text-on-surface-variant text-xs font-medium uppercase">
+<div class="w-2 h-2 rounded-full bg-[#3671C6]"></div>
+                                Red Bull Racing
+                            </div>
+</td>
+<td class="px-6 py-5 text-on-surface-variant font-bold">—</td>
+<td class="px-6 py-5 font-mono text-xs">58</td>
+<td class="px-6 py-5 font-mono text-xs">1:20:26.866</td>
+<td class="px-6 py-5 font-headline font-bold text-xl text-primary-container text-right italic">25</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-surface-container-high transition-colors team-border-ferrari" style="border-left-color: #C0C0C0; border-left-width: 6px;">
+<td class="px-6 py-5 font-headline font-black text-2xl italic text-[#C0C0C0]">P2</td>
+<td class="px-6 py-5">
+<div class="flex items-center gap-3">
+<img alt="LEC" class="w-8 h-8 rounded-full border border-white/10" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA5ERmtRJZalwu4Yoc2G8UN4Y8uI7cNvW3bey491YmUrlamwE6-Qwv3NtWjWBckPGi5IJ6LJQSrjhzyeTt-ewUhhVtHnXYowGx9xd5yj8xor0qbbjuh_i9BaE0yJ0-8jDAT9MowrZ_XCGwM3l3uWHEDtmbpDxD_kMws5TRaZkheLyM2ZSbR7ivly6pq-5DFMhEt8hSIyvrTEnK72suDHaHXeLhY-5wIPGPo6VJsazvuUkl_Mw-oQxuPy74A08UsiOF1PPf2o0cFJ1E"/>
+<div>
+<a class="font-bold text-on-surface hover:text-primary-container block" href="#">Charles Leclerc</a>
+<span class="font-mono text-[10px] text-on-surface-variant uppercase">LEC</span>
+</div>
+</div>
+</td>
+<td class="px-6 py-5">
+<div class="flex items-center gap-2 text-on-surface-variant text-xs font-medium uppercase">
+<div class="w-2 h-2 rounded-full bg-[#E80020]"></div>
+                                Ferrari
+                            </div>
+</td>
+<td class="px-6 py-5 text-green-500 font-bold">▲ 2</td>
+<td class="px-6 py-5 font-mono text-xs">58</td>
+<td class="px-6 py-5 font-mono text-xs">+3.521s <span class="material-symbols-outlined text-[14px] text-purple-500 ml-1" style="font-variation-settings: 'FILL' 1;">bolt</span></td>
+<td class="px-6 py-5 font-headline font-bold text-xl text-primary-container text-right italic">19</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-surface-container-high transition-colors team-border-mclaren" style="border-left-color: #CD7F32; border-left-width: 6px;">
+<td class="px-6 py-5 font-headline font-black text-2xl italic text-[#CD7F32]">P3</td>
+<td class="px-6 py-5">
+<div class="flex items-center gap-3">
+<img alt="NOR" class="w-8 h-8 rounded-full border border-white/10" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCCE-FlwYMM2vvdg-4fBnQPp34HqSL2hOVGsdfvAUxyGo0DbqAxKKt2axkzyxB3xGHXeNeDLRv9vYNo_v3mNTcIJ7xowWOhnG-NXzThn6seoPbODVhl7XDBEyEloJjVgfgr-6tzqU61pB9kxmMNtknAqEfkGv3BbmOimarPLUWKudwrk2yhS1N3-YIMzEe2DxhtZ6Bkx7UPesQ3iIK251I1OW1hfMymVVTDc6yQD1YinQRqae1qG_xRzld3_5bIbzIu3tHbnVfSDGc"/>
+<div>
+<a class="font-bold text-on-surface hover:text-primary-container block" href="#">Lando Norris</a>
+<span class="font-mono text-[10px] text-on-surface-variant uppercase">NOR</span>
+</div>
+</div>
+</td>
+<td class="px-6 py-5">
+<div class="flex items-center gap-2 text-on-surface-variant text-xs font-medium uppercase">
+<div class="w-2 h-2 rounded-full bg-[#FF8000]"></div>
+                                McLaren
+                            </div>
+</td>
+<td class="px-6 py-5 text-red-500 font-bold">▼ 1</td>
+<td class="px-6 py-5 font-mono text-xs">58</td>
+<td class="px-6 py-5 font-mono text-xs">+5.902s</td>
+<td class="px-6 py-5 font-headline font-bold text-xl text-primary-container text-right italic">15</td>
+</tr>
+<!-- Row 4 -->
+<tr class="hover:bg-surface-container-high transition-colors team-border-mclaren">
+<td class="px-6 py-5 font-headline font-black text-2xl italic text-on-surface-variant opacity-50">P4</td>
+<td class="px-6 py-5">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-surface-container-highest flex items-center justify-center text-[10px] font-bold">PIA</div>
+<div>
+<a class="font-bold text-on-surface hover:text-primary-container block" href="#">Oscar Piastri</a>
+<span class="font-mono text-[10px] text-on-surface-variant uppercase">PIA</span>
+</div>
+</div>
+</td>
+<td class="px-6 py-5">
+<div class="flex items-center gap-2 text-on-surface-variant text-xs font-medium uppercase">
+<div class="w-2 h-2 rounded-full bg-[#FF8000]"></div>
+                                McLaren
+                            </div>
+</td>
+<td class="px-6 py-5 text-green-500 font-bold">▲ 1</td>
+<td class="px-6 py-5 font-mono text-xs">58</td>
+<td class="px-6 py-5 font-mono text-xs">+10.211s</td>
+<td class="px-6 py-5 font-headline font-bold text-xl text-primary-container text-right italic">12</td>
+</tr>
+<!-- Row 5 -->
+<tr class="hover:bg-surface-container-high transition-colors team-border-redbull">
+<td class="px-6 py-5 font-headline font-black text-2xl italic text-on-surface-variant opacity-50">P5</td>
+<td class="px-6 py-5">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-surface-container-highest flex items-center justify-center text-[10px] font-bold">PER</div>
+<div>
+<a class="font-bold text-on-surface hover:text-primary-container block" href="#">Sergio Perez</a>
+<span class="font-mono text-[10px] text-on-surface-variant uppercase">PER</span>
+</div>
+</div>
+</td>
+<td class="px-6 py-5">
+<div class="flex items-center gap-2 text-on-surface-variant text-xs font-medium uppercase">
+<div class="w-2 h-2 rounded-full bg-[#3671C6]"></div>
+                                Red Bull Racing
+                            </div>
+</td>
+<td class="px-6 py-5 text-red-500 font-bold">▼ 2</td>
+<td class="px-6 py-5 font-mono text-xs">58</td>
+<td class="px-6 py-5 font-mono text-xs">+14.445s</td>
+<td class="px-6 py-5 font-headline font-bold text-xl text-primary-container text-right italic">10</td>
+</tr>
+<!-- Row 6 -->
+<tr class="hover:bg-surface-container-high transition-colors team-border-mercedes">
+<td class="px-6 py-5 font-headline font-black text-2xl italic text-on-surface-variant opacity-50">P6</td>
+<td class="px-6 py-5">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-surface-container-highest flex items-center justify-center text-[10px] font-bold">RUS</div>
+<div>
+<a class="font-bold text-on-surface hover:text-primary-container block" href="#">George Russell</a>
+<span class="font-mono text-[10px] text-on-surface-variant uppercase">RUS</span>
+</div>
+</div>
+</td>
+<td class="px-6 py-5">
+<div class="flex items-center gap-2 text-on-surface-variant text-xs font-medium uppercase">
+<div class="w-2 h-2 rounded-full bg-[#27F4D2]"></div>
+                                Mercedes
+                            </div>
+</td>
+<td class="px-6 py-5 text-on-surface-variant font-bold">—</td>
+<td class="px-6 py-5 font-mono text-xs">58</td>
+<td class="px-6 py-5 font-mono text-xs">+19.012s</td>
+<td class="px-6 py-5 font-headline font-bold text-xl text-primary-container text-right italic">8</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</main>
+<!-- Footer (Shared Component) -->
+<footer class="bg-[#0d0d15] dark:bg-[#0d0d15] full-width py-12 px-8 border-t-4 border-[#e10600] flat no shadows flex flex-col md:flex-row justify-between items-center gap-6 w-full">
+<div class="text-lg font-black italic text-[#e4e1ed]">F1 PRECISION</div>
+<div class="flex flex-wrap justify-center gap-6">
+<a class="font-['Inter'] text-[10px] uppercase tracking-widest font-semibold text-[#393841] hover:text-[#e4e1ed] transition-opacity opacity-80 hover:opacity-100" href="#">Privacy Policy</a>
+<a class="font-['Inter'] text-[10px] uppercase tracking-widest font-semibold text-[#393841] hover:text-[#e4e1ed] transition-opacity opacity-80 hover:opacity-100" href="#">Terms of Service</a>
+<a class="font-['Inter'] text-[10px] uppercase tracking-widest font-semibold text-[#393841] hover:text-[#e4e1ed] transition-opacity opacity-80 hover:opacity-100" href="#">Cookie Policy</a>
+<a class="font-['Inter'] text-[10px] uppercase tracking-widest font-semibold text-[#393841] hover:text-[#e4e1ed] transition-opacity opacity-80 hover:opacity-100" href="#">Technical Support</a>
+</div>
+<div class="font-['Inter'] text-[10px] uppercase tracking-widest font-semibold text-[#393841]">
+        © 2024 F1 PRECISION. ALL RIGHTS RESERVED.
+    </div>
+</footer>
+</body></html>
