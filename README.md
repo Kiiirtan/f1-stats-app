@@ -26,7 +26,8 @@ A premium, high-fidelity real-time Formula 1 web application designed to track t
 
 ## 📸 Screenshots
 
-*(Replace these image URLs with actual screenshots of your application from your computer)*
+<img width="1918" height="971" alt="image" src="https://github.com/user-attachments/assets/305c15d1-12b7-4d4c-b2b2-abefa40933a9" />
+
 
 <p align="center">
   <img src="https://via.placeholder.com/800x400/13131b/ffffff?text=F1+Settings+Menu" alt="Dashboard" width="48%">
