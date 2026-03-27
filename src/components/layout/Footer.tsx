@@ -11,9 +11,12 @@ export default function Footer() {
         <Link to="/contact" className="font-['Inter'] text-[10px] uppercase tracking-[0.2em] text-[#c7c6ca] hover:text-[var(--theme-accent)] transition-colors">Contact</Link>
         <Link to="/credits" className="font-['Inter'] text-[10px] uppercase tracking-[0.2em] text-[#c7c6ca] hover:text-[var(--theme-accent)] transition-colors">Credits</Link>
       </div>
-      <div className="text-center">
+      <div className="text-center max-w-2xl px-4 space-y-4">
         <p className="font-['Inter'] text-[10px] uppercase tracking-[0.2em] text-[#c7c6ca] opacity-50">
-          © 2026 F1 STATS. ALL RIGHTS RESERVED.
+          © {new Date().getFullYear()} F1 STATS. ALL RIGHTS RESERVED.
+        </p>
+        <p className="font-['Inter'] text-[9px] leading-relaxed tracking-wider text-[#c7c6ca] opacity-40">
+          This website is unofficial and is not associated in any way with the Formula 1 companies. F1, FORMULA ONE, FORMULA 1, FIA FORMULA ONE WORLD CHAMPIONSHIP, GRAND PRIX and related marks are trade marks of Formula One Licensing B.V.
         </p>
       </div>
     </footer>

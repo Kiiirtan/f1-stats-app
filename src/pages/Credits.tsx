@@ -2,10 +2,12 @@ import PageTransition from '../components/ui/PageTransition';
 
 export default function Credits() {
   const credits = [
+    { title: "Developer", desc: "Built and designed by Kirtan Patidar as a premium F1 data dashboard.", link: "https://github.com/Kiiirtan" },
     { title: "Jolpica F1 API", desc: "The open-source API powering all live timing, standings, and historical data.", link: "https://jolpi.ca/" },
-    { title: "Wikimedia Commons", desc: "Providing premium, globally accessible driver portraits and hero imagery.", link: "https://commons.wikimedia.org/" },
+    { title: "Wikimedia Commons", desc: "Providing premium, globally accessible driver portraits and constructor hero imagery.", link: "https://commons.wikimedia.org/" },
+    { title: "Motorsport.com", desc: "Direct source for live F1 news feeds and article previews.", link: "https://www.motorsport.com/" },
     { title: "Vite & React", desc: "The lightning-fast frontend tooling and component architecture.", link: "https://vitejs.dev/" },
-    { title: "Google Fonts", desc: "Serving Space Grotesk and Inter for the official typography.", link: "https://fonts.google.com/" }
+    { title: "Google Fonts & Unsplash", desc: "Serving official typography and dynamic fallback racing photography.", link: "https://unsplash.com/" }
   ];
 
   return (

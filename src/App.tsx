@@ -7,11 +7,14 @@ import CursorGlow from './components/ui/CursorGlow';
 import SmoothLoader from './components/ui/SmoothLoader';
 import Layout from './components/layout/Layout';
 import Dashboard from './pages/Dashboard';
+import News from './pages/News';
 import Drivers from './pages/Drivers';
 import DriverProfile from './pages/DriverProfile';
 import Races from './pages/Races';
 import Results from './pages/Results';
 import Constructors from './pages/Constructors';
+import ConstructorProfile from './pages/ConstructorProfile';
+import ConstructorSeasonDetails from './pages/ConstructorSeasonDetails';
 import Settings from './pages/Settings';
 import Contact from './pages/Contact';
 import Credits from './pages/Credits';
@@ -49,11 +52,14 @@ function App() {
             <PageTransition>
               <Routes>
                 <Route path="/" element={<Dashboard />} />
+                <Route path="/news" element={<News />} />
                 <Route path="/drivers" element={<Drivers />} />
                 <Route path="/driver/:id" element={<DriverProfile />} />
                 <Route path="/races" element={<Races />} />
                 <Route path="/results" element={<Results />} />
                 <Route path="/constructors" element={<Constructors />} />
+                <Route path="/constructor/:id" element={<ConstructorProfile />} />
+                <Route path="/constructor/:id/season/:year" element={<ConstructorSeasonDetails />} />
                 <Route path="/settings" element={<Settings />} />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/credits" element={<Credits />} />

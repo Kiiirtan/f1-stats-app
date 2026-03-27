@@ -32,6 +32,7 @@ export default function TopNavBar() {
   }, []);
 
   const navLinks = [
+    { label: 'News', to: '/news' },
     { label: 'Drivers', to: '/drivers' },
     { label: 'Races', to: '/races' },
     { label: 'Results', to: '/results' },
@@ -40,6 +41,7 @@ export default function TopNavBar() {
 
   const mobileNavLinks = [
     { label: 'Dashboard', to: '/', icon: 'dashboard' },
+    { label: 'News', to: '/news', icon: 'newspaper' },
     { label: 'Live Timing', to: '/races', icon: 'timer' },
     { label: 'Standings', to: '/drivers', icon: 'leaderboard' },
     { label: 'Archives', to: '/results', icon: 'history' },

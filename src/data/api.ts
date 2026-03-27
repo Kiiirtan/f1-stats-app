@@ -428,3 +428,395 @@ export async function fetchDriverCareerStats(driverId: string): Promise<DriverCa
     seasons
   };
 }
+
+export interface ConstructorSeasonRecord {
+  year: number;
+  position: number;
+  points: number;
+  wins: number;
+}
+
+export interface ConstructorProfileData {
+  constructorId: string;
+  name: string;
+  nationality: string;
+  color: string;
+  wikiUrl: string;
+  careerChampionships: number;
+  careerWins: number;
+  careerPodiums: number;
+  careerPoles: number;
+  careerSeasons: number;
+  firstEntry: number;
+  teamBase: string;
+  teamPrincipal: string;
+  heroImage: string;
+  seasonHistory: ConstructorSeasonRecord[];
+  currentSeason: {
+    position: number;
+    points: number;
+    wins: number;
+    drivers: {
+      driverId: string;
+      code: string;
+      givenName: string;
+      familyName: string;
+    }[];
+  };
+  previousSeason: {
+    year: number;
+    position: number;
+    points: number;
+    wins: number;
+    drivers: {
+      driverId: string;
+      code: string;
+      givenName: string;
+      familyName: string;
+    }[];
+  } | null;
+}
+
+// ─── All-Time Constructor Metadata (Historical Data) ───
+// The Ergast API only provides stats per-season; fetching full history
+// for every team would be too slow. These values are sourced from
+// official FIA records and are correct as of end-of-2025.
+interface ConstructorMeta {
+  allTimeChampionships: number;
+  allTimePodiums: number;
+  allTimePoles: number;
+  firstEntry: number;
+  teamBase: string;
+  teamPrincipal: string;
+  heroImage: string;
+}
+
+const CONSTRUCTOR_META: Record<string, ConstructorMeta> = {
+  ferrari: {
+    allTimeChampionships: 16,
+    allTimePodiums: 806,
+    allTimePoles: 248,
+    firstEntry: 1950,
+    teamBase: 'Maranello, Italy',
+    teamPrincipal: 'Frédéric Vasseur',
+    heroImage: 'https://upload.wikimedia.org/wikipedia/commons/9/99/Carlos_Sainz_Chinese_GP_2024.jpg',
+  },
+  mclaren: {
+    allTimeChampionships: 8,
+    allTimePodiums: 508,
+    allTimePoles: 157,
+    firstEntry: 1966,
+    teamBase: 'Woking, United Kingdom',
+    teamPrincipal: 'Andrea Stella',
+    heroImage: 'https://upload.wikimedia.org/wikipedia/commons/d/df/2024-08-25_Motorsport%2C_Formel_1%2C_Gro%C3%9Fer_Preis_der_Niederlande_2024_STP_3805_by_Stepro.jpg',
+  },
+  red_bull: {
+    allTimeChampionships: 6,
+    allTimePodiums: 250,
+    allTimePoles: 103,
+    firstEntry: 2005,
+    teamBase: 'Milton Keynes, United Kingdom',
+    teamPrincipal: 'Christian Horner',
+    heroImage: 'https://upload.wikimedia.org/wikipedia/commons/2/2e/Max_Verstappen_2024_Chinese_GP.jpg',
+  },
+  mercedes: {
+    allTimeChampionships: 8,
+    allTimePodiums: 310,
+    allTimePoles: 136,
+    firstEntry: 2010,
+    teamBase: 'Brackley, United Kingdom',
+    teamPrincipal: 'Toto Wolff',
+    heroImage: 'https://upload.wikimedia.org/wikipedia/commons/5/55/2024-08-24_Motorsport%2C_Formel_1%2C_Gro%C3%9Fer_Preis_der_Niederlande_2024_STP_3434_by_Stepro.jpg',
+  },
+  aston_martin: {
+    allTimeChampionships: 0,
+    allTimePodiums: 18,
+    allTimePoles: 1,
+    firstEntry: 2021,
+    teamBase: 'Silverstone, United Kingdom',
+    teamPrincipal: 'Andy Cowell',
+    heroImage: 'https://upload.wikimedia.org/wikipedia/commons/e/e8/2024-08-24_Motorsport%2C_Formel_1%2C_Gro%C3%9Fer_Preis_der_Niederlande_2024_STP_3318_by_Stepro.jpg',
+  },
+  alpine: {
+    allTimeChampionships: 2,
+    allTimePodiums: 46,
+    allTimePoles: 20,
+    firstEntry: 2021,
+    teamBase: 'Enstone, United Kingdom',
+    teamPrincipal: 'Oliver Oakes',
+    heroImage: 'https://upload.wikimedia.org/wikipedia/commons/4/40/2024_Spanish_Grand_Prix_%2853811182883%29.jpg',
+  },
+  williams: {
+    allTimeChampionships: 9,
+    allTimePodiums: 313,
+    allTimePoles: 128,
+    firstEntry: 1977,
+    teamBase: 'Grove, United Kingdom',
+    teamPrincipal: 'James Vowles',
+    heroImage: 'https://upload.wikimedia.org/wikipedia/commons/1/17/FIA_F1_Austria_2024_Nr._23_Albon.jpg',
+  },
+  rb: {
+    allTimeChampionships: 0,
+    allTimePodiums: 2,
+    allTimePoles: 1,
+    firstEntry: 2006,
+    teamBase: 'Faenza, Italy',
+    teamPrincipal: 'Laurent Mekies',
+    heroImage: 'https://upload.wikimedia.org/wikipedia/commons/1/11/Yuki_Tsunoda_Chinese_GP_2024.jpg',
+  },
+  haas: {
+    allTimeChampionships: 0,
+    allTimePodiums: 1,
+    allTimePoles: 1,
+    firstEntry: 2016,
+    teamBase: 'Kannapolis, United States',
+    teamPrincipal: 'Ayao Komatsu',
+    heroImage: 'https://upload.wikimedia.org/wikipedia/commons/c/c7/FIA_F1_Austria_2024_Nr._20_Magnussen.jpg',
+  },
+  audi: {
+    allTimeChampionships: 0,
+    allTimePodiums: 0,
+    allTimePoles: 0,
+    firstEntry: 2026,
+    teamBase: 'Hinwil, Switzerland',
+    teamPrincipal: 'Mattia Binotto',
+    heroImage: 'https://upload.wikimedia.org/wikipedia/commons/f/f0/2024-08-24_Motorsport%2C_Formel_1%2C_Gro%C3%9Fer_Preis_der_Niederlande_2024_STP_3314_by_Stepro.jpg',
+  },
+  sauber: {
+    allTimeChampionships: 0,
+    allTimePodiums: 28,
+    allTimePoles: 1,
+    firstEntry: 1993,
+    teamBase: 'Hinwil, Switzerland',
+    teamPrincipal: 'Mattia Binotto',
+    heroImage: 'https://upload.wikimedia.org/wikipedia/commons/f/f0/2024-08-24_Motorsport%2C_Formel_1%2C_Gro%C3%9Fer_Preis_der_Niederlande_2024_STP_3314_by_Stepro.jpg',
+  },
+  cadillac: {
+    allTimeChampionships: 0,
+    allTimePodiums: 0,
+    allTimePoles: 0,
+    firstEntry: 2026,
+    teamBase: 'United States',
+    teamPrincipal: 'TBC',
+    heroImage: 'https://images.unsplash.com/photo-1504707748692-419802cf939d?q=80&w=1600&auto=format&fit=crop',
+  },
+};
+
+export async function fetchConstructorProfile(constructorId: string): Promise<ConstructorProfileData | null> {
+  const currentStandings = await fetchConstructorStandings();
+  const currentStanding = currentStandings.find(s => s.constructorId === constructorId);
+
+  if (!currentStanding) return null;
+
+  const currentYearStr = await fetchCurrentSeason();
+  const currentYear = parseInt(currentYearStr, 10);
+  const previousYear = currentYear - 1;
+
+  // Fetch all seasons this constructor competed in
+  const seasonsRes = await fetchWithCache<{ MRData: { SeasonTable: { Seasons: { season: string }[] } } }>(`${BASE_URL}/constructors/${constructorId}/seasons.json?limit=100`).catch(() => null);
+  const seasonYears = seasonsRes?.MRData.SeasonTable.Seasons.map(s => s.season) || [];
+
+  // Fetch all-time standings for every season in parallel (last 15 seasons for performance)
+  const historyYears = seasonYears.slice(-15);
+  const historyPromises = historyYears.map(year =>
+    fetchWithCache<{ MRData: { StandingsTable: { StandingsLists: any[] } } }>(`${BASE_URL}/${year}/constructors/${constructorId}/constructorStandings.json`).catch(() => null)
+  );
+
+  // Also get total career wins from results endpoint
+  const totalWinsRes = await fetchWithCache<{ MRData: { total: string } }>(`${BASE_URL}/constructors/${constructorId}/results/1.json?limit=1`).catch(() => null);
+
+  // Get constructor wiki URL
+  const constructorInfoRes = await fetchWithCache<{ MRData: { ConstructorTable: { Constructors: any[] } } }>(`${BASE_URL}/constructors/${constructorId}.json`).catch(() => null);
+  const wikiUrl = constructorInfoRes?.MRData.ConstructorTable.Constructors[0]?.url || '';
+
+  // Drivers for current year — use driver standings to get only race drivers (excludes reserve/test drivers)
+  const currentDriverStandingsRes = await fetchWithCache<{
+    MRData: { StandingsTable: { StandingsLists: Array<{ DriverStandings: Array<{ Driver: ApiDriver; Constructors: ApiConstructor[] }> }> } }
+  }>(`${BASE_URL}/current/driverStandings.json`).catch(() => null);
+
+  // Previous year standings and drivers
+  const prevStandingRes = await fetchWithCache<{ MRData: { StandingsTable: { StandingsLists: any[] } } }>(`${BASE_URL}/${previousYear}/constructors/${constructorId}/constructorStandings.json`).catch(() => null);
+  const prevDriverStandingsRes = await fetchWithCache<{
+    MRData: { StandingsTable: { StandingsLists: Array<{ DriverStandings: Array<{ Driver: ApiDriver; Constructors: ApiConstructor[] }> }> } }
+  }>(`${BASE_URL}/${previousYear}/driverStandings.json`).catch(() => null);
+
+  // Await all history
+  const historyResults = await Promise.all(historyPromises);
+
+  // Build season history
+  const seasonHistory: ConstructorSeasonRecord[] = [];
+
+  for (let i = 0; i < historyYears.length; i++) {
+    const res = historyResults[i];
+    const list = res?.MRData.StandingsTable.StandingsLists[0]?.ConstructorStandings;
+    if (list && list.length > 0) {
+      const s = list[0];
+      const pos = parseInt(s.position, 10);
+      seasonHistory.push({
+        year: parseInt(historyYears[i], 10),
+        position: pos,
+        points: parseFloat(s.points) || 0,
+        wins: parseInt(s.wins, 10) || 0,
+      });
+    }
+  }
+  seasonHistory.sort((a, b) => b.year - a.year);
+
+  // Filter to only race drivers for this constructor (from standings, not the general drivers endpoint which includes reserves)
+  const allCurrentStandings = currentDriverStandingsRes?.MRData.StandingsTable.StandingsLists[0]?.DriverStandings || [];
+  const currentDrivers = allCurrentStandings
+    .filter(ds => ds.Constructors.some(c => c.constructorId === constructorId))
+    .map(ds => ({
+      driverId: ds.Driver.driverId,
+      code: ds.Driver.code,
+      givenName: ds.Driver.givenName === 'Andrea Kimi' ? 'Kimi' : ds.Driver.givenName,
+      familyName: ds.Driver.familyName,
+    }));
+
+  let previousSeasonDetails = null;
+  if (prevStandingRes && prevStandingRes.MRData.StandingsTable.StandingsLists.length > 0) {
+    const sList = prevStandingRes.MRData.StandingsTable.StandingsLists[0].ConstructorStandings;
+    if (sList && sList.length > 0) {
+      const s = sList[0];
+      const allPrevStandings = prevDriverStandingsRes?.MRData.StandingsTable.StandingsLists[0]?.DriverStandings || [];
+      const prevDrivers = allPrevStandings
+        .filter(ds => ds.Constructors.some(c => c.constructorId === constructorId))
+        .map(ds => ({
+          driverId: ds.Driver.driverId,
+          code: ds.Driver.code,
+          givenName: ds.Driver.givenName,
+          familyName: ds.Driver.familyName,
+        }));
+      previousSeasonDetails = {
+        year: previousYear,
+        position: parseInt(s.position, 10),
+        points: parseFloat(s.points),
+        wins: parseInt(s.wins, 10),
+        drivers: prevDrivers,
+      };
+    }
+  }
+
+  // Retrieve hardcoded all-time metadata (official FIA records)
+  const meta = CONSTRUCTOR_META[constructorId];
+  const careerWinsFromApi = totalWinsRes ? parseInt(totalWinsRes.MRData.total, 10) : 0;
+
+  return {
+    constructorId: currentStanding.constructorId,
+    name: currentStanding.name,
+    nationality: currentStanding.nationality,
+    color: currentStanding.color,
+    wikiUrl,
+    careerChampionships: meta?.allTimeChampionships ?? 0,
+    careerWins: careerWinsFromApi,
+    careerPodiums: meta?.allTimePodiums ?? 0,
+    careerPoles: meta?.allTimePoles ?? 0,
+    careerSeasons: seasonYears.length,
+    firstEntry: meta?.firstEntry ?? (seasonYears.length > 0 ? parseInt(seasonYears[0], 10) : 0),
+    teamBase: meta?.teamBase ?? '',
+    teamPrincipal: meta?.teamPrincipal ?? '',
+    heroImage: meta?.heroImage ?? '',
+    seasonHistory,
+    currentSeason: {
+      position: currentStanding.position,
+      points: currentStanding.points,
+      wins: currentStanding.wins,
+      drivers: currentDrivers,
+    },
+    previousSeason: previousSeasonDetails,
+  };
+}
+
+export interface NewsItem {
+  title: string;
+  pubDate: string;
+  link: string;
+  guid: string;
+  author: string;
+  thumbnail: string;
+  description: string;
+  content: string;
+  enclosure: {
+    link: string;
+    type: string;
+    length: number;
+  };
+}
+
+export async function fetchLiveNews(): Promise<NewsItem[]> {
+  try {
+    const data = await fetchWithCache<{ items: NewsItem[] }>('https://api.rss2json.com/v1/api.json?rss_url=https://www.motorsport.com/rss/f1/news/');
+    return data.items || [];
+  } catch (err) {
+    console.error('Failed to fetch live news:', err);
+    return [];
+  }
+}
+
+export interface ConstructorSeasonDetailsData {
+  constructorId: string;
+  name: string;
+  year: number;
+  position: number;
+  points: number;
+  wins: number;
+  teamPrincipal: string;
+  heroImage: string;
+  color: string;
+  drivers: {
+    driverId: string;
+    givenName: string;
+    familyName: string;
+    code: string;
+    position: number;
+    points: number;
+    wins: number;
+  }[];
+}
+
+export async function fetchConstructorSeasonDetails(constructorId: string, year: string): Promise<ConstructorSeasonDetailsData | null> {
+  const standingsStr = `${BASE_URL}/${year}/constructors/${constructorId}/constructorStandings.json`;
+  const driversStr = `${BASE_URL}/${year}/driverStandings.json`;
+
+  const [standingsRes, driverStandingsRes] = await Promise.all([
+    fetchWithCache<{ MRData: { StandingsTable: { StandingsLists: any[] } } }>(standingsStr).catch(() => null),
+    fetchWithCache<{ MRData: { StandingsTable: { StandingsLists: Array<{ DriverStandings: Array<{ Driver: ApiDriver; Constructors: ApiConstructor[]; position: string; points: string; wins: string; }> }> } } }>(driversStr).catch(() => null)
+  ]);
+
+  if (!standingsRes || standingsRes.MRData.StandingsTable.StandingsLists.length === 0) {
+    return null;
+  }
+
+  const constructorStandings = standingsRes.MRData.StandingsTable.StandingsLists[0].ConstructorStandings;
+  if (!constructorStandings || constructorStandings.length === 0) return null;
+
+  const s = constructorStandings[0];
+  const meta = CONSTRUCTOR_META[constructorId];
+  
+  // Extract driver details
+  const allDriversInYear = driverStandingsRes?.MRData.StandingsTable.StandingsLists[0]?.DriverStandings || [];
+  const constructorDrivers = allDriversInYear
+    .filter(ds => ds.Constructors.some(c => c.constructorId === constructorId))
+    .map(ds => ({
+      driverId: ds.Driver.driverId,
+      givenName: ds.Driver.givenName,
+      familyName: ds.Driver.familyName,
+      code: ds.Driver.code || ds.Driver.familyName.substring(0, 3).toUpperCase(),
+      position: parseInt(ds.position, 10),
+      points: parseFloat(ds.points),
+      wins: parseInt(ds.wins, 10)
+    }));
+
+  return {
+    constructorId: constructorId,
+    name: s.Constructor.name,
+    year: parseInt(year, 10),
+    position: parseInt(s.position, 10),
+    points: parseFloat(s.points),
+    wins: parseInt(s.wins, 10),
+    teamPrincipal: meta?.teamPrincipal ?? 'Data Unavailable',
+    heroImage: meta?.heroImage ?? '',
+    color: '#66FCF1',
+    drivers: constructorDrivers,
+  };
+}

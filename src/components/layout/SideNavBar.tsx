@@ -6,10 +6,11 @@ export default function SideNavBar() {
 
   const navItems = [
     { to: '/', icon: 'dashboard', label: 'Dashboard', fill: true, match: (p: string) => p === '/' },
+    { to: '/news', icon: 'newspaper', label: 'News Section', fill: false, match: (p: string) => p === '/news' },
     { to: '/races', icon: 'timer', label: 'Live Timing', fill: false, match: (p: string) => p === '/races' },
     { to: '/drivers', icon: 'leaderboard', label: 'Standings', fill: false, match: (p: string) => p.includes('/driver') },
     { to: '/results', icon: 'history', label: 'Archives', fill: false, match: (p: string) => p === '/results' },
-    { to: '/constructors', icon: 'groups', label: 'Constructors', fill: false, match: (p: string) => p === '/constructors' },
+    { to: '/constructors', icon: 'groups', label: 'Constructors', fill: false, match: (p: string) => p.includes('/constructor') },
   ];
 
   return (
