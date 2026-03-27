@@ -1,0 +1,29 @@
+# Future Roadmap: Performance & Optimization Pass
+
+*This plan has been intentionally deferred. It serves as a backlog reference if the application encounters Lighthouse performance issues, high bandwidth usage warnings, or mobile rate-limiting from Wikipedia's servers when traffic scales.*
+
+---
+
+## Proposed Changes (Backlog)
+
+### 1. `index.html` (Network Optimizations)
+We will add browser hints to the `<head>` of the entry file to instruct the browser to resolve DNS and establish TLS connections to our critical external APIs before the JavaScript bundle even finishes parsing.
+#### [MODIFY] `index.html`
+- Add `<link rel="preconnect" href="https://upload.wikimedia.org" crossorigin />`
+- Add `<link rel="preconnect" href="https://api.jolpi.ca" crossorigin />`
+- Add `<link rel="dns-prefetch" href="https://api.allorigins.win" />`
+
+### 2. High-Priority "Above the Fold" Assets
+For heavy hero images (the driver portraits and constructor cars at the very top of their respective profile pages), we will use HTML5 priority hints to tell the browser's Network layer to download them immediately, avoiding Largest Contentful Paint (LCP) delays.
+#### [MODIFY] `src/pages/ConstructorProfile.tsx`
+- Add `fetchPriority="high"` and `decoding="sync"` to the main hero `<img />` tag.
+#### [MODIFY] `src/pages/ConstructorSeasonDetails.tsx`
+- Add `fetchPriority="high"` to the hero `<img />` tag.
+#### [MODIFY] `src/pages/DriverProfile.tsx`
+- Add `fetchPriority="high"`, `decoding="sync"`, and `loading="eager"` to the driver portrait `<img />` tag.
+
+### 3. "Below the Fold" Lazy Loading
+For images that the user does not see immediately upon page load (like the many thumbnails in the News grid), we will instruct the browser to defer downloading them until the user scrolls them into view. This saves massive amounts of initial bandwidth.
+#### [MODIFY] `src/pages/News.tsx`
+- Add `fetchPriority="high"` and `loading="eager"` to the **Featured Article** image.
+- Add `loading="lazy"` and `decoding="async"` to the `gridArticles.map` images.
