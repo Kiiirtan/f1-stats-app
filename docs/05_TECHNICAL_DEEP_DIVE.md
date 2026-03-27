@@ -201,11 +201,15 @@ React Context providing `{ user, isAuthenticated, login, register, logout }`. Us
 | Path | Page | Dynamic? |
 |---|---|---|
 | `/` | Dashboard | No |
+| `/news` | Live RSS News Feed | No |
 | `/drivers` | All Drivers | No |
 | `/driver/:id` | Driver Profile | Yes (`:id` from API) |
 | `/races` | Race Calendar | No |
 | `/results` | Race Results | No (uses `?race=` query) |
 | `/constructors` | Constructor Standings | No |
+| `/constructor/:id` | Constructor Profile | Yes (`:id` from API) |
+| `/constructor/:id/season/:year` | Historical Season DB | Yes (Dual params) |
+| `/credits` | Attributions & Legal | No |
 | `*` | 404 Not Found | Catch-all |
 
 ---

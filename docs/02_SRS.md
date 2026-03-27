@@ -170,7 +170,8 @@ The system is a client-side Single Page Application (SPA) that fetches and displ
 ## 5. Data Requirements
 
 ### 5.1 External API
-- **Base URL**: `https://api.jolpi.ca/ergast/f1`
+- **Base URL 1 (Telemetry)**: `https://api.jolpi.ca/ergast/f1`
+- **Base URL 2 (News Proxy)**: `https://api.allorigins.win/get?url=`
 
 | Endpoint | Purpose |
 |---|---|
@@ -178,6 +179,8 @@ The system is a client-side Single Page Application (SPA) that fetches and displ
 | `/current/constructorStandings.json` | Constructor standings |
 | `/current.json` | Race calendar |
 | `/current/results.json?limit=600` | Race results |
+| `/*/constructors/:id/constructorStandings.json` | Historical Constructor performance |
+| `motorsport.com/rss/f1/news` | Live News XML Feed |
 
 ### 5.2 Local Storage Keys
 | Key | Purpose |

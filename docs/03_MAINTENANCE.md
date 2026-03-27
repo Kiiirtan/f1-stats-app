@@ -16,47 +16,33 @@ demo/
 │   └── manifest.json
 ├── src/
 │   ├── __tests__/
-│   │   └── api.test.ts              # 8 API tests
 │   ├── components/
-│   │   ├── CursorGlow.tsx            # Global cursor-following glow
-│   │   ├── DriverCard.tsx            # 3D tilt driver card
-│   │   ├── ErrorBoundary.tsx         # React error boundary
-│   │   ├── Footer.tsx                # Site footer
-│   │   ├── Header.tsx                # Fixed nav bar
-│   │   ├── LoginModal.tsx            # Auth modal
-│   │   ├── MobileMenu.tsx            # Mobile nav drawer
-│   │   ├── PageTransition.tsx        # Route animation wrapper
-│   │   ├── ScrollReveal.tsx          # Scroll-triggered entrance
-│   │   ├── SearchModal.tsx           # Global search overlay
-│   │   ├── SkeletonCard.tsx          # Loading placeholder
-│   │   ├── SmoothLoader.tsx          # F1 splash screen
-│   │   ├── TiltCard.tsx              # 3D perspective tilt wrapper
-│   │   └── Tooltip.tsx               # Hover tooltip for UI elements
-│   ├── context/
-│   │   └── AuthContext.tsx           # Auth state (localStorage)
+│   │   ├── layout/            
+│   │   │   ├── Footer.tsx            # Site footer (with Legal Disclaimer)
+│   │   │   ├── Header.tsx            # Fixed top nav bar
+│   │   │   ├── MobileMenu.tsx        # Mobile nav drawer
+│   │   │   └── SideNavBar.tsx        # Desktop left navigation
+│   │   └── ... (Interactive UI Components)
 │   ├── data/
-│   │   └── api.ts                    # API layer + cache + retry
+│   │   ├── api.ts                    # API layer + cache (Jolpica + AllOrigins RSS)
+│   │   └── driverImages.ts           # Wikimedia Commons asset linking logic
 │   ├── hooks/
-│   │   ├── useCountUp.ts            # Animated number counter with scroll trigger
-│   │   ├── useInView.ts             # Intersection Observer
-│   │   └── useMousePosition.ts      # Cursor position tracking
 │   ├── pages/
 │   │   ├── Constructors.tsx
+│   │   ├── ConstructorProfile.tsx    # Single constructor overview
+│   │   ├── ConstructorSeasonDetails.tsx # Deep-dive into historical driver lineups
 │   │   ├── Dashboard.tsx
 │   │   ├── DriverProfile.tsx
 │   │   ├── Drivers.tsx
-│   │   ├── NotFound.tsx
+│   │   ├── News.tsx                  # Live RSS Breaking News Feed
+│   │   ├── Credits.tsx               # Attributions page
+│   │   ├── Terms.tsx                 # Terms of Service & Legal
 │   │   ├── Races.tsx
-│   │   └── Results.tsx
-│   ├── App.tsx                       # Root component
-│   ├── index.css                     # Animations + base styles
+│   │   ├── Results.tsx
+│   │   └── NotFound.tsx
+│   ├── App.tsx                       # Root routing component
+│   ├── index.css                     # Base styling
 │   └── main.tsx                      # Entry point
-├── docs/                             # Documentation
-├── index.html                        # HTML shell
-├── package.json
-├── tailwind.config.js
-├── tsconfig.json
-└── vite.config.ts
 ```
 
 ---
