@@ -17,10 +17,12 @@ A premium, high-fidelity real-time Formula 1 web application designed to track t
 
 ## ✨ Features
 
-- **🏆 Real-Time Grid Standings:** Live tracking of all 22 active drivers and 11 constructors across the 2026 season relying on the Jolpica API.
+- **🏆 Real-Time Grid Standings:** Live tracking of all 22 active drivers and 11 constructors across the modern season relying on the Jolpica API.
+- **📰 Live Breaking News Feed:** Directly syncs with Motorsport.com via an RSS XML proxy, delivering instant, up-to-the-minute global coverage and breaking stories without leaving the dashboard.
+- **📚 Historical Season Analytics:** Deep-dive into any constructor's past. View season-by-season performance, exact points contributed by primary drivers, final positioning, and historic team principals.
+- **🖼️ High-Fidelity Imagery:** Seamless fallback integration with Wikimedia Commons and Unsplash for premium, globally-accessible driver portraits and hero car backgrounds.
 - **🎨 Dynamic Theming Engine:** The UI accent colors dynamically shift to match the exact hexadecimal branding of your favorite Constructor (e.g., Ferrari Red, Mercedes Teal) without touching any CSS.
-- **🏎️ Interactive Telemetry Simulator:** A native DOM physics engine visualizer that translates your mouse cursor's X-axis movement into responsive engine RPMs, transmission gears, braking, and speed metrics.
-- **📱 Responsive Glassmorphism:** Fully optimized mobile and desktop experiences utilizing modern Tailwind backdrop blur filters and hardware-accelerated SVG animations.
+- **📱 Responsive Glassmorphism:** Fully optimized mobile-first experiences built on TailwindCSS, featuring backdrop blur filters, smooth route transitions, and collapsed mobile-navigation.
 
 ---
 
@@ -39,10 +41,12 @@ A premium, high-fidelity real-time Formula 1 web application designed to track t
 
 ## 🛠️ Architecture & Tech Stack
 
-- **Frontend:** React 18, Vite, TypeScript
-- **Styling:** Tailwind CSS, PostCSS, Custom Component Tokens
-- **State Management:** React Context API (`SettingsContext` & `ThemeManager`)
-- **Data Source:** [Jolpica F1 API](https://jolpica.com)
+- **Frontend Core:** React 18, Vite, TypeScript, React Router DOM v6
+- **Styling:** Tailwind CSS, PostCSS, Custom Semantic Component Tokens
+- **Data Syndication:** 
+  - [Jolpica F1 API](https://jolpi.ca/) (Live Telemetry & Standings)
+  - Motorsport.com RSS Feed via AllOrigins API Proxy (News)
+  - Wikimedia Commons & Unsplash (Dynamic Media)
 - **Deployment & CI/CD:** Render Cloud Infrastructure
 
 ---
