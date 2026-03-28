@@ -47,7 +47,7 @@ export default function CircuitProfile() {
     return () => { mounted = false; };
   }, [id]);
 
-  // Fetch track layout image from Wikipedia API
+  // Fetch robust track map from Wikipedia
   useEffect(() => {
     if (!data?.circuit.wikiUrl) return;
     const title = getWikiTitle(data.circuit.wikiUrl);
@@ -55,17 +55,81 @@ export default function CircuitProfile() {
 
     let mounted = true;
 
-    // Use Wikipedia API to get page images — the main image is usually the track layout
-    fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${title}`)
-      .then(res => res.json())
-      .then(json => {
-        if (mounted && json.thumbnail?.source) {
-          // Get higher resolution version by modifying the thumbnail URL
-          const highRes = json.thumbnail.source.replace(/\/\d+px-/, '/800px-');
+    async function loadTrackMap() {
+      try {
+        // 1. Get all images on the page
+        const res1 = await fetch(`https://en.wikipedia.org/w/api.php?action=query&titles=${title}&prop=images&imlimit=100&format=json&origin=*`);
+        const json1 = await res1.json();
+        const pages = json1.query?.pages;
+        if (!pages) throw new Error("No pages returned from Wiki API");
+        
+        const pageId = Object.keys(pages)[0];
+        const images = pages[pageId].images || [];
+
+        // Filter potential track maps
+        const candidates = images
+          .map((img: any) => img.title)
+          .filter((t: string) => {
+            const lower = t.toLowerCase();
+            return lower.endsWith('.svg') && 
+                  !lower.includes('ambox') && 
+                  !lower.includes('flag') && 
+                  !lower.includes('icon') &&
+                  !lower.includes('logo') &&
+                  !lower.includes('symbol') &&
+                  !lower.includes('question') &&
+                  !lower.includes('arrow');
+          });
+
+        let bestImage = null;
+        let highestScore = -1;
+
+        for (const img of candidates) {
+          const lower = img.toLowerCase();
+          let score = 0;
+          if (lower.includes('circuit')) score += 2;
+          if (lower.includes('map')) score += 2;
+          if (lower.includes('track')) score += 2;
+          if (lower.includes('layout')) score += 2;
+          
+          const titleLower = title.replace(/_/g, ' ').toLowerCase();
+          if (lower.includes(titleLower.split(' ')[0])) score += 3;
+
+          if (score > highestScore) {
+            highestScore = score;
+            bestImage = img;
+          }
+        }
+
+        if (bestImage) {
+          // 2. Fetch the URL for the best image
+          const res2 = await fetch(`https://en.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(bestImage)}&prop=imageinfo&iiprop=url&format=json&origin=*`);
+          const json2 = await res2.json();
+          const imgPages = json2.query?.pages;
+          if (imgPages) {
+            const imgPageId = Object.keys(imgPages)[0];
+            const url = imgPages[imgPageId].imageinfo?.[0]?.url;
+            if (url && mounted) {
+              setTrackImageUrl(url);
+              return;
+            }
+          }
+        }
+
+        // 3. Fallback to summary API if no valid SVG track map was found
+        const fallbackRes = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${title}`);
+        const fallbackJson = await fallbackRes.json();
+        if (mounted && fallbackJson.thumbnail?.source) {
+          const highRes = fallbackJson.thumbnail.source.replace(/\/\d+px-/, '/800px-');
           setTrackImageUrl(highRes);
         }
-      })
-      .catch(() => {});
+
+      } catch (err) {
+        console.error("Failed to load track map:", err);
+      }
+    }
+
+    loadTrackMap();
 
     return () => { mounted = false; };
   }, [data?.circuit.wikiUrl]);
