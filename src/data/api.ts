@@ -175,7 +175,11 @@ const FLAGS: Record<string, string> = {
   Australian: '🇦🇺', French: '🇫🇷', German: '🇩🇪', Finnish: '🇫🇮',
   Mexican: '🇲🇽', Canadian: '🇨🇦', Thai: '🇹🇭', Japanese: '🇯🇵',
   Chinese: '🇨🇳', Italian: '🇮🇹', Brazilian: '🇧🇷', Argentine: '🇦🇷',
-  'New Zealander': '🇳🇿',
+  'New Zealander': '🇳🇿', American: '🇺🇸', Austrian: '🇦🇹',
+  Belgian: '🇧🇪', Swiss: '🇨🇭', Colombian: '🇨🇴', Danish: '🇩🇰',
+  Hungarian: '🇭🇺', Indian: '🇮🇳', Indonesian: '🇮🇩', Irish: '🇮🇪',
+  Korean: '🇰🇷', Malaysian: '🇲🇾', Polish: '🇵🇱', Portuguese: '🇵🇹',
+  Russian: '🇷🇺', South_African: '🇿🇦', Swedish: '🇸🇪', Venezuelan: '🇻🇪',
 };
 
 export function getNationalityFlag(nationality: string): string {
@@ -190,7 +194,11 @@ const COUNTRY_FLAGS: Record<string, string> = {
   Belgium: '🇧🇪', Hungary: '🇭🇺', Netherlands: '🇳🇱', Italy: '🇮🇹',
   Azerbaijan: '🇦🇿', Singapore: '🇸🇬', Mexico: '🇲🇽', Brazil: '🇧🇷',
   Qatar: '🇶🇦', UAE: '🇦🇪', Canada: '🇨🇦', Bahrain: '🇧🇭',
-  'Saudi Arabia': '🇸🇦',
+  'Saudi Arabia': '🇸🇦', France: '🇫🇷', Germany: '🇩🇪', Portugal: '🇵🇹',
+  Argentina: '🇦🇷', 'South Africa': '🇿🇦', Sweden: '🇸🇪', Switzerland: '🇨🇭',
+  India: '🇮🇳', Korea: '🇰🇷', Malaysia: '🇲🇾', Morocco: '🇲🇦',
+  Turkey: '🇹🇷', Russia: '🇷🇺', Vietnam: '🇻🇳', Indonesia: '🇮🇩',
+  'United States': '🇺🇸', 'United Kingdom': '🇬🇧',
 };
 
 export function getCountryFlag(country: string): string {
@@ -819,4 +827,241 @@ export async function fetchConstructorSeasonDetails(constructorId: string, year:
     color: '#66FCF1',
     drivers: constructorDrivers,
   };
+}
+
+// ---------- Circuit Types ----------
+
+export interface CircuitInfo {
+  circuitId: string;
+  circuitName: string;
+  lat: string;
+  long: string;
+  locality: string;
+  country: string;
+  wikiUrl: string;
+}
+
+export interface PodiumEntry {
+  position: number;
+  driverId: string;
+  driverName: string;
+  driverCode: string;
+  team: string;
+  teamId: string;
+  time: string;
+}
+
+export interface CircuitRaceYear {
+  season: number;
+  round: number;
+  raceName: string;
+  date: string;
+  podium: PodiumEntry[];
+}
+
+export interface CircuitDetail {
+  circuit: CircuitInfo;
+  totalRaces: number;
+  firstRaceYear: number;
+  lastRaceYear: number;
+  raceHistory: CircuitRaceYear[];
+}
+
+// ---------- Season Calendar Types ----------
+
+export interface DetailedCalendarRace {
+  id: string;
+  round: number;
+  name: string;
+  circuit: string;
+  circuitId: string;
+  location: string;
+  country: string;
+  flag: string;
+  date: string;
+  time: string;
+  completed: boolean;
+  isSprint: boolean;
+  firstPractice?: { date: string; time: string };
+  qualifying?: { date: string; time: string };
+  sprint?: { date: string; time: string };
+  podium: PodiumEntry[];
+}
+
+// ---------- Circuit API Functions ----------
+
+export async function fetchAllCircuits(): Promise<CircuitInfo[]> {
+  // Fetch all circuits with pagination (API default limit is 30)
+  const firstPage = await fetchWithCache<{
+    MRData: { total: string; CircuitTable: { Circuits: ApiCircuit[] } };
+  }>(`${BASE_URL}/circuits.json?limit=100`);
+
+  let allCircuits = firstPage.MRData.CircuitTable.Circuits;
+  const total = parseInt(firstPage.MRData.total, 10);
+
+  // If more than 100, fetch remaining pages
+  if (total > 100) {
+    const remaining = await fetchWithCache<{
+      MRData: { CircuitTable: { Circuits: ApiCircuit[] } };
+    }>(`${BASE_URL}/circuits.json?limit=100&offset=100`);
+    allCircuits = [...allCircuits, ...remaining.MRData.CircuitTable.Circuits];
+  }
+
+  return allCircuits.map((c) => ({
+    circuitId: c.circuitId,
+    circuitName: c.circuitName,
+    lat: c.Location.lat,
+    long: c.Location.long,
+    locality: c.Location.locality,
+    country: c.Location.country,
+    wikiUrl: c.url,
+  }));
+}
+
+export async function fetchCircuitRaceHistory(circuitId: string): Promise<CircuitDetail> {
+  // Fetch P1, P2, P3 results separately — much fewer rows than fetching all results
+  // e.g., Silverstone has ~60 winners vs 1385 total result rows
+  const [p1Data, p2Data, p3Data, circuitData] = await Promise.all([
+    fetchWithCache<{
+      MRData: { RaceTable: { Races: ApiRace[] } };
+    }>(`${BASE_URL}/circuits/${circuitId}/results/1.json?limit=200`),
+    fetchWithCache<{
+      MRData: { RaceTable: { Races: ApiRace[] } };
+    }>(`${BASE_URL}/circuits/${circuitId}/results/2.json?limit=200`),
+    fetchWithCache<{
+      MRData: { RaceTable: { Races: ApiRace[] } };
+    }>(`${BASE_URL}/circuits/${circuitId}/results/3.json?limit=200`),
+    fetchWithCache<{
+      MRData: { CircuitTable: { Circuits: ApiCircuit[] } };
+    }>(`${BASE_URL}/circuits/${circuitId}.json`),
+  ]);
+
+  const circuitInfo = circuitData.MRData.CircuitTable.Circuits[0];
+
+  // Build a map of season → podium entries
+  const podiumMap = new Map<string, { race: ApiRace; podium: PodiumEntry[] }>();
+
+  const processResults = (races: ApiRace[]) => {
+    for (const race of races) {
+      const key = `${race.season}-${race.round}`;
+      if (!podiumMap.has(key)) {
+        podiumMap.set(key, { race, podium: [] });
+      }
+      const entry = podiumMap.get(key)!;
+      for (const res of race.Results || []) {
+        const pos = parseInt(res.position, 10);
+        if (pos <= 3 && !entry.podium.some(p => p.position === pos)) {
+          entry.podium.push({
+            position: pos,
+            driverId: res.Driver.driverId,
+            driverName: `${res.Driver.givenName} ${res.Driver.familyName}`,
+            driverCode: res.Driver.code || res.Driver.familyName.substring(0, 3).toUpperCase(),
+            team: res.Constructor.name,
+            teamId: res.Constructor.constructorId,
+            time: res.Time?.time || res.status || '',
+          });
+        }
+      }
+    }
+  };
+
+  processResults(p1Data.MRData.RaceTable.Races);
+  processResults(p2Data.MRData.RaceTable.Races);
+  processResults(p3Data.MRData.RaceTable.Races);
+
+  const raceHistory: CircuitRaceYear[] = Array.from(podiumMap.values()).map(({ race, podium }) => ({
+    season: parseInt(race.season, 10),
+    round: parseInt(race.round, 10),
+    raceName: race.raceName,
+    date: race.date,
+    podium: podium.sort((a, b) => a.position - b.position),
+  }));
+
+  // Sort by season descending (most recent first)
+  raceHistory.sort((a, b) => b.season - a.season);
+
+  const seasons = raceHistory.map((r) => r.season);
+
+  return {
+    circuit: {
+      circuitId: circuitInfo.circuitId,
+      circuitName: circuitInfo.circuitName,
+      lat: circuitInfo.Location.lat,
+      long: circuitInfo.Location.long,
+      locality: circuitInfo.Location.locality,
+      country: circuitInfo.Location.country,
+      wikiUrl: circuitInfo.url,
+    },
+    totalRaces: raceHistory.length,
+    firstRaceYear: seasons.length > 0 ? Math.min(...seasons) : 0,
+    lastRaceYear: seasons.length > 0 ? Math.max(...seasons) : 0,
+    raceHistory,
+  };
+}
+
+// ---------- Season Calendar API ----------
+
+export async function fetchSeasonCalendarDetailed(): Promise<DetailedCalendarRace[]> {
+  // Fetch both the calendar (with session times) and results in parallel
+  const [calendarData, resultsData] = await Promise.all([
+    fetchWithCache<{
+      MRData: { RaceTable: { season: string; Races: ApiRace[] } };
+    }>(`${BASE_URL}/current.json`),
+    fetchWithCache<{
+      MRData: { RaceTable: { Races: ApiRace[] } };
+    }>(`${BASE_URL}/current/results.json?limit=600`),
+  ]);
+
+  const calendarRaces = calendarData.MRData.RaceTable.Races;
+  const resultRaces = resultsData.MRData.RaceTable.Races;
+
+  // Build a map of round → results
+  const resultsMap = new Map<string, ApiRace>();
+  for (const r of resultRaces) {
+    resultsMap.set(r.round, r);
+  }
+
+  const today = new Date().toISOString().split('T')[0];
+
+  return calendarRaces.map((r) => {
+    const resultRace = resultsMap.get(r.round);
+    const podium: PodiumEntry[] = [];
+
+    if (resultRace && resultRace.Results) {
+      for (const res of resultRace.Results) {
+        const pos = parseInt(res.position, 10);
+        if (pos <= 3) {
+          podium.push({
+            position: pos,
+            driverId: res.Driver.driverId,
+            driverName: `${res.Driver.givenName} ${res.Driver.familyName}`,
+            driverCode: res.Driver.code || res.Driver.familyName.substring(0, 3).toUpperCase(),
+            team: res.Constructor.name,
+            teamId: res.Constructor.constructorId,
+            time: res.Time?.time || res.status || '',
+          });
+        }
+      }
+      podium.sort((a, b) => a.position - b.position);
+    }
+
+    return {
+      id: r.Circuit.circuitId,
+      round: parseInt(r.round, 10),
+      name: r.raceName,
+      circuit: r.Circuit.circuitName,
+      circuitId: r.Circuit.circuitId,
+      location: r.Circuit.Location.locality,
+      country: r.Circuit.Location.country,
+      flag: getCountryFlag(r.Circuit.Location.country),
+      date: r.date,
+      time: r.time || '',
+      completed: r.date < today,
+      isSprint: !!r.Sprint,
+      firstPractice: r.FirstPractice ? { date: r.FirstPractice.date, time: r.FirstPractice.time } : undefined,
+      qualifying: r.Qualifying ? { date: r.Qualifying.date, time: r.Qualifying.time } : undefined,
+      sprint: r.Sprint ? { date: r.Sprint.date, time: r.Sprint.time } : undefined,
+      podium,
+    };
+  });
 }

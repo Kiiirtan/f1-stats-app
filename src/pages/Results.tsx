@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { fetchRaceResults, type Race } from '../data/api';
+import DataState from '../components/ui/DataState';
 
 const TEAM_COLORS: Record<string, string> = {
   mercedes: '#27F4D2',
@@ -25,15 +26,20 @@ export default function Results() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [completedRaces, setCompletedRaces] = useState<Race[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     let mounted = true;
     fetchRaceResults().then((data) => {
       if (mounted) {
         setCompletedRaces(data.filter(r => r.results && r.results.length > 0));
-        setLoading(false);
       }
-    }).catch(console.error);
+    }).catch(err => {
+      console.error(err);
+      if (mounted) setError(err.message);
+    }).finally(() => {
+      if (mounted) setLoading(false);
+    });
     return () => { mounted = false; };
   }, []);
 
@@ -48,10 +54,22 @@ export default function Results() {
     );
   }
 
+  if (error) {
+    return (
+      <div className="pt-24 min-h-screen flex items-center justify-center">
+        <DataState type="error" onAction={() => window.location.reload()} />
+      </div>
+    );
+  }
+
   if (!selectedRace) {
     return (
-      <div className="pt-24 md:pt-32 pb-20 flex justify-center items-center min-h-[50vh]">
-        <p className="text-on-surface-variant headline-font italic tracking-widest uppercase">No race data available</p>
+      <div className="pt-24 min-h-screen flex items-center justify-center">
+        <DataState 
+          type="empty" 
+          title="NO RESULTS AVAILABLE" 
+          message="Race telemetry data for the selected round could not be located." 
+        />
       </div>
     );
   }
@@ -62,7 +80,7 @@ export default function Results() {
       <header className="mb-12 relative flex items-center justify-between">
         <div>
           <p className="text-primary-container font-label text-[10px] uppercase tracking-[0.3em] font-bold mb-2">Full Results</p>
-          <h1 className="font-headline text-6xl md:text-8xl font-black italic uppercase tracking-tighter leading-none flex items-center gap-4">
+          <h1 className="font-headline text-5xl md:text-8xl font-black italic uppercase tracking-tighter leading-none flex items-center gap-4">
             Race <span className="text-primary-container">Battles</span>
           </h1>
         </div>

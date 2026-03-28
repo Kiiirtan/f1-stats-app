@@ -1,19 +1,25 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { fetchConstructorStandings, type ConstructorStanding } from '../data/api';
+import DataState from '../components/ui/DataState';
 
 export default function Constructors() {
   const [standings, setStandings] = useState<ConstructorStanding[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     let mounted = true;
     fetchConstructorStandings().then((data) => {
       if (mounted) {
         setStandings(data);
-        setLoading(false);
       }
-    }).catch(console.error);
+    }).catch(err => {
+      console.error(err);
+      if (mounted) setError(err.message);
+    }).finally(() => {
+      if (mounted) setLoading(false);
+    });
     return () => { mounted = false; };
   }, []);
 
@@ -26,7 +32,7 @@ export default function Constructors() {
           <span className="h-px w-12 bg-white/20"></span>
           <span className="font-label font-bold italic uppercase text-white/40 tracking-widest text-sm">2026 SEASON</span>
         </div>
-        <h1 className="font-headline font-black italic uppercase text-6xl md:text-9xl text-white leading-[0.85] tracking-tighter mb-6">
+        <h1 className="font-headline font-black italic uppercase text-5xl md:text-8xl lg:text-9xl text-white leading-[0.85] tracking-tighter mb-6">
           CONSTRUCTOR<br/><span className="text-primary-container">CHAMPIONSHIP</span>
         </h1>
         <p className="text-on-surface-variant max-w-2xl text-lg font-light border-t border-white/10 pt-6">
@@ -40,6 +46,8 @@ export default function Constructors() {
           <div className="flex justify-center items-center py-20">
             <div className="w-16 h-1 bg-[var(--theme-accent)] animate-pulse"></div>
           </div>
+        ) : error ? (
+          <DataState type="error" onAction={() => window.location.reload()} />
         ) : (
           standings.map((team, index) => {
             const hexColor = team.color || '#ffffff';

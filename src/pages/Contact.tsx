@@ -39,16 +39,16 @@ export default function Contact() {
   };
   return (
     <PageTransition>
-      <div className="p-6 lg:p-12 max-w-4xl pt-24 lg:pt-12">
+      <div className="pt-24 md:pt-32 pb-20 px-6 md:px-12 max-w-4xl mx-auto w-full">
         <header className="mb-12">
           <span className="font-['Space_Grotesk'] font-bold italic uppercase tracking-[0.3em] text-[var(--theme-accent)] text-xs mb-2 block">Reach Out</span>
-          <h1 className="f1-heading text-5xl md:text-7xl text-white leading-tight">CONTACT US</h1>
+          <h1 className="f1-heading text-4xl sm:text-5xl md:text-7xl text-white leading-tight">CONTACT US</h1>
         </header>
 
-        <section className="bg-surface-container-highest p-8 md:p-12 relative overflow-hidden group">
+        <section className="bg-surface-container-highest px-6 md:px-12 py-10 md:py-12 relative overflow-hidden group">
           <div className="absolute inset-0 bg-gradient-to-br from-[var(--theme-accent)]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"></div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 relative z-10">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 relative z-10">
             <div>
               <h2 className="text-2xl font-bold text-white mb-6 uppercase tracking-wider">Get in Touch</h2>
               <p className="text-on-surface-variant mb-8 leading-relaxed">

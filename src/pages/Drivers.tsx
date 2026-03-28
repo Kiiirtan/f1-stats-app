@@ -3,9 +3,10 @@ import { useDrivers } from '../hooks/useDrivers';
 import { getDriverPortrait, FALLBACK_IMAGE } from '../data/driverImages';
 import { getNationalityFlag } from '../data/api';
 import TelemetryVisualizer from '../components/features/TelemetryVisualizer';
+import DataState from '../components/ui/DataState';
 
 export default function Drivers() {
-  const { drivers, loading } = useDrivers();
+  const { drivers, loading, error } = useDrivers();
   return (
     <div className="pt-24 pb-20 px-6 md:px-10 max-w-[1400px] mx-auto w-full">
       {/* Page Title Section */}
@@ -21,6 +22,10 @@ export default function Drivers() {
       {loading ? (
         <div className="flex justify-center py-20">
           <div className="w-16 h-1 bg-[var(--theme-accent)] animate-pulse"></div>
+        </div>
+      ) : error ? (
+        <div className="pt-10">
+          <DataState type="error" onAction={() => window.location.reload()} />
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">

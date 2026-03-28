@@ -59,7 +59,7 @@ export default function TelemetryVisualizer() {
       </div>
 
       {/* Main Dashboard UI */}
-      <div className="relative z-10 mt-8 grid grid-cols-3 gap-8 items-end">
+      <div className="relative z-10 mt-8 grid grid-cols-1 sm:grid-cols-3 gap-8 items-end">
         
         {/* Speed / Gear Block */}
         <div className="col-span-1 flex flex-col">
@@ -98,7 +98,7 @@ export default function TelemetryVisualizer() {
         </div>
 
         {/* Brake / Throttle Pedals */}
-        <div className="col-span-1 flex justify-end gap-6 h-32">
+        <div className="col-span-1 flex justify-start sm:justify-end gap-6 h-32">
           {/* Brake */}
           <div className="flex flex-col items-center justify-end h-full">
             <div className="w-8 h-24 bg-white/5 rounded-sm flex items-end p-1 relative overflow-hidden">

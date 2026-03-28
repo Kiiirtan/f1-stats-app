@@ -10,6 +10,9 @@ import Dashboard from './pages/Dashboard';
 import News from './pages/News';
 import Drivers from './pages/Drivers';
 import DriverProfile from './pages/DriverProfile';
+import SeasonCalendar from './pages/SeasonCalendar';
+import Circuits from './pages/Circuits';
+import CircuitProfile from './pages/CircuitProfile';
 import Races from './pages/Races';
 import Results from './pages/Results';
 import Constructors from './pages/Constructors';
@@ -55,6 +58,9 @@ function App() {
                 <Route path="/news" element={<News />} />
                 <Route path="/drivers" element={<Drivers />} />
                 <Route path="/driver/:id" element={<DriverProfile />} />
+                <Route path="/calendar" element={<SeasonCalendar />} />
+                <Route path="/circuits" element={<Circuits />} />
+                <Route path="/circuit/:id" element={<CircuitProfile />} />
                 <Route path="/races" element={<Races />} />
                 <Route path="/results" element={<Results />} />
                 <Route path="/constructors" element={<Constructors />} />

@@ -2,6 +2,7 @@ import { useParams, Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { fetchDriverStandings, fetchRaceResults, fetchDriverCareerStats, getNationalityFlag, type Driver, type Race, type DriverCareerStats } from '../data/api';
 import { getDriverPortrait } from '../data/driverImages';
+import DataState from '../components/ui/DataState';
 
 export default function DriverProfile() {
   const { id } = useParams<{ id: string }>();
@@ -9,6 +10,7 @@ export default function DriverProfile() {
   const [driverRaces, setDriverRaces] = useState<{ race: Race; result: any }[]>([]);
   const [careerStats, setCareerStats] = useState<DriverCareerStats | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     let mounted = true;
@@ -36,7 +38,12 @@ export default function DriverProfile() {
 
         setLoading(false);
       }
-    }).catch(console.error);
+    }).catch(err => {
+      console.error(err);
+      if (mounted) setError(err.message);
+    }).finally(() => {
+      if (mounted) setLoading(false);
+    });
 
     return () => { mounted = false; };
   }, [id]);
@@ -49,11 +56,18 @@ export default function DriverProfile() {
     );
   }
 
+  if (error) {
+    return (
+      <div className="pt-24 min-h-screen flex items-center justify-center">
+        <DataState type="error" onAction={() => window.location.reload()} />
+      </div>
+    );
+  }
+
   if (!driver) {
     return (
-      <div className="pt-32 pb-20 flex flex-col justify-center items-center min-h-[80vh]">
-        <h2 className="text-4xl font-headline font-black mb-4">DRIVER NOT FOUND</h2>
-        <Link to="/drivers" className="text-primary-container hover:underline tracking-widest text-sm font-bold">RETURN TO GRID</Link>
+      <div className="pt-24 min-h-screen flex items-center justify-center">
+        <DataState type="not-found" actionLink="/drivers" actionText="RETURN TO GRID" />
       </div>
     );
   }
@@ -144,7 +158,7 @@ export default function DriverProfile() {
 
       {/* Career Overview Section */}
       {careerStats && (
-        <section className="bg-background px-8 py-24 relative overflow-hidden border-t border-outline-variant/10">
+        <section className="bg-background px-6 md:px-8 py-24 relative overflow-hidden border-t border-outline-variant/10">
           <div className="max-w-[1600px] mx-auto relative z-10">
             <div className="flex items-center justify-between mb-12">
               <h2 className="font-headline text-3xl font-bold uppercase tracking-widest border-l-4 pl-6" style={{ borderColor: driver.teamColor }}>Career Overview</h2>
@@ -182,15 +196,15 @@ export default function DriverProfile() {
 
       {/* Season History Section */}
       {careerStats && careerStats.seasons.length > 0 && (
-        <section className="px-8 py-24 bg-surface-container-low relative border-t border-outline-variant/10">
+        <section className="px-6 md:px-8 py-24 bg-surface-container-low relative border-t border-outline-variant/10">
           <div className="max-w-[1600px] mx-auto">
             <div className="flex items-center justify-between mb-16">
               <h2 className="font-headline text-3xl font-bold uppercase tracking-widest border-l-4 pl-6" style={{ borderColor: driver.teamColor }}>Season History</h2>
               <span className="font-label text-[10px] text-on-surface-variant uppercase tracking-[0.5em]">Historical Standings</span>
             </div>
             
-            <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse">
+            <div className="overflow-x-auto w-full">
+              <table className="w-full text-left border-collapse min-w-[600px]">
                 <thead>
                   <tr className="border-b border-outline-variant/20">
                     <th className="py-6 px-4 font-label text-[10px] uppercase tracking-widest text-on-surface-variant">Year</th>
@@ -223,7 +237,7 @@ export default function DriverProfile() {
       
       {/* Top Results Section (Current Season) */}
       {bestResults.length > 0 && (
-        <section className="px-8 py-24 bg-surface-container relative border-t border-outline-variant/10">
+        <section className="px-6 md:px-8 py-24 bg-surface-container relative border-t border-outline-variant/10">
           <div className="max-w-[1600px] mx-auto">
             <div className="flex items-center justify-between mb-16">
               <h2 className="font-headline text-3xl font-bold uppercase tracking-widest border-l-4 pl-6" style={{ borderColor: driver.teamColor }}>Best Performances</h2>

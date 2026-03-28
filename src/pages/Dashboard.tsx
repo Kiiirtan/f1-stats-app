@@ -2,12 +2,14 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { fetchRaceCalendar, fetchRaceResults, fetchDriverStandings, getNationalityFlag, type Race, type Driver } from '../data/api';
 import { getDriverPortrait } from '../data/driverImages';
+import DataState from '../components/ui/DataState';
 
 export default function Dashboard() {
   const [calendar, setCalendar] = useState<Race[]>([]);
   const [resultsRaces, setResultsRaces] = useState<Race[]>([]);
   const [standings, setStandings] = useState<Driver[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     let mounted = true;
@@ -20,9 +22,13 @@ export default function Dashboard() {
         setCalendar(calData);
         setResultsRaces(resData.filter(r => r.results && r.results.length > 0));
         setStandings(stdData);
-        setLoading(false);
       }
-    }).catch(console.error);
+    }).catch(err => {
+      console.error(err);
+      if (mounted) setError(err.message);
+    }).finally(() => {
+      if (mounted) setLoading(false);
+    });
     return () => { mounted = false; };
   }, []);
 
@@ -30,6 +36,14 @@ export default function Dashboard() {
     return (
       <div className="pt-32 pb-20 flex justify-center items-center min-h-[80vh]">
         <div className="w-16 h-1 bg-primary-container animate-pulse"></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="pt-24 min-h-screen flex items-center justify-center">
+        <DataState type="error" onAction={() => window.location.reload()} />
       </div>
     );
   }
@@ -52,7 +66,7 @@ export default function Dashboard() {
           <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent z-10"></div>
           <img className="w-full h-full object-cover object-center opacity-60" alt="Moody F1 car side profile in dark lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA3bo_d4vWwDs92VYSGwvL072zTNkuUkgq22x3JibKTdQm8L5-RM8M1DM92K8REfM_MBcDXPCHV-yIYyo-kwiUvK7AVf77tBsBImIEKq014lCTopGb-q9ArqVjeyFv_NZQ0C_uBif187fYAghFGlIz70IR-W02yEoYdkUgxh0anW0jYShOfFAvuJ9eMSwrV4cEk_c5NA6vTzKNYSKIxlko3fXLYAjVHyZDpyuGZ_nOe3IBvjvIhTKew4sidu9am78GD9h8nBIPwrv8" />
         </div>
-        <div className="relative z-20 h-full flex flex-col justify-center px-12 lg:px-24">
+        <div className="relative z-20 h-full flex flex-col justify-center px-6 md:px-12 lg:px-24">
           <div className="flex items-center space-x-4 mb-6">
             <span className="bg-primary-container text-white px-3 py-1 text-[10px] font-black tracking-widest uppercase">LATEST RACE</span>
             <span className="text-secondary text-xs font-label uppercase tracking-widest flex items-center gap-2">
@@ -60,11 +74,11 @@ export default function Dashboard() {
               GRAND PRIX {latestRace?.country || 'F1'}
             </span>
           </div>
-          <h1 className="font-headline font-black text-6xl md:text-8xl lg:text-9xl leading-[0.85] italic uppercase tracking-tighter -ml-2 mb-8 max-w-4xl text-glow">
-            KINETIC<br /><span className="text-primary-container">STATS.</span>
+          <h1 className="font-headline font-black text-5xl md:text-8xl lg:text-9xl leading-[0.85] italic uppercase tracking-tighter -ml-2 mb-8 max-w-4xl text-glow">
+            EVERY LAP.<br />EVERY BATTLE.<br /><span className="text-primary-container">DECODED.</span>
           </h1>
           <div className="flex flex-col md:flex-row items-start md:items-center space-y-6 md:space-y-0 md:space-x-12">
-            <Link to="/races" className="inline-block bg-primary-container text-white px-10 py-5 text-sm font-black tracking-[0.2em] hover:scale-105 transition-transform duration-300">
+            <Link to="/calendar" className="inline-block bg-primary-container text-white px-10 py-5 text-sm font-black tracking-[0.2em] hover:scale-105 transition-transform duration-300">
               EXPLORE THE SEASON
             </Link>
             {latestRace && latestRace.results.length > 0 && (
@@ -78,7 +92,7 @@ export default function Dashboard() {
       </section>
 
       {/* Driver Grid */}
-      <section className="py-24 px-8 lg:px-16 bg-surface relative overflow-hidden">
+      <section className="py-24 px-6 md:px-12 lg:px-16 bg-surface relative overflow-hidden">
         <div className="flex justify-between items-end mb-16 border-b border-outline-variant/20 pb-8">
           <div>
             <h2 className="font-headline text-4xl font-black uppercase italic tracking-tighter">DRIVER STANDINGS</h2>
@@ -122,11 +136,11 @@ export default function Dashboard() {
         <div className="absolute inset-0 opacity-5 pointer-events-none">
           <img alt="F1 technical background shot" className="w-full h-full object-cover grayscale" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBzJdal9yMFntax9Sfua1w5p3YTcYThM_KTkpklWwBM45qrWVZvw1BH6TP5W-B4jjDLAd_gi0RbjIJHY-2QiFCSZ7zQnMCdGUyRBWusNuTH0hhPBp4mUjCKG22KPtRaHPeay4D6qYhguPO_ztOPjGpOdqz27UWOYofFIWY1TIMai6tbZcDzQOKrl-MX4fTcvcY63Repa_-8Hv9W8F5VHyY0182bXhmtyta1TOomdOD8acXbt7AajlLObN74C7tnR5kIvG9Zzydm8lg" />
         </div>
-        <div className="relative z-10 px-8 lg:px-16 mb-8 flex items-center space-x-4">
+        <div className="relative z-10 px-6 md:px-12 lg:px-16 mb-8 flex items-center space-x-4">
           <span className="w-12 h-[2px] bg-primary-container"></span>
           <h2 className="font-headline font-bold text-xs uppercase tracking-[0.3em]">SEASON CALENDAR</h2>
         </div>
-        <div className="relative z-10 flex overflow-x-auto pb-8 px-8 lg:px-16 space-x-8 no-scrollbar">
+        <div className="relative z-10 flex overflow-x-auto pb-8 px-6 md:px-12 lg:px-16 space-x-8 no-scrollbar w-full">
           {timelineRaces.map((race) => (
             <Link key={race.id} to={`/races?round=${race.round}`} className={`flex-shrink-0 w-80 group block ${!race.completed && race.round > nextRace.round ? 'opacity-60' : ''}`}>
               <div className="bg-surface-container-low p-6 border-b-2 border-transparent group-hover:border-primary-container transition-all h-full">
@@ -156,13 +170,13 @@ export default function Dashboard() {
 
       {/* Results Table - Latest Race */}
       {latestRace && (
-        <section className="py-24 px-8 lg:px-16 relative">
+        <section className="py-24 px-6 md:px-12 lg:px-16 relative">
           <div className="absolute inset-0 z-0 opacity-[0.03] overflow-hidden pointer-events-none">
             <img alt="F1 Pit stop action background" className="w-full h-full object-cover object-bottom" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB51ehXkJtWRhpEfnhCftwwzon7OqV6-5hySm8VFyI6MjTlbdOtJyiV2En8WQju6uPhzIfqdBUgW5oK_AHGG3fKWalG3IE_GYi0qMWYhnwg7S6MJFgQC7heC31b9kjEGfN4mLbZqjQVJkBPHa1lvlixKqoT-X3Th2TFN6Pl8AhFgg2cOJj-df6RQZ9nbeDrVBmLgOF8Aj1I8NsHt0_W2xvqIxhHEoW46M1XWEh5Ee8vEIhRnofmINnyfIvYgx5C5WETjp8bh2qbdU4" />
           </div>
           <div className="relative z-10">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-12">
-              <h2 className="font-headline text-2xl font-black uppercase italic tracking-tighter flex items-center gap-4">
+              <h2 className="font-headline text-2xl font-black uppercase italic tracking-tighter flex flex-wrap items-center gap-4">
                 RACE RESULTS : {latestRace.name.replace('Grand Prix', 'GP')}
                 <span className="text-xl">{latestRace.flag}</span>
               </h2>

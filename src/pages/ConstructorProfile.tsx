@@ -2,6 +2,7 @@ import { useParams, Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { fetchConstructorProfile, type ConstructorProfileData, type ConstructorSeasonRecord, getNationalityFlag } from '../data/api';
 import { getDriverPortrait } from '../data/driverImages';
+import DataState from '../components/ui/DataState';
 
 function StatBox({ label, value, color, large }: { label: string; value: string | number; color?: string; large?: boolean }) {
   return (
@@ -21,6 +22,7 @@ export default function ConstructorProfile() {
   const { id } = useParams<{ id: string }>();
   const [profile, setProfile] = useState<ConstructorProfileData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     let mounted = true;
@@ -34,7 +36,10 @@ export default function ConstructorProfile() {
       })
       .catch((err) => {
         console.error(err);
-        if (mounted) setLoading(false);
+        if (mounted) {
+          setError(err.message);
+          setLoading(false);
+        }
       });
     return () => { mounted = false; };
   }, [id]);
@@ -50,11 +55,18 @@ export default function ConstructorProfile() {
     );
   }
 
+  if (error) {
+    return (
+      <div className="pt-24 min-h-screen flex items-center justify-center">
+        <DataState type="error" onAction={() => window.location.reload()} />
+      </div>
+    );
+  }
+
   if (!profile) {
     return (
-      <div className="pt-32 pb-20 flex flex-col justify-center items-center min-h-[80vh]">
-        <h2 className="text-4xl font-headline font-black mb-4">CONSTRUCTOR NOT FOUND</h2>
-        <Link to="/constructors" className="text-primary-container hover:underline tracking-widest text-sm font-bold uppercase">Return to Constructors</Link>
+      <div className="pt-24 min-h-screen flex items-center justify-center">
+        <DataState type="not-found" actionLink="/constructors" actionText="Return to Constructors" />
       </div>
     );
   }
@@ -132,7 +144,7 @@ export default function ConstructorProfile() {
       </section>
 
       {/* ─── Team Information Panel ─── */}
-      <section className="bg-surface-container px-8 py-20 border-b border-outline-variant/10">
+      <section className="bg-surface-container px-6 md:px-8 py-20 border-b border-outline-variant/10">
         <div className="max-w-[1600px] mx-auto">
           <h2 className="font-headline text-3xl font-bold uppercase tracking-widest border-l-4 pl-6 mb-12" style={{ borderColor: teamColor }}>
             Team Information
@@ -173,7 +185,7 @@ export default function ConstructorProfile() {
       </section>
 
       {/* ─── All-Time Career Statistics ─── */}
-      <section className="bg-surface-container-low px-8 py-20">
+      <section className="bg-surface-container-low px-6 md:px-8 py-20">
         <div className="max-w-[1600px] mx-auto">
           <h2 className="font-headline text-3xl font-bold uppercase tracking-widest border-l-4 pl-6 mb-4" style={{ borderColor: teamColor }}>
             All-Time Record
@@ -191,7 +203,7 @@ export default function ConstructorProfile() {
       </section>
 
       {/* ─── Current Season Stats Grid ─── */}
-      <section className="bg-background px-8 py-20 border-t border-outline-variant/10">
+      <section className="bg-background px-6 md:px-8 py-20 border-t border-outline-variant/10">
         <div className="max-w-[1600px] mx-auto">
           <h2 className="font-headline text-3xl font-bold uppercase tracking-widest border-l-4 pl-6 mb-12" style={{ borderColor: teamColor }}>
             {currentYear} Season
@@ -206,7 +218,7 @@ export default function ConstructorProfile() {
       </section>
 
       {/* ─── Driver Lineup (Current) ─── */}
-      <section className="bg-surface-container px-8 py-24 border-t border-outline-variant/10">
+      <section className="bg-surface-container px-6 md:px-8 py-24 border-t border-outline-variant/10">
         <div className="max-w-[1600px] mx-auto">
           <div className="mb-12">
             <h2 className="font-headline text-3xl font-bold uppercase tracking-widest border-l-4 pl-6" style={{ borderColor: teamColor }}>Driver Lineup</h2>
@@ -257,7 +269,7 @@ export default function ConstructorProfile() {
 
       {/* ─── Previous Season ─── */}
       {profile.previousSeason && (
-        <section className="bg-background px-8 py-24 border-t border-outline-variant/10">
+        <section className="bg-background px-6 md:px-8 py-24 border-t border-outline-variant/10">
           <div className="max-w-[1600px] mx-auto">
             <div className="mb-12">
               <h2 className="font-headline text-3xl font-bold uppercase tracking-widest border-l-4 pl-6" style={{ borderColor: teamColor }}>{profile.previousSeason.year} Season</h2>
@@ -306,7 +318,7 @@ export default function ConstructorProfile() {
 
       {/* ─── Season History Table ─── */}
       {profile.seasonHistory.length > 0 && (
-        <section className="bg-surface-container-low px-8 py-24 border-t border-outline-variant/10">
+        <section className="bg-surface-container-low px-6 md:px-8 py-24 border-t border-outline-variant/10">
           <div className="max-w-[1600px] mx-auto">
             <div className="mb-12">
               <h2 className="font-headline text-3xl font-bold uppercase tracking-widest border-l-4 pl-6" style={{ borderColor: teamColor }}>Season History</h2>
@@ -361,7 +373,7 @@ export default function ConstructorProfile() {
       )}
 
       {/* Footer notice */}
-      <section className="px-8 pb-24 pt-16 bg-background border-t border-outline-variant/10">
+      <section className="px-6 md:px-8 pb-24 pt-16 bg-background border-t border-outline-variant/10">
         <div className="max-w-[1600px] mx-auto text-center">
           <p className="text-on-surface-variant text-sm font-label uppercase tracking-widest">
             Data sourced from Jolpica F1 API &amp; Official FIA Records

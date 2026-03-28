@@ -33,8 +33,9 @@ export default function TopNavBar() {
 
   const navLinks = [
     { label: 'News', to: '/news' },
+    { label: 'Calendar', to: '/calendar' },
+    { label: 'Circuits', to: '/circuits' },
     { label: 'Drivers', to: '/drivers' },
-    { label: 'Races', to: '/races' },
     { label: 'Results', to: '/results' },
     { label: 'Constructors', to: '/constructors' },
   ];
@@ -42,7 +43,8 @@ export default function TopNavBar() {
   const mobileNavLinks = [
     { label: 'Dashboard', to: '/', icon: 'dashboard' },
     { label: 'News', to: '/news', icon: 'newspaper' },
-    { label: 'Live Timing', to: '/races', icon: 'timer' },
+    { label: 'Calendar', to: '/calendar', icon: 'calendar_month' },
+    { label: 'Circuits', to: '/circuits', icon: 'map' },
     { label: 'Standings', to: '/drivers', icon: 'leaderboard' },
     { label: 'Archives', to: '/results', icon: 'history' },
     { label: 'Constructors', to: '/constructors', icon: 'groups' },

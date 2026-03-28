@@ -56,23 +56,23 @@ export default function Settings() {
       <div className="space-y-2">
         {/* Appearance Section */}
         <section className="bg-surface-container-low border border-white/5 overflow-hidden">
-          <div className="px-8 py-5 border-b border-white/5 flex items-center gap-3">
+          <div className="px-6 md:px-8 py-5 border-b border-white/5 flex items-center gap-3">
             <span className="material-symbols-outlined text-[var(--theme-accent)] text-lg">palette</span>
             <h2 className="font-headline font-bold uppercase text-sm tracking-widest text-white">Appearance</h2>
           </div>
           <div className="divide-y divide-white/5">
             {/* Accent Color */}
-            <div className="px-8 py-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="px-6 md:px-8 py-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
                 <h3 className="text-white font-bold text-sm">Accent Color</h3>
                 <p className="text-white/40 text-xs mt-1">Primary color used throughout the interface</p>
               </div>
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-3 sm:gap-2">
                 {ACCENT_COLORS.map((color) => (
                   <button
                     key={color.value}
                     onClick={() => handleUpdate('accentColor', color.value)}
-                    className={`w-8 h-8 transition-all duration-200 ${
+                    className={`w-10 h-10 sm:w-8 sm:h-8 transition-all duration-200 ${
                       settings.accentColor === color.value
                         ? 'ring-2 ring-white ring-offset-2 ring-offset-[#13131b] scale-110'
                         : 'opacity-60 hover:opacity-100 hover:scale-105'
@@ -86,19 +86,19 @@ export default function Settings() {
             </div>
 
             {/* Animations */}
-            <div className="px-8 py-6 flex items-center justify-between">
+            <div className="px-6 md:px-8 py-6 flex items-center justify-between">
               <div>
                 <h3 className="text-white font-bold text-sm">Animations</h3>
                 <p className="text-white/40 text-xs mt-1">Enable smooth transitions and hover effects</p>
               </div>
               <button
                 onClick={() => handleUpdate('showAnimations', !settings.showAnimations)}
-                className={`relative w-12 h-6 rounded-full transition-colors duration-200 ${
+                className={`relative w-14 h-8 rounded-full transition-colors duration-200 ${
                   settings.showAnimations ? 'bg-[var(--theme-accent)]' : 'bg-white/10'
                 }`}
               >
                 <div
-                  className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full transition-transform duration-200 ${
+                  className={`absolute top-1 left-1 w-6 h-6 bg-white rounded-full transition-transform duration-200 ${
                     settings.showAnimations ? 'translate-x-6' : ''
                   }`}
                 />
@@ -106,12 +106,12 @@ export default function Settings() {
             </div>
 
             {/* Data Density */}
-            <div className="px-8 py-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="px-6 md:px-8 py-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
                 <h3 className="text-white font-bold text-sm">Data Density</h3>
                 <p className="text-white/40 text-xs mt-1">Adjust the spacing and size of data elements</p>
               </div>
-              <div className="flex gap-0 bg-[#13131b] border border-white/10">
+              <div className="flex flex-wrap gap-0 bg-[#13131b] border border-white/10 w-full sm:w-auto">
                 {(['compact', 'default', 'comfortable'] as const).map((density) => (
                   <button
                     key={density}
@@ -132,25 +132,25 @@ export default function Settings() {
 
         {/* Data & Performance Section */}
         <section className="bg-surface-container-low border border-white/5 overflow-hidden">
-          <div className="px-8 py-5 border-b border-white/5 flex items-center gap-3">
+          <div className="px-6 md:px-8 py-5 border-b border-white/5 flex items-center gap-3">
             <span className="material-symbols-outlined text-[var(--theme-accent)] text-lg">speed</span>
             <h2 className="font-headline font-bold uppercase text-sm tracking-widest text-white">Data & Performance</h2>
           </div>
           <div className="divide-y divide-white/5">
             {/* Auto Refresh */}
-            <div className="px-8 py-6 flex items-center justify-between">
+            <div className="px-6 md:px-8 py-6 flex items-center justify-between">
               <div>
                 <h3 className="text-white font-bold text-sm">Auto Refresh</h3>
                 <p className="text-white/40 text-xs mt-1">Automatically fetch new data at regular intervals</p>
               </div>
               <button
                 onClick={() => handleUpdate('autoRefresh', !settings.autoRefresh)}
-                className={`relative w-12 h-6 rounded-full transition-colors duration-200 ${
+                className={`relative w-14 h-8 rounded-full transition-colors duration-200 ${
                   settings.autoRefresh ? 'bg-[var(--theme-accent)]' : 'bg-white/10'
                 }`}
               >
                 <div
-                  className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full transition-transform duration-200 ${
+                  className={`absolute top-1 left-1 w-6 h-6 bg-white rounded-full transition-transform duration-200 ${
                     settings.autoRefresh ? 'translate-x-6' : ''
                   }`}
                 />
@@ -159,12 +159,12 @@ export default function Settings() {
 
             {/* Refresh Interval */}
             {settings.autoRefresh && (
-              <div className="px-8 py-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="px-6 md:px-8 py-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
                   <h3 className="text-white font-bold text-sm">Refresh Interval</h3>
                   <p className="text-white/40 text-xs mt-1">How often to fetch updated data</p>
                 </div>
-                <div className="flex gap-0 bg-[#13131b] border border-white/10">
+                <div className="flex w-full sm:w-auto flex-wrap gap-0 bg-[#13131b] border border-white/10">
                   {[
                     { label: '1 MIN', value: 60 },
                     { label: '5 MIN', value: 300 },
@@ -187,12 +187,12 @@ export default function Settings() {
             )}
 
             {/* Units */}
-            <div className="px-8 py-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="px-6 md:px-8 py-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
                 <h3 className="text-white font-bold text-sm">Units</h3>
                 <p className="text-white/40 text-xs mt-1">Speed, distance, and temperature units</p>
               </div>
-              <div className="flex gap-0 bg-[#13131b] border border-white/10">
+              <div className="flex flex-wrap w-full sm:w-auto gap-0 bg-[#13131b] border border-white/10">
                 {(['metric', 'imperial'] as const).map((unit) => (
                   <button
                     key={unit}
@@ -213,13 +213,13 @@ export default function Settings() {
 
         {/* Navigation Section */}
         <section className="bg-surface-container-low border border-white/5 overflow-hidden">
-          <div className="px-8 py-5 border-b border-white/5 flex items-center gap-3">
+          <div className="px-6 md:px-8 py-5 border-b border-white/5 flex items-center gap-3">
             <span className="material-symbols-outlined text-[var(--theme-accent)] text-lg">navigation</span>
             <h2 className="font-headline font-bold uppercase text-sm tracking-widest text-white">Navigation</h2>
           </div>
           <div className="divide-y divide-white/5">
             {/* Default Page */}
-            <div className="px-8 py-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="px-6 md:px-8 py-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
                 <h3 className="text-white font-bold text-sm">Default Page</h3>
                 <p className="text-white/40 text-xs mt-1">Page to show when opening the app</p>
@@ -227,7 +227,7 @@ export default function Settings() {
               <select
                 value={settings.defaultPage}
                 onChange={(e) => handleUpdate('defaultPage', e.target.value)}
-                className="bg-[#13131b] border border-white/10 text-white px-4 py-2 text-xs font-['Space_Grotesk'] font-bold uppercase tracking-wider outline-none focus:border-[var(--theme-accent)] transition-colors cursor-pointer"
+                className="bg-[#13131b] border border-white/10 text-white px-4 py-3 sm:py-2 w-full sm:w-auto text-xs font-['Space_Grotesk'] font-bold uppercase tracking-wider outline-none focus:border-[var(--theme-accent)] transition-colors cursor-pointer"
               >
                 {DEFAULT_PAGES.map((page) => (
                   <option key={page.value} value={page.value}>{page.label}</option>
@@ -239,11 +239,11 @@ export default function Settings() {
 
         {/* About Section */}
         <section className="bg-surface-container-low border border-white/5 overflow-hidden">
-          <div className="px-8 py-5 border-b border-white/5 flex items-center gap-3">
+          <div className="px-6 md:px-8 py-5 border-b border-white/5 flex items-center gap-3">
             <span className="material-symbols-outlined text-[var(--theme-accent)] text-lg">info</span>
             <h2 className="font-headline font-bold uppercase text-sm tracking-widest text-white">About</h2>
           </div>
-          <div className="px-8 py-6 space-y-4">
+          <div className="px-6 md:px-8 py-6 space-y-4">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
               <div className="border-l-2 border-[var(--theme-accent)]/30 pl-4">
                 <p className="text-[10px] text-white/30 font-bold uppercase tracking-widest">Version</p>

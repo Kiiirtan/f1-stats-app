@@ -3,7 +3,7 @@ import PageTransition from '../components/ui/PageTransition';
 export default function Terms() {
   return (
     <PageTransition>
-      <div className="p-6 lg:p-12 max-w-3xl pt-24 lg:pt-12">
+      <div className="pt-24 md:pt-32 pb-20 px-6 md:px-12 max-w-4xl mx-auto w-full">
         <header className="mb-12 border-b border-white/10 pb-8">
           <span className="font-['Space_Grotesk'] font-bold italic uppercase tracking-[0.3em] text-[var(--theme-accent)] text-xs mb-2 block">Legal Information</span>
           <h1 className="f1-heading text-4xl md:text-5xl text-white leading-tight">TERMS OF SERVICE</h1>

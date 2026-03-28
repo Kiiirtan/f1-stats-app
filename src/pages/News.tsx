@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { fetchLiveNews, type NewsItem } from '../data/api';
+import DataState from '../components/ui/DataState';
 
 const FALLBACK_IMG = "https://images.unsplash.com/photo-1504707748692-419802cf939d?q=80&w=1600&auto=format&fit=crop";
 
@@ -69,10 +70,14 @@ export default function News() {
 
   if (error || news.length === 0) {
     return (
-      <div className="pt-32 pb-20 flex flex-col justify-center items-center min-h-[80vh]">
-        <span className="material-symbols-outlined text-6xl text-on-surface-variant mb-4 opacity-50">rss_feed</span>
-        <h2 className="text-3xl font-headline font-black mb-4 uppercase tracking-widest text-white">Feed Unavailable</h2>
-        <p className="text-on-surface-variant max-w-md text-center">Unable to load live news from Motorsport F1 feed right now. Please try again later.</p>
+      <div className="pt-24 min-h-screen flex items-center justify-center">
+        <DataState 
+          type="error" 
+          title="FEED UNAVAILABLE" 
+          message="Unable to load live news from Motorsport F1 feed right now. Please try again later."
+          onAction={() => window.location.reload()}
+          actionText="RETRY"
+        />
       </div>
     );
   }
@@ -134,7 +139,7 @@ export default function News() {
 
       {/* Grid Articles */}
       <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-fr">
-        {gridArticles.map((article, idx) => (
+        {gridArticles.map((article: NewsItem, idx: number) => (
           <a
             href={article.link}
             target="_blank" 

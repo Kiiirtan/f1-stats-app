@@ -1,19 +1,25 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { fetchRaceCalendar, type Race } from '../data/api';
+import DataState from '../components/ui/DataState';
 
 export default function Races() {
   const [calendar, setCalendar] = useState<Race[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     let mounted = true;
     fetchRaceCalendar().then((data) => {
       if (mounted) {
         setCalendar(data);
-        setLoading(false);
       }
-    }).catch(console.error);
+    }).catch(err => {
+      console.error(err);
+      if (mounted) setError(err.message);
+    }).finally(() => {
+      if (mounted) setLoading(false);
+    });
     return () => { mounted = false; };
   }, []);
 
@@ -30,11 +36,19 @@ export default function Races() {
     );
   }
 
+  if (error) {
+    return (
+      <div className="pt-24 min-h-screen flex items-center justify-center">
+        <DataState type="error" onAction={() => window.location.reload()} />
+      </div>
+    );
+  }
+
   return (
     <div className="pt-24 md:pt-32 pb-20 px-6 md:px-12 max-w-[1600px] mx-auto w-full">
       {/* Header Section */}
       <header className="mb-16">
-        <h1 className="text-6xl md:text-8xl font-black italic uppercase headline-font tracking-tighter leading-none mb-4 text-on-surface">
+        <h1 className="text-5xl md:text-8xl font-black italic uppercase headline-font tracking-tighter leading-none mb-4 text-on-surface">
           THE CIRCUIT
         </h1>
         <div className="flex items-center gap-4 text-primary-fixed-dim headline-font font-bold italic uppercase tracking-widest text-sm md:text-lg flex-wrap">
@@ -64,10 +78,10 @@ export default function Races() {
                     NEXT UP - ROUND {String(nextRace.round).padStart(2, '0')}
                   </span>
                 </div>
-                <h2 className="text-4xl md:text-7xl headline-font font-black italic uppercase tracking-tighter leading-none mb-2">
+                <h2 className="text-4xl md:text-6xl lg:text-7xl headline-font font-black italic uppercase tracking-tighter leading-none mb-2">
                   {nextRace.name}
                 </h2>
-                <p className="text-xl md:text-2xl text-cyan-400 headline-font font-bold italic uppercase tracking-widest flex items-center gap-2 mt-2">
+                <p className="text-lg md:text-2xl text-cyan-400 headline-font font-bold italic uppercase tracking-widest flex items-center gap-2 mt-2">
                   {nextRace.circuit}, {new Date(nextRace.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric' })} {nextRace.flag}
                 </p>
               </div>

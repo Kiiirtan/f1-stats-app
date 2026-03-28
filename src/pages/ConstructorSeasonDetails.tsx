@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { fetchConstructorSeasonDetails, ConstructorSeasonDetailsData } from '../data/api';
+import DataState from '../components/ui/DataState';
 
 const StatBox = ({ label, value, color = '#66FCF1' }: { label: string; value: string | number; color?: string }) => (
   <div className="bg-surface-container-low border border-outline-variant/10 p-6 backdrop-blur-sm relative overflow-hidden group">
@@ -14,14 +15,21 @@ function ConstructorSeasonDetails() {
   const { id, year } = useParams<{ id: string; year: string }>();
   const [details, setDetails] = useState<ConstructorSeasonDetailsData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     async function loadData() {
       if (id && year) {
         setLoading(true);
-        const data = await fetchConstructorSeasonDetails(id, year);
-        setDetails(data);
-        setLoading(false);
+        try {
+          const data = await fetchConstructorSeasonDetails(id, year);
+          setDetails(data);
+        } catch (err) {
+          console.error(err);
+          setError(err instanceof Error ? err.message : String(err));
+        } finally {
+          setLoading(false);
+        }
       }
     }
     loadData();
@@ -35,15 +43,24 @@ function ConstructorSeasonDetails() {
     );
   }
 
+  if (error) {
+    return (
+      <div className="pt-24 min-h-screen flex items-center justify-center">
+        <DataState type="error" onAction={() => window.location.reload()} />
+      </div>
+    );
+  }
+
   if (!details) {
     return (
-      <div className="min-h-screen pt-32 pb-16 flex flex-col items-center justify-center text-center px-4">
-        <span className="material-symbols-outlined text-6xl text-error mb-4">do_not_disturb_off</span>
-        <h2 className="text-2xl font-bold mb-2">No Season Data Available</h2>
-        <p className="text-on-surface-variant max-w-md">We couldn't find statistics for this constructor in the selected year.</p>
-        <Link to={`/constructor/${id}`} className="mt-8 px-6 py-3 bg-surface-container hover:bg-surface-container-high transition-colors text-sm uppercase tracking-wider font-bold">
-          Return to Profile
-        </Link>
+      <div className="pt-24 min-h-screen flex items-center justify-center">
+        <DataState 
+          type="not-found" 
+          title="NO SEASON DATA"
+          message="We couldn't find statistics for this constructor in the selected year."
+          actionLink={`/constructor/${id}`} 
+          actionText="RETURN TO PROFILE" 
+        />
       </div>
     );
   }
@@ -59,10 +76,10 @@ function ConstructorSeasonDetails() {
     <div className="min-h-screen pb-16">
       {/* ─── Hero Section ─── */}
       <section 
-        className="relative pt-32 pb-24 px-8 min-h-[50vh] flex flex-col justify-end bg-cover bg-center"
+        className="relative pt-32 pb-24 px-6 md:px-8 min-h-[50vh] flex flex-col justify-end bg-cover bg-center"
         style={heroStyle}
       >
-        <Link to={`/constructor/${id}`} className="absolute top-24 left-8 flex items-center gap-2 text-on-surface hover:text-white transition-colors text-sm font-label uppercase tracking-widest z-10 p-2 bg-black/40 backdrop-blur-sm border border-white/10">
+        <Link to={`/constructor/${id}`} className="absolute top-24 left-6 md:left-8 flex items-center gap-2 text-on-surface hover:text-white transition-colors text-sm font-label uppercase tracking-widest z-10 p-2 bg-black/40 backdrop-blur-sm border border-white/10">
           <span className="material-symbols-outlined text-sm">arrow_back</span>
           Back to Profile
         </Link>
@@ -105,7 +122,7 @@ function ConstructorSeasonDetails() {
       </section>
 
       {/* ─── Content Grid ─── */}
-      <section className="px-8 mt-12">
+      <section className="px-6 md:px-8 mt-12">
         <div className="max-w-[1600px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12">
           
           {/* Main Info */}
