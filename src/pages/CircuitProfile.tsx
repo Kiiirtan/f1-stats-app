@@ -14,12 +14,21 @@ function getWikiTitle(url: string): string {
   } catch { return ''; }
 }
 
+interface CircuitPhysicalStats {
+  length: string | null;
+  turns: string | null;
+  lapRecord: string | null;
+  lapRecordHolder: string | null;
+  lapRecordYear: string | null;
+}
+
 export default function CircuitProfile() {
   const { id } = useParams<{ id: string }>();
   const [data, setData] = useState<CircuitDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [trackImageUrl, setTrackImageUrl] = useState<string | null>(null);
+  const [circuitStats, setCircuitStats] = useState<CircuitPhysicalStats | null>(null);
 
   // Filter state — decade-based filter
   const [selectedDecade, setSelectedDecade] = useState<string>('RECENT');
@@ -131,6 +140,108 @@ export default function CircuitProfile() {
 
     loadTrackMap();
 
+    return () => { mounted = false; };
+  }, [data?.circuit.wikiUrl]);
+
+  // Fetch circuit physical stats (length, turns, lap record) from Wikipedia infobox HTML
+  useEffect(() => {
+    if (!data?.circuit.wikiUrl) return;
+    const title = getWikiTitle(data.circuit.wikiUrl);
+    if (!title) return;
+
+    let mounted = true;
+
+    async function loadCircuitStats() {
+      try {
+        const res = await fetch(`https://en.wikipedia.org/api/rest_v1/page/html/${title}`);
+        const html = await res.text();
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+
+        // Helper: find a value in the infobox table by its label (th text)
+        function getInfoboxValue(label: string): string | null {
+          const ths = Array.from(doc.querySelectorAll('table.infobox th, table th'));
+          for (const th of ths) {
+            const text = th.textContent?.trim().toLowerCase() || '';
+            if (text.includes(label.toLowerCase())) {
+              const td = th.nextElementSibling;
+              if (td) {
+                // Remove reference tags like [1], [2] etc.
+                const clone = td.cloneNode(true) as HTMLElement;
+                clone.querySelectorAll('sup').forEach(s => s.remove());
+                return clone.textContent?.replace(/\s+/g, ' ').trim() || null;
+              }
+            }
+          }
+          return null;
+        }
+
+        const rawLength = getInfoboxValue('circuit length') || getInfoboxValue('length');
+        const rawTurns = getInfoboxValue('turns') || getInfoboxValue('corners');
+        const rawRecord = getInfoboxValue('race lap record');
+
+        // Extract lap record time, holder name, year
+        let lapRecord: string | null = null;
+        let lapRecordHolder: string | null = null;
+        let lapRecordYear: string | null = null;
+
+        if (rawRecord) {
+          // Time format: 1:27.097
+          const timeMatch = rawRecord.match(/(\d+:\d{2}\.\d+)/);
+          if (timeMatch) lapRecord = timeMatch[1];
+
+          // Year: 4-digit year
+          const yearMatch = rawRecord.match(/\b(20\d{2}|19\d{2})\b/);
+          if (yearMatch) lapRecordYear = yearMatch[1];
+
+          // Holder: name is usually between time and year
+          // Remove time, year, team name clutter, just grab first recognizable name chunk
+          const cleaned = rawRecord
+            .replace(/\d+:\d{2}\.\d+/g, '')
+            .replace(/\b(20|19)\d{2}\b/g, '')
+            .replace(/F1|Formula One|DHL/gi, '')
+            .replace(/\s+/g, ' ')
+            .trim();
+          // Take first 30 characters as a rough name
+          if (cleaned.length > 2) {
+            lapRecordHolder = cleaned.split('(')[0].trim().slice(0, 40);
+          }
+        }
+
+        // Clean length: extract km value
+        let length = rawLength;
+        if (length) {
+          // Prefer km value like "5.891 km"
+          const kmMatch = length.match(/([\d.]+)\s*km/i);
+          if (kmMatch) length = `${kmMatch[1]} km`;
+          else {
+            const miMatch = length.match(/([\d.]+)\s*mi/i);
+            if (miMatch) length = `${(parseFloat(miMatch[1]) * 1.60934).toFixed(3)} km`;
+          }
+        }
+
+        // Clean turns: just take the first integer
+        let turns = rawTurns;
+        if (turns) {
+          const numMatch = turns.match(/(\d+)/);
+          if (numMatch) turns = numMatch[1];
+        }
+
+        if (mounted) {
+          setCircuitStats({
+            length: length || null,
+            turns: turns || null,
+            lapRecord: lapRecord || null,
+            lapRecordHolder: lapRecordHolder || null,
+            lapRecordYear: lapRecordYear || null,
+          });
+        }
+      } catch (err) {
+        console.warn('Failed to load circuit physical stats:', err);
+      }
+    }
+
+    loadCircuitStats();
     return () => { mounted = false; };
   }, [data?.circuit.wikiUrl]);
 
@@ -285,6 +396,42 @@ export default function CircuitProfile() {
               CIRCUIT STATS
             </h3>
             <div className="space-y-4">
+              {/* Physical specs from Wikipedia */}
+              {circuitStats?.length && (
+                <div className="flex justify-between items-center border-b border-white/5 pb-3">
+                  <span className="text-sm text-on-surface-variant flex items-center gap-1">
+                    <span className="material-symbols-outlined text-sm text-tertiary">straighten</span>
+                    Length
+                  </span>
+                  <span className="headline-font font-black italic text-lg text-tertiary">{circuitStats.length}</span>
+                </div>
+              )}
+              {circuitStats?.turns && (
+                <div className="flex justify-between items-center border-b border-white/5 pb-3">
+                  <span className="text-sm text-on-surface-variant flex items-center gap-1">
+                    <span className="material-symbols-outlined text-sm text-tertiary">360</span>
+                    Turns
+                  </span>
+                  <span className="headline-font font-black italic text-lg text-tertiary">{circuitStats.turns}</span>
+                </div>
+              )}
+              {circuitStats?.lapRecord && (
+                <div className="border-b border-white/5 pb-3">
+                  <div className="flex justify-between items-center mb-1">
+                    <span className="text-sm text-on-surface-variant flex items-center gap-1">
+                      <span className="material-symbols-outlined text-sm text-[#FFD700]">timer</span>
+                      Lap Record
+                    </span>
+                    <span className="headline-font font-black italic text-lg text-[#FFD700]">{circuitStats.lapRecord}</span>
+                  </div>
+                  {(circuitStats.lapRecordHolder || circuitStats.lapRecordYear) && (
+                    <p className="text-[10px] text-on-surface-variant/60 text-right uppercase tracking-wider">
+                      {circuitStats.lapRecordHolder}{circuitStats.lapRecordYear ? ` · ${circuitStats.lapRecordYear}` : ''}
+                    </p>
+                  )}
+                </div>
+              )}
+              {/* Historical stats */}
               <div className="flex justify-between items-center border-b border-white/5 pb-3">
                 <span className="text-sm text-on-surface-variant">Total GPs Hosted</span>
                 <span className="headline-font font-black italic text-xl text-on-surface">{totalRaces}</span>
