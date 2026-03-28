@@ -75,34 +75,40 @@ export default function CircuitProfile() {
         const pageId = Object.keys(pages)[0];
         const images = pages[pageId].images || [];
 
-        // Filter potential track maps
+        // Filter potential track maps — accept both SVG and PNG
+        const blocklist = [
+          'ambox', 'flag', 'icon', 'logo', 'symbol', 'question',
+          'arrow', 'edit-clear', 'commons', 'wikimedia', 'stub',
+          'star', 'lock', 'portal', 'nuvola', 'button', 'badge',
+          'medal', 'pictogram', 'sign', 'wikidata', 'merge',
+          'redirect', 'category', 'talk', 'move', 'protect',
+          'location', 'topographic', 'relief', 'satellite',
+        ];
+
         const candidates = images
           .map((img: any) => img.title)
           .filter((t: string) => {
             const lower = t.toLowerCase();
-            return lower.endsWith('.svg') && 
-                  !lower.includes('ambox') && 
-                  !lower.includes('flag') && 
-                  !lower.includes('icon') &&
-                  !lower.includes('logo') &&
-                  !lower.includes('symbol') &&
-                  !lower.includes('question') &&
-                  !lower.includes('arrow');
+            // Accept SVG or PNG only
+            if (!lower.endsWith('.svg') && !lower.endsWith('.png')) return false;
+            return !blocklist.some(word => lower.includes(word));
           });
 
-        let bestImage = null;
-        let highestScore = -1;
+        let bestImage: string | null = null;
+        let highestScore = 0; // minimum score of 1 required
+
+        const titleLower = title.replace(/_/g, ' ').toLowerCase();
+        const firstTitleWord = titleLower.split(' ')[0];
 
         for (const img of candidates) {
           const lower = img.toLowerCase();
           let score = 0;
+          if (lower.endsWith('.svg')) score += 1; // prefer vector over raster
           if (lower.includes('circuit')) score += 2;
           if (lower.includes('map')) score += 2;
           if (lower.includes('track')) score += 2;
           if (lower.includes('layout')) score += 2;
-          
-          const titleLower = title.replace(/_/g, ' ').toLowerCase();
-          if (lower.includes(titleLower.split(' ')[0])) score += 3;
+          if (lower.includes(firstTitleWord)) score += 3;
 
           if (score > highestScore) {
             highestScore = score;
@@ -112,12 +118,14 @@ export default function CircuitProfile() {
 
         if (bestImage) {
           // 2. Fetch the URL for the best image
-          const res2 = await fetch(`https://en.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(bestImage)}&prop=imageinfo&iiprop=url&format=json&origin=*`);
+          const res2 = await fetch(`https://en.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(bestImage)}&prop=imageinfo&iiprop=url|thumburl&iiurlwidth=800&format=json&origin=*`);
           const json2 = await res2.json();
           const imgPages = json2.query?.pages;
           if (imgPages) {
             const imgPageId = Object.keys(imgPages)[0];
-            const url = imgPages[imgPageId].imageinfo?.[0]?.url;
+            const info = imgPages[imgPageId].imageinfo?.[0];
+            // Prefer the pre-rendered thumbnail (PNG) — this bypasses Wikimedia SVG CSP blocks
+            const url = info?.thumburl || info?.url;
             if (url && mounted) {
               setTrackImageUrl(url);
               return;
@@ -345,11 +353,12 @@ export default function CircuitProfile() {
                   <span className="material-symbols-outlined text-xs">open_in_new</span>
                 </a>
               </div>
-              <div className="relative bg-black/20 flex items-center justify-center p-6 min-h-[200px]">
+              <div className="relative bg-black/10 flex items-center justify-center p-4 min-h-[200px]">
                 <img
                   src={trackImageUrl}
                   alt={`${circuit.circuitName} Track Layout`}
-                  className="max-h-[320px] w-auto object-contain"
+                  className="max-h-[340px] w-auto object-contain drop-shadow-lg"
+                  loading="lazy"
                   onError={() => setTrackImageUrl(null)}
                 />
               </div>
