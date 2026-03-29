@@ -2,6 +2,8 @@
 // Docs: https://github.com/jolpica/jolpica-f1
 const BASE_URL = 'https://api.jolpi.ca/ergast/f1';
 
+import { syncToSupabase, fetchFromSupabase } from '../lib/supabase';
+
 // ---------- Type Definitions ----------
 
 export interface ApiDriver {
@@ -225,6 +227,9 @@ async function fetchWithCache<T>(url: string): Promise<T> {
     return cached.data as T;
   }
 
+  // Extract a short cache key from the full URL for Supabase storage
+  const cacheKey = url.replace(BASE_URL, '');
+
   let lastError: Error | null = null;
   for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
     try {
@@ -235,6 +240,10 @@ async function fetchWithCache<T>(url: string): Promise<T> {
 
       const data = await response.json();
       cache.set(url, { data, timestamp: now });
+
+      // ✅ SYNC: Silently push fresh data to Supabase (fire-and-forget)
+      syncToSupabase(cacheKey, data).catch(() => {});
+
       return data as T;
     } catch (err) {
       lastError = err instanceof Error ? err : new Error(String(err));
@@ -244,13 +253,22 @@ async function fetchWithCache<T>(url: string): Promise<T> {
     }
   }
 
-  // If all retries failed, return stale cache if available
+  // If all retries failed, return stale in-memory cache if available
   if (cached) {
     console.warn(`API failed after ${MAX_RETRIES} retries, using stale cache for: ${url}`);
     return cached.data as T;
   }
 
-  throw lastError || new Error('API request failed after retries');
+  // 🛡️ FALLBACK: Jolpica is down & no in-memory cache — try Supabase database
+  console.warn(`[Fallback] Jolpica unreachable, querying Supabase for: ${cacheKey}`);
+  const supabaseData = await fetchFromSupabase<T>(cacheKey);
+  if (supabaseData) {
+    // Populate in-memory cache so subsequent calls are instant
+    cache.set(url, { data: supabaseData, timestamp: now });
+    return supabaseData;
+  }
+
+  throw lastError || new Error('API request failed after retries and database fallback');
 }
 
 // ---------- API Functions ----------

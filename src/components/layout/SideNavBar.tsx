@@ -23,7 +23,7 @@ export default function SideNavBar() {
         </div>
         <p className="text-[10px] text-[#c7c6ca] mt-1 opacity-60">Telemetry Active</p>
       </div>
-      
+
       <nav className="flex-grow py-4">
         {navItems.map((item) => (
           <Link
@@ -36,15 +36,14 @@ export default function SideNavBar() {
           </Link>
         ))}
       </nav>
-      
+
       <div className="p-6 mt-auto">
-        <Link 
-          to="/settings" 
-          className={`flex items-center space-x-4 transition-colors group ${
-            path === '/settings' 
-              ? 'text-[var(--theme-accent)]' 
+        <Link
+          to="/settings"
+          className={`flex items-center space-x-4 transition-colors group ${path === '/settings'
+              ? 'text-[var(--theme-accent)]'
               : 'text-[#c7c6ca] hover:text-[#e4e1ee]'
-          }`}
+            }`}
         >
           <span className="material-symbols-outlined text-sm group-hover:rotate-45 transition-transform">settings</span>
           <span className="font-['Space_Grotesk'] text-xs uppercase tracking-widest">Settings</span>

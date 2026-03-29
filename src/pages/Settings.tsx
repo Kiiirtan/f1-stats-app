@@ -72,11 +72,10 @@ export default function Settings() {
                   <button
                     key={color.value}
                     onClick={() => handleUpdate('accentColor', color.value)}
-                    className={`w-10 h-10 sm:w-8 sm:h-8 transition-all duration-200 ${
-                      settings.accentColor === color.value
+                    className={`w-10 h-10 sm:w-8 sm:h-8 transition-all duration-200 ${settings.accentColor === color.value
                         ? 'ring-2 ring-white ring-offset-2 ring-offset-[#13131b] scale-110'
                         : 'opacity-60 hover:opacity-100 hover:scale-105'
-                    }`}
+                      }`}
                     style={{ backgroundColor: color.value }}
                     title={color.label}
                     aria-label={color.label}
@@ -93,14 +92,12 @@ export default function Settings() {
               </div>
               <button
                 onClick={() => handleUpdate('showAnimations', !settings.showAnimations)}
-                className={`relative w-14 h-8 rounded-full transition-colors duration-200 ${
-                  settings.showAnimations ? 'bg-[var(--theme-accent)]' : 'bg-white/10'
-                }`}
+                className={`relative w-14 h-8 rounded-full transition-colors duration-200 ${settings.showAnimations ? 'bg-[var(--theme-accent)]' : 'bg-white/10'
+                  }`}
               >
                 <div
-                  className={`absolute top-1 left-1 w-6 h-6 bg-white rounded-full transition-transform duration-200 ${
-                    settings.showAnimations ? 'translate-x-6' : ''
-                  }`}
+                  className={`absolute top-1 left-1 w-6 h-6 bg-white rounded-full transition-transform duration-200 ${settings.showAnimations ? 'translate-x-6' : ''
+                    }`}
                 />
               </button>
             </div>
@@ -116,11 +113,10 @@ export default function Settings() {
                   <button
                     key={density}
                     onClick={() => handleUpdate('dataDensity', density)}
-                    className={`px-4 py-2 text-xs font-['Space_Grotesk'] font-bold uppercase tracking-wider transition-all ${
-                      settings.dataDensity === density
+                    className={`px-4 py-2 text-xs font-['Space_Grotesk'] font-bold uppercase tracking-wider transition-all ${settings.dataDensity === density
                         ? 'bg-[var(--theme-accent)] text-white'
                         : 'text-white/40 hover:text-white/70 hover:bg-white/5'
-                    }`}
+                      }`}
                   >
                     {density}
                   </button>
@@ -145,14 +141,12 @@ export default function Settings() {
               </div>
               <button
                 onClick={() => handleUpdate('autoRefresh', !settings.autoRefresh)}
-                className={`relative w-14 h-8 rounded-full transition-colors duration-200 ${
-                  settings.autoRefresh ? 'bg-[var(--theme-accent)]' : 'bg-white/10'
-                }`}
+                className={`relative w-14 h-8 rounded-full transition-colors duration-200 ${settings.autoRefresh ? 'bg-[var(--theme-accent)]' : 'bg-white/10'
+                  }`}
               >
                 <div
-                  className={`absolute top-1 left-1 w-6 h-6 bg-white rounded-full transition-transform duration-200 ${
-                    settings.autoRefresh ? 'translate-x-6' : ''
-                  }`}
+                  className={`absolute top-1 left-1 w-6 h-6 bg-white rounded-full transition-transform duration-200 ${settings.autoRefresh ? 'translate-x-6' : ''
+                    }`}
                 />
               </button>
             </div>
@@ -173,11 +167,10 @@ export default function Settings() {
                     <button
                       key={opt.value}
                       onClick={() => handleUpdate('refreshInterval', opt.value)}
-                      className={`px-4 py-2 text-xs font-['Space_Grotesk'] font-bold uppercase tracking-wider transition-all ${
-                        settings.refreshInterval === opt.value
+                      className={`px-4 py-2 text-xs font-['Space_Grotesk'] font-bold uppercase tracking-wider transition-all ${settings.refreshInterval === opt.value
                           ? 'bg-[var(--theme-accent)] text-white'
                           : 'text-white/40 hover:text-white/70 hover:bg-white/5'
-                      }`}
+                        }`}
                     >
                       {opt.label}
                     </button>
@@ -197,11 +190,10 @@ export default function Settings() {
                   <button
                     key={unit}
                     onClick={() => handleUpdate('units', unit)}
-                    className={`px-5 py-2 text-xs font-['Space_Grotesk'] font-bold uppercase tracking-wider transition-all ${
-                      settings.units === unit
+                    className={`px-5 py-2 text-xs font-['Space_Grotesk'] font-bold uppercase tracking-wider transition-all ${settings.units === unit
                         ? 'bg-[var(--theme-accent)] text-white'
                         : 'text-white/40 hover:text-white/70 hover:bg-white/5'
-                    }`}
+                      }`}
                   >
                     {unit}
                   </button>
@@ -263,8 +255,8 @@ export default function Settings() {
               </div>
             </div>
             <p className="text-white/30 text-xs leading-relaxed mt-4">
-              F1 Stats provides real-time Formula 1 standings, race results, and driver analytics. 
-              Data is sourced from the Jolpica F1 API (open-source Ergast successor). 
+              F1 Stats provides real-time Formula 1 standings, race results, and driver analytics.
+              Data is sourced from the Jolpica F1 API (open-source Ergast successor).
               Not affiliated with Formula 1, FIA, or any racing team.
             </p>
           </div>
@@ -275,11 +267,10 @@ export default function Settings() {
       <div className="mt-8 flex flex-col sm:flex-row gap-4 items-start">
         <button
           onClick={handleSave}
-          className={`px-10 py-4 font-headline font-bold italic uppercase text-sm tracking-wider transition-all duration-200 active:scale-95 ${
-            saved
+          className={`px-10 py-4 font-headline font-bold italic uppercase text-sm tracking-wider transition-all duration-200 active:scale-95 ${saved
               ? 'bg-green-600 text-white'
               : 'bg-[var(--theme-accent)] text-white hover:brightness-110'
-          }`}
+            }`}
         >
           {saved ? '✓ SAVED' : 'SAVE PREFERENCES'}
         </button>

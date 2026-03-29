@@ -6,6 +6,7 @@
   :root {
     --theme-accent: #E10600;
   }
+
   body {
     @apply bg-background text-on-surface font-body selection:bg-primary-container selection:text-on-primary-container overflow-x-hidden;
     -webkit-font-smoothing: antialiased;
@@ -23,15 +24,18 @@
     width: 4px;
     height: 4px;
   }
+
   ::-webkit-scrollbar-track {
     background: #13131b;
   }
+
   ::-webkit-scrollbar-thumb {
     background: var(--theme-accent);
   }
 }
 
 @layer components {
+
   /* Material Icons */
   .material-symbols-outlined {
     font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
@@ -50,6 +54,7 @@
   .no-scrollbar::-webkit-scrollbar {
     display: none;
   }
+
   .no-scrollbar {
     -ms-overflow-style: none;
     scrollbar-width: none;
@@ -57,35 +62,61 @@
 }
 
 @layer utilities {
+
   /* Keep animations from previous */
   .animate-search-in {
     animation: searchIn 0.2s ease-out;
   }
+
   @keyframes searchIn {
-    from { opacity: 0; transform: translateY(-10px) scale(0.98); }
-    to { opacity: 1; transform: translateY(0) scale(1); }
+    from {
+      opacity: 0;
+      transform: translateY(-10px) scale(0.98);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
   }
 
   .animate-page-in {
     animation: pageIn 0.4s ease-out;
   }
+
   @keyframes pageIn {
-    from { opacity: 0; transform: translateY(8px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
   .animate-card-in {
     animation: cardIn 0.5s ease-out both;
   }
+
   @keyframes cardIn {
-    from { opacity: 0; transform: translateY(20px) scale(0.97); }
-    to { opacity: 1; transform: translateY(0) scale(1); }
+    from {
+      opacity: 0;
+      transform: translateY(20px) scale(0.97);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
   }
 
   /* Hover Effects */
   .hover-lift {
     transition: transform 0.3s ease, box-shadow 0.3s ease;
   }
+
   .hover-lift:hover {
     transform: translateY(-6px);
   }

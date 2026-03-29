@@ -53,11 +53,10 @@ export default function TopNavBar() {
 
   return (
     <>
-      <header className={`fixed top-0 w-full z-50 h-16 flex justify-between items-center px-4 md:px-8 transition-all duration-300 ${
-        scrolled
+      <header className={`fixed top-0 w-full z-50 h-16 flex justify-between items-center px-4 md:px-8 transition-all duration-300 ${scrolled
           ? 'bg-[#13131b]/95 backdrop-blur-xl shadow-lg border-b border-[var(--theme-accent)]/10'
           : 'bg-[#13131b]/70 backdrop-blur-xl border-b border-[var(--theme-accent)]/10'
-      }`}>
+        }`}>
         <div className="flex items-center space-x-4">
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -77,11 +76,10 @@ export default function TopNavBar() {
             <Link
               key={link.to}
               to={link.to}
-              className={`transition-colors py-1 ${
-                pathname === link.to || (link.to === '/drivers' && pathname.startsWith('/driver'))
+              className={`transition-colors py-1 ${pathname === link.to || (link.to === '/drivers' && pathname.startsWith('/driver'))
                   ? 'text-[var(--theme-accent)]'
                   : 'text-[#c7c6ca] hover:text-[#e4e1ee]'
-              }`}
+                }`}
             >
               {link.label}
             </Link>
@@ -119,11 +117,10 @@ export default function TopNavBar() {
               <Link
                 key={link.to}
                 to={link.to}
-                className={`flex items-center space-x-4 p-4 rounded-lg transition-colors ${
-                  pathname === link.to || (link.to === '/drivers' && pathname.startsWith('/driver'))
+                className={`flex items-center space-x-4 p-4 rounded-lg transition-colors ${pathname === link.to || (link.to === '/drivers' && pathname.startsWith('/driver'))
                     ? 'bg-[#1b1b24] text-[var(--theme-accent)] border-l-2 border-[var(--theme-accent)]'
                     : 'text-[#c7c6ca] hover:bg-[#1b1b24]/50 hover:text-[#e4e1ee]'
-                }`}
+                  }`}
               >
                 <span className="material-symbols-outlined">{link.icon}</span>
                 <span className="font-['Space_Grotesk'] text-sm uppercase tracking-widest font-bold">
