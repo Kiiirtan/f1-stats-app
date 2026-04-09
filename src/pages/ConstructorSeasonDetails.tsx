@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { fetchConstructorSeasonDetails, ConstructorSeasonDetailsData } from '../data/api';
+import { useSettings } from '../context/SettingsContext';
 import DataState from '../components/ui/DataState';
+import { useDocumentMeta } from '../hooks/useDocumentMeta';
 
-const StatBox = ({ label, value, color = '#66FCF1' }: { label: string; value: string | number; color?: string }) => (
-  <div className="bg-surface-container-low border border-outline-variant/10 p-6 backdrop-blur-sm relative overflow-hidden group">
+const StatBox = ({ label, value, color = '#66FCF1', glass = false }: { label: string; value: string | number; color?: string; glass?: boolean }) => (
+  <div className={`border p-6 backdrop-blur-sm relative overflow-hidden group ${glass ? 'bg-black/10 border-white/20 rounded-2xl shadow-lg' : 'bg-surface-container-low border-outline-variant/10'}`}>
     <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-br from-white/5 to-transparent transform rotate-45 translate-x-8 -translate-y-8" />
     <span className="font-label text-[10px] tracking-widest uppercase text-on-surface-variant block mb-2">{label}</span>
     <span className="font-headline text-4xl font-bold" style={{ color }}>{value}</span>
@@ -14,8 +16,11 @@ const StatBox = ({ label, value, color = '#66FCF1' }: { label: string; value: st
 function ConstructorSeasonDetails() {
   const { id, year } = useParams<{ id: string; year: string }>();
   const [details, setDetails] = useState<ConstructorSeasonDetailsData | null>(null);
+  useDocumentMeta(details ? `${details.name} – ${details.year} Season` : 'Season Data', 'Detailed performance telemetry for F1 constructors across historical seasons.');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { settings } = useSettings();
+  const glass = settings.glassMorphism;
 
   useEffect(() => {
     async function loadData() {
@@ -37,7 +42,7 @@ function ConstructorSeasonDetails() {
 
   if (loading) {
     return (
-      <div className="min-h-screen pt-32 pb-16 flex justify-center items-center">
+      <div className="min-h-screen pt-20 pb-16 flex justify-center items-center">
         <div className="w-16 h-16 border-4 border-on-surface-variant/20 border-t-primary rounded-full animate-spin"></div>
       </div>
     );
@@ -45,7 +50,7 @@ function ConstructorSeasonDetails() {
 
   if (error) {
     return (
-      <div className="pt-24 min-h-screen flex items-center justify-center">
+      <div className="pt-20 min-h-screen flex items-center justify-center">
         <DataState type="error" onAction={() => window.location.reload()} />
       </div>
     );
@@ -53,7 +58,7 @@ function ConstructorSeasonDetails() {
 
   if (!details) {
     return (
-      <div className="pt-24 min-h-screen flex items-center justify-center">
+      <div className="pt-20 min-h-screen flex items-center justify-center">
         <DataState 
           type="not-found" 
           title="NO SEASON DATA"
@@ -79,7 +84,7 @@ function ConstructorSeasonDetails() {
         className="relative pt-32 pb-24 px-6 md:px-8 min-h-[50vh] flex flex-col justify-end bg-cover bg-center"
         style={heroStyle}
       >
-        <Link to={`/constructor/${id}`} className="absolute top-24 left-6 md:left-8 flex items-center gap-2 text-on-surface hover:text-white transition-colors text-sm font-label uppercase tracking-widest z-10 p-2 bg-black/40 backdrop-blur-sm border border-white/10">
+        <Link to={`/constructor/${id}`} className={`absolute top-24 left-6 md:left-8 flex items-center gap-2 text-on-surface hover:text-white transition-colors text-sm font-label uppercase tracking-widest z-10 p-2 border ${glass ? 'bg-black/40 backdrop-blur-md border-white/20 rounded-xl' : 'bg-black/40 backdrop-blur-sm border-white/10'}`}>
           <span className="material-symbols-outlined text-sm">arrow_back</span>
           Back to Profile
         </Link>
@@ -88,7 +93,7 @@ function ConstructorSeasonDetails() {
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
             <div>
               <div className="flex items-center gap-4 mb-4">
-                <span className="px-3 py-1 bg-surface-container/60 backdrop-blur-sm border border-outline-variant/20 text-xs font-bold uppercase tracking-widest">
+                <span className={`px-3 py-1 backdrop-blur-sm border text-xs font-bold uppercase tracking-widest ${glass ? 'bg-black/40 border-white/20 rounded-lg' : 'bg-surface-container/60 border-outline-variant/20'}`}>
                   {details.year} Season
                 </span>
                 {details.position === 1 && (
@@ -106,7 +111,7 @@ function ConstructorSeasonDetails() {
               </p>
             </div>
             
-            <div className="flex gap-8 text-right bg-surface-container/40 p-6 backdrop-blur-md border border-white/10">
+            <div className={`flex gap-8 text-right p-6 backdrop-blur-md border ${glass ? 'bg-white/5 border-white/20 rounded-2xl' : 'bg-surface-container/40 border-white/10'}`}>
               <div>
                 <span className="block text-[10px] font-label uppercase tracking-widest text-on-surface-variant mb-1">Final Position</span>
                 <span className="text-4xl font-headline font-bold text-white">P{details.position}</span>
@@ -159,7 +164,7 @@ function ConstructorSeasonDetails() {
 
             <div className="space-y-4">
               {details.drivers.sort((a,b) => a.position - b.position).map((driver, idx) => (
-                <div key={driver.driverId} className="group bg-surface-container-low border border-outline-variant/10 hover:border-outline-variant/30 transition-all duration-300 relative overflow-hidden">
+                <div key={driver.driverId} className={`group border transition-all duration-300 relative overflow-hidden ${glass ? 'bg-black/10 backdrop-blur-md border-white/20 rounded-2xl hover:bg-black/20' : 'bg-surface-container-low border-outline-variant/10 hover:border-outline-variant/30'}`}>
                    {/* Driver Accent Bar */}
                    <div 
                     className="absolute left-0 top-0 bottom-0 w-1 opacity-50 group-hover:opacity-100 transition-opacity"

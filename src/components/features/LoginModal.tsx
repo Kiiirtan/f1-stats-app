@@ -7,7 +7,7 @@ interface Props {
 }
 
 export default function LoginModal({ open, onClose }: Props) {
-  const { login, register } = useAuth();
+  const { signIn, signUp } = useAuth();
   const [mode, setMode] = useState<'login' | 'register'>('login');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -19,11 +19,11 @@ export default function LoginModal({ open, onClose }: Props) {
     setError('');
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
 
-    const result = mode === 'login' ? login(username, password) : register(username, password);
+    const result = mode === 'login' ? await signIn(username, password) : await signUp(username, password);
 
     if (result.success) {
       resetForm();

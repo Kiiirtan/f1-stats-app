@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 
 export default function Footer() {
   return (
-    <footer className="lg:ml-64 w-full border-t border-[#1b1b24] py-12 bg-[#0d0d16] flex flex-col items-center justify-center space-y-8 px-4 mt-auto">
+    <footer className="lg:ml-20 w-full border-t border-[#1b1b24] py-12 bg-[#0d0d16] flex flex-col items-center justify-center space-y-8 px-4 mt-auto">
       <div className="text-lg font-black text-[var(--theme-accent)]">F1 STATS</div>
       <div className="flex flex-wrap justify-center gap-8">
         <Link to="/privacy" className="font-['Inter'] text-[10px] uppercase tracking-[0.2em] text-[#c7c6ca] hover:text-[var(--theme-accent)] transition-colors">Privacy Policy</Link>

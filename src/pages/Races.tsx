@@ -1,12 +1,18 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { fetchRaceCalendar, type Race } from '../data/api';
+import { useSettings } from '../context/SettingsContext';
 import DataState from '../components/ui/DataState';
+import { RacesSkeleton } from '../components/ui/SkeletonLoader';
+import { useDocumentMeta } from '../hooks/useDocumentMeta';
 
 export default function Races() {
+  useDocumentMeta('Race Archive', 'Historical F1 race archives, round-by-round results, and seasonal performance.');
   const [calendar, setCalendar] = useState<Race[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { settings } = useSettings();
+  const glass = settings.glassMorphism;
 
   useEffect(() => {
     let mounted = true;
@@ -29,23 +35,19 @@ export default function Races() {
   const upcomingRaces = calendar.filter((r) => !r.completed && r.round !== nextRace?.round);
 
   if (loading) {
-    return (
-      <div className="pt-24 md:pt-32 pb-20 flex justify-center items-center min-h-[50vh]">
-        <div className="w-16 h-1 bg-[var(--theme-accent)] animate-pulse"></div>
-      </div>
-    );
+    return <RacesSkeleton />;
   }
 
   if (error) {
     return (
-      <div className="pt-24 min-h-screen flex items-center justify-center">
+      <div className="pt-20 min-h-screen flex items-center justify-center">
         <DataState type="error" onAction={() => window.location.reload()} />
       </div>
     );
   }
 
   return (
-    <div className="pt-24 md:pt-32 pb-20 px-6 md:px-12 max-w-[1600px] mx-auto w-full">
+    <div className="pt-20 pb-20 px-6 md:px-12 max-w-[1600px] mx-auto w-full">
       {/* Header Section */}
       <header className="mb-16">
         <h1 className="text-5xl md:text-8xl font-black italic uppercase headline-font tracking-tighter leading-none mb-4 text-on-surface">
@@ -63,7 +65,7 @@ export default function Races() {
       {/* Next Race Highlight */}
       {nextRace && (
         <section className="mb-20">
-          <div className="relative group bg-surface-container border-l-8 border-[#ffb4a8] overflow-hidden transition-all duration-500 hover:shadow-[0_0_50px_rgba(180,197,255,0.1)] min-h-[400px]">
+          <div className={`relative group border-l-8 border-[#ffb4a8] overflow-hidden transition-all duration-500 hover:shadow-[0_0_50px_rgba(180,197,255,0.1)] min-h-[400px] ${glass ? 'bg-transparent backdrop-blur-[2px] border border-white/20 rounded-[2rem] shadow-lg' : 'bg-surface-container'}`}>
             <div className="absolute inset-0 opacity-40 group-hover:opacity-50 transition-opacity">
               <img alt="Next Race Background" className="w-full h-full object-cover grayscale brightness-[0.4]" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDSeUPhrB9vGtuFqo7zlV2FWbGRwoNnWz5spgDz8YiGA1BcJrFb2vt4iEclkJGNbjIpNCFuaYqKoZm56ES8HW5_1kwKbIQ_tmd0-WCNcFVxxvU5IfZpZFKIuguYH7quVWpRJLhtDEDEfkbYfND22S7qY8NObqyxbjAmURP42cHlB-OGwiKOpizsCU2At1pys84RoHd5o4-5Y8B0eNJGSOFw-YK03a4j5rfXiNINz2JwKkCXdZUNdyzF9vZw6osyPrGUiP48fE9Ea28" />
             </div>
@@ -118,7 +120,7 @@ export default function Races() {
               <Link 
                 key={race.round} 
                 to={`/results?round=${race.round}`} 
-                className="group relative bg-surface-container-low transition-all duration-500 hover:bg-surface-container overflow-hidden border border-white/5 block"
+                className={`group relative transition-all duration-500 overflow-hidden border block ${glass ? 'bg-black/10 backdrop-blur-sm border-white/20 rounded-xl hover:bg-black/20 hover:border-white/40' : 'bg-surface-container-low border-white/5 hover:bg-surface-container'}`}
               >
                 <div className="absolute inset-0 opacity-10 group-hover:opacity-20 transition-opacity">
                   <div className="w-full h-full bg-black/50"></div>
@@ -162,7 +164,7 @@ export default function Races() {
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px bg-outline-variant/20 border border-outline-variant/20">
             {upcomingRaces.slice(0, 7).map((race) => (
-              <div key={race.round} className="bg-surface-container-low p-8 opacity-60 hover:opacity-100 transition-all duration-300 group relative overflow-hidden border-l-2 border-primary-container/0 hover:border-primary-container">
+              <div key={race.round} className={`p-8 opacity-60 hover:opacity-100 transition-all duration-300 group relative overflow-hidden border-l-2 border-primary-container/0 hover:border-primary-container ${glass ? 'bg-black/10 backdrop-blur-sm' : 'bg-surface-container-low'}`}>
                 <div className="relative z-10">
                   <div className="flex justify-between items-start mb-6">
                     <span className="headline-font font-black italic text-4xl text-on-surface opacity-10">

@@ -1,4 +1,4 @@
-# F1 STATS - Pitch Deck Presentation
+# F1 Stats — Pitch Deck Presentation
 
 **Lead Developer:** Kirtan Patidar
 
@@ -22,9 +22,14 @@ Current F1 data websites suffer from severe UX bloat. They are plagued by ad-clu
 # Key Product Features
 
 - **Live Driver & Constructor Standings:** Updating ~2hrs after the chequered flag.
-- **Real-Time Global News:** Direct RSS syndication ensuring fans get breaking news instantly.
-- **Deep Historical Context:** Unprecedented season-by-season breakdowns and driver analytics.
-- **Premium UI/UX:** Built on "Geist-inspired" brutalist dark-mode principles, using heavy contrast, semantic coloring, and high-fidelity racing photography.
+- **Real-Time Global News:** Direct RSS syndication via RSS2JSON ensuring fans get breaking news instantly.
+- **Deep Historical Context:** Unprecedented season-by-season breakdowns and driver/constructor career analytics.
+- **Circuit Encyclopedia:** Full circuit browser with race history, podium records, and physical track specs.
+- **Season Calendar:** Detailed schedules with FP1, Qualifying, Sprint, and Race session times.
+- **Driver Career Stats:** Championships, wins, poles, and full season-by-season history for every driver.
+- **Premium UI/UX:** Built on Material Design 3 dark-mode principles with heavy contrast, semantic coloring, and high-fidelity racing photography.
+- **Zero-Downtime Architecture:** Supabase database fallback + GitHub Actions CRON ensures data availability even when APIs are down.
+- **Settings & Personalization:** Theme (Dark/Light), accent colors, animation preferences, and default page configuration.
 
 ![News Feed Layout](./assets/news_feed.png)
 
@@ -34,23 +39,45 @@ Current F1 data websites suffer from severe UX bloat. They are plagued by ad-clu
 The platform isn't just a list of numbers; it visualizes the history of the sport.
 Below is the highly detailed **Constructor Season Dashboard**, parsing and displaying the exact point contribution and final position of every driver for a specific historical team lineup.
 
+Additionally, the **Driver Profile** pages feature full career analytics — tracking championships, wins, poles, and season-by-season performance across the driver's entire career (fetched dynamically from per-season API endpoints).
+
 ![Constructor Season Details](./assets/season_details.png)
 
 ---
 # Technical Architecture
 
-Our stack is built for **speed, scale, and extremely low latency**.
+Our stack is built for **speed, scale, and extremely low latency** with **zero-downtime data resilience**.
 
 ```mermaid
 graph TD
     User([End User]) --> |HTTPS / React| Frontend(F1 Stats Frontend<br/>Vite + React.js + Tailwind)
-    
+
     Frontend --> |Fetch Race Data| Jolpica(Jolpica API<br/>Ergast Successor)
-    Frontend --> |Fetch Live News| CORSProxy(AllOrigins Proxy)
+    Frontend --> |Fetch Live News| RSS2JSON(RSS2JSON Proxy)
     Frontend --> |Fetch Imagery| Assets(Wikimedia / Unsplash CDN)
-    
-    CORSProxy -.-> |RSS XML| Motorsport(Motorsport.com)
+    Frontend --> |DB Fallback| Supabase(Supabase PostgreSQL<br/>api_cache table)
+
+    RSS2JSON -.-> |RSS XML| Motorsport(Motorsport.com)
     Jolpica -.-> |Database| FIA(FIA Official Timing Data)
+
+    GHA([GitHub Actions<br/>CRON every 30 min]) --> |sync script| Supabase
+    GHA --> |fetch data| Jolpica
+```
+
+---
+# Data Resilience Strategy
+
+F1 Stats implements a **3-tier fallback** to ensure zero downtime:
+
+```mermaid
+graph LR
+    A[In-Memory Cache<br/>5 min TTL] -->|miss| B[Jolpica F1 API<br/>3 retries + backoff]
+    B -->|success| C[Return + Sync to Supabase]
+    B -->|all fail| D[Stale in-memory cache?]
+    D -->|yes| E[Return stale data]
+    D -->|no| F[Supabase DB fallback]
+    F -->|has data| G[Return + populate cache]
+    F -->|no data| H[Show error to user]
 ```
 
 ---
@@ -59,7 +86,7 @@ graph TD
 How does F1 Stats generate revenue in the future?
 
 1. **Freemium Pro Tier (B2C):**
-   - **Free:** Current standings, news, basic constructor profiles.
+   - **Free:** Current standings, news, basic constructor profiles, settings.
    - **Pro ($3/mo):** In-depth telemetry, advanced Head-to-Head driver comparison charts, and ad-free live session timing.
 2. **Affiliate & Partner Integrations (B2B):**
    - Integrating seamless affiliate links for F1 Merchandise, Ticket Sales (e.g., F1 Experiences), and sim-racing gear.
@@ -69,15 +96,18 @@ How does F1 Stats generate revenue in the future?
 ---
 # SWOT Analysis
 
-### Pros (Strengths)
+### Strengths
 - **Lightning Fast:** SPA architecture means instant page transitions.
-- **Zero Operating Cost:** Relies on free, robust open-source APIs (Jolpica).
+- **Zero Operating Cost:** Relies on free, robust open-source APIs (Jolpica) with Supabase free tier for fallback.
+- **Zero Downtime:** 3-tier data fallback (cache → Supabase → error) ensures consistent availability.
 - **Stunning UI:** Differentiator in a market of boring, spreadsheet-like sports websites.
+- **Comprehensive Data:** 18+ pages covering drivers, constructors, circuits, calendar, news, and settings.
 
-### Cons (Weaknesses)
-- **API Dependency:** Reliant on third-party uptime (Jolpica F1 API). If they go down, live-timing goes down.
+### Weaknesses
+- **API Dependency:** Reliant on third-party uptime (Jolpica F1 API), mitigated by Supabase fallback.
 - **Image Licensing:** Relying on Wikipedia Creative Commons limits exclusive branding.
 - **No Official Telemetry:** We lack live-lap GPS data without paying exorbitant FIA commercial fees.
+- **Client-Side Rendering:** SEO limited without SSR migration.
 
 ---
 # The Future Roadmap
@@ -87,10 +117,10 @@ What's next for F1 Stats?
 ```mermaid
 timeline
     title Product Scaling Timeline
-    Phase 1 : Launch MVP : Core Standings : Live News Feed
-    Phase 2 : Advanced Analytics : Driver Head-to-Head Compare : Circuit Maps & Weather API
-    Phase 3 : Social & User Auth : User Accounts : "My Favorite Team" Dashboard
-    Phase 4 : Commercialization : Pro Tier Launch : Native iOS/Android App (React Native)
+    Phase 1 : Launch MVP : Core Standings : Live News Feed : Settings
+    Phase 2 : Advanced Analytics : Driver Head-to-Head Compare : Circuit Maps & Weather API : Qualifying Results
+    Phase 3 : Social & User Auth : User Accounts : "My Favorite Team" Dashboard : Push Notifications
+    Phase 4 : Commercialization : Pro Tier Launch : Native iOS/Android App (React Native) : Self-Hosted CDN
 ```
 
-**Conclusion:** F1 Stats represents the pinnacle of modern sports data visualization. It is lean, beautiful, and ready to scale to millions of passionate racing fans.
+**Conclusion:** F1 Stats represents the pinnacle of modern sports data visualization. It is lean, beautiful, resilient, and ready to scale to millions of passionate racing fans.

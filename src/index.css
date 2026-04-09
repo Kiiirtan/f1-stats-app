@@ -41,10 +41,135 @@
     font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
   }
 
-  /* Glass Effects */
-  .bg-glass {
+  /* ═══════════════════════════════════════════════════════════════════════════
+     GLASS EFFECTS — scoped behind html.glass-enabled / html.glass-disabled
+     ═══════════════════════════════════════════════════════════════════════════ */
+
+  /* ── Glass ON ─────────────────────────────────────────────────────────────── */
+  html.glass-enabled .bg-glass {
+    background: rgba(19, 19, 27, 0.4);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  html.glass-enabled .bg-glass-heavy {
+    background: linear-gradient(145deg, rgba(27, 27, 36, 0.6) 0%, rgba(13, 13, 22, 0.8) 100%);
+    backdrop-filter: blur(40px);
+    -webkit-backdrop-filter: blur(40px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  }
+
+  html.glass-enabled .glass-card {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+  }
+
+  html.glass-enabled .bg-surface-container {
+    background: rgba(0, 0, 0, 0.12) !important;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  html.glass-enabled .bg-surface-container-low {
+    background: rgba(0, 0, 0, 0.10) !important;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+
+  html.glass-enabled .bg-surface-container-high {
+    background: rgba(0, 0, 0, 0.18) !important;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  html.glass-enabled .bg-surface-container-highest {
+    background: rgba(0, 0, 0, 0.22) !important;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  html.glass-enabled .hover\:bg-surface-container-high:hover {
+    background: rgba(0, 0, 0, 0.28) !important;
+  }
+
+  html.glass-enabled .hover\:bg-surface-container:hover {
+    background: rgba(0, 0, 0, 0.20) !important;
+  }
+
+  /* ── Glass OFF — solid dark backgrounds, no blur ──────────────────────────── */
+  html.glass-disabled .bg-glass {
+    background: rgba(19, 19, 27, 0.95);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  html.glass-disabled .bg-glass-heavy {
+    background: linear-gradient(145deg, rgba(27, 27, 36, 0.95) 0%, rgba(13, 13, 22, 0.98) 100%);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  }
+
+  html.glass-disabled .glass-card {
+    background: rgba(30, 30, 40, 0.95);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+  }
+
+  html.glass-disabled .bg-surface-container {
+    background: rgba(25, 25, 35, 0.95) !important;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  html.glass-disabled .bg-surface-container-low {
+    background: rgba(20, 20, 30, 0.95) !important;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  html.glass-disabled .bg-surface-container-high {
+    background: rgba(30, 30, 42, 0.95) !important;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  html.glass-disabled .bg-surface-container-highest {
+    background: rgba(35, 35, 48, 0.95) !important;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  html.glass-disabled .hover\:bg-surface-container-high:hover {
+    background: rgba(40, 40, 55, 0.95) !important;
+  }
+
+  html.glass-disabled .hover\:bg-surface-container:hover {
+    background: rgba(35, 35, 48, 0.95) !important;
+  }
+
+  /* ═══════════════════════════════════════════════════════════════════════════
+     Glow & utility classes (always active)
+     ═══════════════════════════════════════════════════════════════════════════ */
+
+  .glow-border-red {
+    border: 1px solid rgba(225, 6, 0, 0.3);
+    box-shadow: 0 0 15px rgba(225, 6, 0, 0.2), inset 0 0 15px rgba(225, 6, 0, 0.1);
+  }
+
+  .glow-border-red-active {
+    border: 1px solid rgba(225, 6, 0, 0.6);
+    box-shadow: 0 0 25px rgba(225, 6, 0, 0.4), inset 0 0 20px rgba(225, 6, 0, 0.2);
+    background: linear-gradient(180deg, rgba(225, 6, 0, 0.1) 0%, rgba(13, 13, 22, 0.8) 100%);
   }
 
   .text-glow {
@@ -112,6 +237,11 @@
     }
   }
 
+  /* ── 3D Flip Nav Item ──────────────────────────────────────────────────────── */
+  .flip-nav-item:hover .flip-nav-inner {
+    transform: rotateY(180deg);
+  }
+
   /* Hover Effects */
   .hover-lift {
     transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -119,5 +249,88 @@
 
   .hover-lift:hover {
     transform: translateY(-6px);
+  }
+
+  /* ── Skeleton Shimmer System (GPU-accelerated) ───────────────────────────── */
+  .skeleton-glass {
+    @apply relative overflow-hidden bg-white/[0.03] border border-white/10 rounded-[2rem];
+  }
+
+  .skeleton-glass::after {
+    content: '';
+    @apply absolute inset-0 -translate-x-full;
+    background: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 0.06) 50%,
+      rgba(255, 255, 255, 0) 100%
+    );
+    animation: shimmer 1.8s infinite ease-in-out;
+    will-change: transform;
+    z-index: 1;
+  }
+
+  /* Individual skeleton bone element */
+  .skeleton-bone {
+    @apply relative overflow-hidden bg-white/[0.06];
+    animation: skeleton-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  .skeleton-bone::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.08) 40%,
+      rgba(255, 255, 255, 0.12) 50%,
+      rgba(255, 255, 255, 0.08) 60%,
+      transparent 100%
+    );
+    animation: shimmer 1.8s infinite ease-in-out;
+    will-change: transform;
+  }
+
+  @keyframes shimmer {
+    100% {
+      transform: translateX(100%);
+    }
+  }
+
+  @keyframes skeleton-pulse {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.5;
+    }
+  }
+
+  /* ── Tactile Hover Glow Flare ────────────────────────────────────────────── */
+  .hover-glow-flare {
+    position: relative;
+    transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+  }
+
+  .hover-glow-flare::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    background: linear-gradient(135deg, rgba(225, 6, 0, 0.4) 0%, transparent 40%, rgba(225, 6, 0, 0.1) 100%);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    z-index: -1;
+    pointer-events: none;
+  }
+
+  .hover-glow-flare:hover {
+    transform: translateY(-4px) scale(1.02);
+  }
+
+  .hover-glow-flare:hover::before {
+    opacity: 1;
   }
 }

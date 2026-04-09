@@ -1,9 +1,14 @@
 import PageTransition from '../components/ui/PageTransition';
 import { useState } from 'react';
+import { useSettings } from '../context/SettingsContext';
+import { useDocumentMeta } from '../hooks/useDocumentMeta';
 
 export default function Contact() {
+  useDocumentMeta('Contact', 'Get in touch with the F1 Stats development team.');
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
+  const { settings } = useSettings();
+  const glass = settings.glassMorphism;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -39,13 +44,13 @@ export default function Contact() {
   };
   return (
     <PageTransition>
-      <div className="pt-24 md:pt-32 pb-20 px-6 md:px-12 max-w-4xl mx-auto w-full">
+      <div className="pt-20 pb-20 px-6 md:px-12 max-w-4xl mx-auto w-full">
         <header className="mb-12">
           <span className="font-['Space_Grotesk'] font-bold italic uppercase tracking-[0.3em] text-[var(--theme-accent)] text-xs mb-2 block">Reach Out</span>
           <h1 className="f1-heading text-4xl sm:text-5xl md:text-7xl text-white leading-tight">CONTACT US</h1>
         </header>
 
-        <section className="bg-surface-container-highest px-6 md:px-12 py-10 md:py-12 relative overflow-hidden group">
+        <section className={`px-6 md:px-12 py-10 md:py-12 relative overflow-hidden group ${glass ? 'bg-transparent backdrop-blur-[2px] border border-white/20 rounded-[2rem] shadow-lg' : 'bg-surface-container-highest'}`}>
           <div className="absolute inset-0 bg-gradient-to-br from-[var(--theme-accent)]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"></div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 relative z-10">
@@ -81,7 +86,7 @@ export default function Contact() {
                   required
                   value={formData.name}
                   onChange={(e) => setFormData({...formData, name: e.target.value})}
-                  className="w-full bg-[#1b1b24] border border-white/10 p-3 text-white focus:outline-none focus:border-[var(--theme-accent)] transition-colors" 
+                  className={`w-full border border-white/10 p-3 text-white focus:outline-none focus:border-[var(--theme-accent)] transition-colors ${glass ? 'bg-black/20 backdrop-blur-md rounded-lg' : 'bg-[#1b1b24]'}`} 
                   placeholder="Kirtan" 
                 />
               </div>
@@ -92,7 +97,7 @@ export default function Contact() {
                   required
                   value={formData.email}
                   onChange={(e) => setFormData({...formData, email: e.target.value})}
-                  className="w-full bg-[#1b1b24] border border-white/10 p-3 text-white focus:outline-none focus:border-[var(--theme-accent)] transition-colors" 
+                  className={`w-full border border-white/10 p-3 text-white focus:outline-none focus:border-[var(--theme-accent)] transition-colors ${glass ? 'bg-black/20 backdrop-blur-md rounded-lg' : 'bg-[#1b1b24]'}`} 
                   placeholder="Kirtan@mclaren.com" 
                 />
               </div>
@@ -103,7 +108,7 @@ export default function Contact() {
                   required
                   value={formData.message}
                   onChange={(e) => setFormData({...formData, message: e.target.value})}
-                  className="w-full bg-[#1b1b24] border border-white/10 p-3 text-white focus:outline-none focus:border-[var(--theme-accent)] transition-colors resize-none" 
+                  className={`w-full border border-white/10 p-3 text-white focus:outline-none focus:border-[var(--theme-accent)] transition-colors resize-none ${glass ? 'bg-black/20 backdrop-blur-md rounded-lg' : 'bg-[#1b1b24]'}`} 
                   placeholder="We need more downforce..."
                 ></textarea>
               </div>

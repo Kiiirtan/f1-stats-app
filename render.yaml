@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: f1-stats-app
+    env: static
+    buildCommand: npm install && npm run build
+    staticPublishPath: ./dist
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: VITE_SUPABASE_URL
+        sync: false  # You will enter the actual value securely in the Render Dashboard
+      - key: VITE_SUPABASE_ANON_KEY
+        sync: false  # You will enter the actual value securely in the Render Dashboard

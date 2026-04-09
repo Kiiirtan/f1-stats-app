@@ -2,7 +2,10 @@ import { useParams, Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { fetchConstructorProfile, type ConstructorProfileData, type ConstructorSeasonRecord, getNationalityFlag } from '../data/api';
 import { getDriverPortrait } from '../data/driverImages';
+import { getConstructorSpecs } from '../data/constructorDetails';
+import { useSettings } from '../context/SettingsContext';
 import DataState from '../components/ui/DataState';
+import { useDocumentMeta } from '../hooks/useDocumentMeta';
 
 function StatBox({ label, value, color, large }: { label: string; value: string | number; color?: string; large?: boolean }) {
   return (
@@ -21,8 +24,11 @@ function StatBox({ label, value, color, large }: { label: string; value: string 
 export default function ConstructorProfile() {
   const { id } = useParams<{ id: string }>();
   const [profile, setProfile] = useState<ConstructorProfileData | null>(null);
+  useDocumentMeta(profile ? `${profile.name} Profile` : 'Team Profile', 'Official Formula 1 constructor profile, history, and statistics.');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { settings } = useSettings();
+  const glass = settings.glassMorphism;
 
   useEffect(() => {
     let mounted = true;
@@ -46,7 +52,7 @@ export default function ConstructorProfile() {
 
   if (loading) {
     return (
-      <div className="pt-32 pb-20 flex justify-center items-center min-h-[80vh]">
+      <div className="pt-20 pb-20 flex justify-center items-center min-h-[80vh]">
         <div className="flex flex-col items-center gap-6">
           <div className="w-16 h-1 bg-primary-container animate-pulse"></div>
           <span className="font-label text-xs text-on-surface-variant uppercase tracking-widest">Loading team data…</span>
@@ -57,7 +63,7 @@ export default function ConstructorProfile() {
 
   if (error) {
     return (
-      <div className="pt-24 min-h-screen flex items-center justify-center">
+      <div className="pt-20 min-h-screen flex items-center justify-center">
         <DataState type="error" onAction={() => window.location.reload()} />
       </div>
     );
@@ -65,7 +71,7 @@ export default function ConstructorProfile() {
 
   if (!profile) {
     return (
-      <div className="pt-24 min-h-screen flex items-center justify-center">
+      <div className="pt-20 min-h-screen flex items-center justify-center">
         <DataState type="not-found" actionLink="/constructors" actionText="Return to Constructors" />
       </div>
     );
@@ -121,9 +127,16 @@ export default function ConstructorProfile() {
             </div>
           </div>
 
-          <h1 className="font-headline text-5xl md:text-[7rem] font-black italic uppercase leading-[0.85] tracking-tighter mb-10 max-w-5xl">
-            {profile.name}
-          </h1>
+          <div className="flex items-center gap-6 mb-10">
+            {getConstructorSpecs(profile.constructorId).logo && (
+              <div className="bg-white/95 p-3 rounded-2xl shadow-xl flex items-center justify-center border border-white/20">
+                <img src={getConstructorSpecs(profile.constructorId).logo} alt={`${profile.name} Logo`} className="w-16 h-16 md:w-24 md:h-24 object-contain drop-shadow-[0_2px_4px_rgba(0,0,0,0.1)]" />
+              </div>
+            )}
+            <h1 className="font-headline text-5xl md:text-[7rem] font-black italic uppercase leading-[0.85] tracking-tighter max-w-5xl">
+              {profile.name}
+            </h1>
+          </div>
 
           {/* Hero quick-stats */}
           <div className="flex flex-wrap gap-10 mt-8 pt-8 border-t border-white/10">
@@ -144,7 +157,7 @@ export default function ConstructorProfile() {
       </section>
 
       {/* ─── Team Information Panel ─── */}
-      <section className="bg-surface-container px-6 md:px-8 py-20 border-b border-outline-variant/10">
+      <section className={`px-6 md:px-8 py-20 border-b border-outline-variant/10 ${glass ? 'bg-transparent backdrop-blur-[2px]' : 'bg-surface-container'}`}>
         <div className="max-w-[1600px] mx-auto">
           <h2 className="font-headline text-3xl font-bold uppercase tracking-widest border-l-4 pl-6 mb-12" style={{ borderColor: teamColor }}>
             Team Information
@@ -185,7 +198,7 @@ export default function ConstructorProfile() {
       </section>
 
       {/* ─── All-Time Career Statistics ─── */}
-      <section className="bg-surface-container-low px-6 md:px-8 py-20">
+      <section className={`px-6 md:px-8 py-20 ${glass ? 'bg-transparent backdrop-blur-[2px]' : 'bg-surface-container-low'}`}>
         <div className="max-w-[1600px] mx-auto">
           <h2 className="font-headline text-3xl font-bold uppercase tracking-widest border-l-4 pl-6 mb-4" style={{ borderColor: teamColor }}>
             All-Time Record
@@ -203,7 +216,7 @@ export default function ConstructorProfile() {
       </section>
 
       {/* ─── Current Season Stats Grid ─── */}
-      <section className="bg-background px-6 md:px-8 py-20 border-t border-outline-variant/10">
+      <section className={`px-6 md:px-8 py-20 border-t border-outline-variant/10 ${glass ? 'bg-transparent backdrop-blur-[2px]' : 'bg-background'}`}>
         <div className="max-w-[1600px] mx-auto">
           <h2 className="font-headline text-3xl font-bold uppercase tracking-widest border-l-4 pl-6 mb-12" style={{ borderColor: teamColor }}>
             {currentYear} Season
@@ -218,7 +231,7 @@ export default function ConstructorProfile() {
       </section>
 
       {/* ─── Driver Lineup (Current) ─── */}
-      <section className="bg-surface-container px-6 md:px-8 py-24 border-t border-outline-variant/10">
+      <section className={`px-6 md:px-8 py-24 border-t border-outline-variant/10 ${glass ? 'bg-transparent backdrop-blur-[2px]' : 'bg-surface-container'}`}>
         <div className="max-w-[1600px] mx-auto">
           <div className="mb-12">
             <h2 className="font-headline text-3xl font-bold uppercase tracking-widest border-l-4 pl-6" style={{ borderColor: teamColor }}>Driver Lineup</h2>
@@ -269,7 +282,7 @@ export default function ConstructorProfile() {
 
       {/* ─── Previous Season ─── */}
       {profile.previousSeason && (
-        <section className="bg-background px-6 md:px-8 py-24 border-t border-outline-variant/10">
+        <section className={`px-6 md:px-8 py-24 border-t border-outline-variant/10 ${glass ? 'bg-transparent backdrop-blur-[2px]' : 'bg-background'}`}>
           <div className="max-w-[1600px] mx-auto">
             <div className="mb-12">
               <h2 className="font-headline text-3xl font-bold uppercase tracking-widest border-l-4 pl-6" style={{ borderColor: teamColor }}>{profile.previousSeason.year} Season</h2>
@@ -318,7 +331,7 @@ export default function ConstructorProfile() {
 
       {/* ─── Season History Table ─── */}
       {profile.seasonHistory.length > 0 && (
-        <section className="bg-surface-container-low px-6 md:px-8 py-24 border-t border-outline-variant/10">
+        <section className={`px-6 md:px-8 py-24 border-t border-outline-variant/10 ${glass ? 'bg-transparent backdrop-blur-[2px]' : 'bg-surface-container-low'}`}>
           <div className="max-w-[1600px] mx-auto">
             <div className="mb-12">
               <h2 className="font-headline text-3xl font-bold uppercase tracking-widest border-l-4 pl-6" style={{ borderColor: teamColor }}>Season History</h2>

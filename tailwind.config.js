@@ -61,12 +61,20 @@ export default {
         "t-main": "#C5C6C7",
         "t-bright": "#E0E1DD"
       },
+      keyframes: {
+        shimmer: {
+          '0%': { transform: 'translateX(-100%)' },
+          '100%': { transform: 'translateX(100%)' }
+        }
+      },
+      animation: {
+        shimmer: 'shimmer 2s infinite'
+      },
       fontFamily: {
         "headline": ["Space Grotesk", "sans-serif"],
         "body": ["Inter", "sans-serif"],
         "label": ["Space Grotesk", "sans-serif"]
       },
-      borderRadius: { "DEFAULT": "0px", "lg": "0px", "xl": "0px", "full": "9999px" },
       spacing: {
         '18': '4.5rem',
         '22': '5.5rem',
@@ -86,6 +94,9 @@ export default {
         'glow-lg': '0 0 40px rgba(102, 252, 241, 0.35)',
         'card': '0 4px 24px rgba(0, 0, 0, 0.3)',
         'card-hover': '0 12px 40px rgba(0, 0, 0, 0.4), 0 0 30px rgba(102, 252, 241, 0.08)',
+        'glow-red-sm': '0 0 15px rgba(225, 6, 0, 0.3)',
+        'glow-red-md': '0 0 25px rgba(225, 6, 0, 0.5)',
+        'glow-red-lg': '0 0 40px rgba(225, 6, 0, 0.7)',
       },
     }
   },

@@ -1,7 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { fetchRaceResults, type Race } from '../data/api';
+import { useSettings } from '../context/SettingsContext';
 import DataState from '../components/ui/DataState';
+import { ResultsSkeleton } from '../components/ui/SkeletonLoader';
+import { useDocumentMeta } from '../hooks/useDocumentMeta';
 
 const TEAM_COLORS: Record<string, string> = {
   mercedes: '#27F4D2',
@@ -23,10 +26,13 @@ function getTeamColor(teamId: string): string {
 }
 
 export default function Results() {
+  useDocumentMeta('Race Results', 'Detailed F1 race results, classifications, and historical lap-by-lap analytics.');
   const [searchParams, setSearchParams] = useSearchParams();
   const [completedRaces, setCompletedRaces] = useState<Race[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { settings } = useSettings();
+  const glass = settings.glassMorphism;
 
   useEffect(() => {
     let mounted = true;
@@ -47,16 +53,12 @@ export default function Results() {
   const selectedRace = completedRaces.find((r) => r.round === selectedRound) || completedRaces[completedRaces.length - 1];
 
   if (loading) {
-    return (
-      <div className="pt-24 md:pt-32 pb-20 flex justify-center items-center min-h-[50vh]">
-        <div className="w-16 h-1 bg-[var(--theme-accent)] animate-pulse"></div>
-      </div>
-    );
+    return <ResultsSkeleton />;
   }
 
   if (error) {
     return (
-      <div className="pt-24 min-h-screen flex items-center justify-center">
+      <div className="pt-20 min-h-screen flex items-center justify-center">
         <DataState type="error" onAction={() => window.location.reload()} />
       </div>
     );
@@ -64,7 +66,7 @@ export default function Results() {
 
   if (!selectedRace) {
     return (
-      <div className="pt-24 min-h-screen flex items-center justify-center">
+      <div className="pt-20 min-h-screen flex items-center justify-center">
         <DataState 
           type="empty" 
           title="NO RESULTS AVAILABLE" 
@@ -75,9 +77,9 @@ export default function Results() {
   }
 
   return (
-    <div className="max-w-[1600px] mx-auto px-6 py-12 md:py-24 w-full">
+    <div className="max-w-[1600px] mx-auto px-6 pt-20 pb-12 w-full">
       {/* Page Title */}
-      <header className="mb-12 relative flex items-center justify-between">
+      <header className={`mb-12 relative flex items-center justify-between ${glass ? 'bg-transparent backdrop-blur-[2px] border border-white/20 rounded-[2rem] shadow-lg p-8 md:p-12' : ''}`}>
         <div>
           <p className="text-primary-container font-label text-[10px] uppercase tracking-[0.3em] font-bold mb-2">Full Results</p>
           <h1 className="font-headline text-5xl md:text-8xl font-black italic uppercase tracking-tighter leading-none flex items-center gap-4">
@@ -95,17 +97,17 @@ export default function Results() {
       </header>
       
       {/* Race Selector Tabs */}
-      <div className="flex gap-1 overflow-x-auto no-scrollbar mb-8 pb-2">
+      <div className={`flex gap-1 overflow-x-auto no-scrollbar mb-8 pb-2 ${glass ? 'bg-transparent backdrop-blur-[2px] border border-white/20 rounded-[2rem] shadow-lg p-3' : ''}`}>
         {completedRaces.map((race) => {
           const isSelected = selectedRace.round === race.round;
           return (
             <button 
               key={race.round}
               onClick={() => setSearchParams({ round: String(race.round) })}
-              className={`flex-none px-6 py-4 flex flex-col items-center gap-2 transition-all min-w-[100px] ${
+              className={`flex-none px-6 py-4 flex flex-col items-center gap-2 transition-all min-w-[100px] ${glass ? 'rounded-xl' : ''} ${
                 isSelected 
                   ? 'bg-primary-container text-on-primary-container f1-glow shadow-[0_0_20px_rgba(225,6,0,0.4)]' 
-                  : 'bg-surface-container-low text-on-surface opacity-60 hover:opacity-100 hover:bg-surface-container group'
+                  : `${glass ? 'bg-black/10 backdrop-blur-sm text-on-surface opacity-60 hover:opacity-100 hover:bg-black/20' : 'bg-surface-container-low text-on-surface opacity-60 hover:opacity-100 hover:bg-surface-container'} group`
               }`}
             >
               <span className="font-headline font-bold text-xs tracking-tighter uppercase whitespace-nowrap">R{race.round}: {race.country} {race.flag}</span>
@@ -115,7 +117,7 @@ export default function Results() {
       </div>
       
       {/* Selected Race Results Card */}
-      <section className="bg-surface-container overflow-hidden">
+      <section className={`overflow-hidden ${glass ? 'bg-transparent backdrop-blur-[2px] border border-white/20 rounded-[2rem] shadow-lg' : 'bg-surface-container'}`}>
         {/* Card Header with Background and Map */}
         <div className="px-8 py-10 flex flex-col md:flex-row md:items-center justify-between gap-6 border-l-4 border-primary-container relative bg-surface-container-low" style={{ backgroundImage: "linear-gradient(90deg, rgba(31, 31, 39, 0.95) 30%, rgba(31, 31, 39, 0.7) 100%)" }}>
           <div className="z-10 relative">

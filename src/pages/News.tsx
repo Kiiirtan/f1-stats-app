@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react';
 import { fetchLiveNews, type NewsItem } from '../data/api';
+import { useSettings } from '../context/SettingsContext';
 import DataState from '../components/ui/DataState';
+import { NewsSkeleton } from '../components/ui/SkeletonLoader';
+import { useDocumentMeta } from '../hooks/useDocumentMeta';
 
 const FALLBACK_IMG = "https://images.unsplash.com/photo-1504707748692-419802cf939d?q=80&w=1600&auto=format&fit=crop";
 
@@ -34,9 +37,12 @@ function stripHtml(html: string): string {
 }
 
 export default function News() {
+  useDocumentMeta('Live Updates', 'Latest Formula 1 news, paddock analysis, and live motorsport updates.');
   const [news, setNews] = useState<NewsItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const { settings } = useSettings();
+  const glass = settings.glassMorphism;
 
   useEffect(() => {
     let mounted = true;
@@ -61,16 +67,12 @@ export default function News() {
   }, []);
 
   if (loading) {
-    return (
-      <div className="pt-32 pb-20 flex justify-center items-center min-h-[80vh]">
-        <div className="w-16 h-1 bg-primary-container animate-pulse"></div>
-      </div>
-    );
+    return <NewsSkeleton />;
   }
 
   if (error || news.length === 0) {
     return (
-      <div className="pt-24 min-h-screen flex items-center justify-center">
+      <div className="pt-20 min-h-screen flex items-center justify-center">
         <DataState 
           type="error" 
           title="FEED UNAVAILABLE" 
@@ -86,9 +88,9 @@ export default function News() {
   const gridArticles = news.slice(1);
 
   return (
-    <div className="pt-24 pb-20 px-6 max-w-[1600px] mx-auto w-full relative z-10">
+    <div className="news-opaque pt-20 pb-20 px-6 max-w-[1600px] mx-auto w-full relative z-10">
       
-      <div className="mb-12 border-b border-surface-container-high pb-4 flex items-center justify-between">
+      <div className={`mb-12 pb-4 flex items-center justify-between ${glass ? 'bg-transparent backdrop-blur-[2px] border border-white/20 rounded-[2rem] shadow-lg p-6' : 'border-b border-surface-container-high'}`}>
         <h1 className="font-headline font-black uppercase italic text-4xl text-white tracking-widest">Live Updates</h1>
         <span className="bg-primary/20 text-primary border border-primary/40 px-3 py-1 font-mono text-[10px] tracking-widest uppercase flex items-center gap-2">
           <span className="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
@@ -138,14 +140,14 @@ export default function News() {
       )}
 
       {/* Grid Articles */}
-      <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-fr">
+      <section className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-fr ${glass ? 'bg-transparent backdrop-blur-[2px] border border-white/20 rounded-[2rem] shadow-lg p-6' : ''}`}>
         {gridArticles.map((article: NewsItem, idx: number) => (
           <a
             href={article.link}
             target="_blank" 
             rel="noopener noreferrer"
             key={idx} 
-            className="group flex flex-col bg-surface-container-low border border-outline-variant/10 cursor-pointer hover:border-primary/50 hover:bg-surface transition-all duration-300 relative overflow-hidden h-full focus-visible:ring-2 focus-visible:ring-primary outline-none"
+            className={`group flex flex-col cursor-pointer transition-all duration-300 relative overflow-hidden h-full focus-visible:ring-2 focus-visible:ring-primary outline-none ${glass ? 'bg-black/10 backdrop-blur-sm border border-white/20 rounded-xl hover:border-white/50 hover:bg-black/20' : 'bg-surface-container-low border border-outline-variant/10 hover:border-primary/50 hover:bg-surface'}`}
           >
             <div className="absolute top-0 inset-x-0 h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
             

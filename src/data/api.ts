@@ -919,10 +919,15 @@ export async function fetchAllCircuits(): Promise<CircuitInfo[]> {
 
   // If more than 100, fetch remaining pages
   if (total > 100) {
-    const remaining = await fetchWithCache<{
-      MRData: { CircuitTable: { Circuits: ApiCircuit[] } };
-    }>(`${BASE_URL}/circuits.json?limit=100&offset=100`);
-    allCircuits = [...allCircuits, ...remaining.MRData.CircuitTable.Circuits];
+    try {
+      const remaining = await fetchWithCache<{
+        MRData: { CircuitTable: { Circuits: ApiCircuit[] } };
+      }>(`${BASE_URL}/circuits.json?limit=100&offset=100`);
+      allCircuits = [...allCircuits, ...remaining.MRData.CircuitTable.Circuits];
+    } catch {
+      // Gracefully degrade — return partial first page
+      console.warn('[Circuits] Pagination failed, returning partial data.');
+    }
   }
 
   return allCircuits.map((c) => ({
@@ -939,16 +944,17 @@ export async function fetchAllCircuits(): Promise<CircuitInfo[]> {
 export async function fetchCircuitRaceHistory(circuitId: string): Promise<CircuitDetail> {
   // Fetch P1, P2, P3 results separately — much fewer rows than fetching all results
   // e.g., Silverstone has ~60 winners vs 1385 total result rows
+  const emptyRaces = { MRData: { RaceTable: { Races: [] as ApiRace[] } } };
   const [p1Data, p2Data, p3Data, circuitData] = await Promise.all([
     fetchWithCache<{
       MRData: { RaceTable: { Races: ApiRace[] } };
-    }>(`${BASE_URL}/circuits/${circuitId}/results/1.json?limit=200`),
+    }>(`${BASE_URL}/circuits/${circuitId}/results/1.json?limit=200`).catch(() => emptyRaces),
     fetchWithCache<{
       MRData: { RaceTable: { Races: ApiRace[] } };
-    }>(`${BASE_URL}/circuits/${circuitId}/results/2.json?limit=200`),
+    }>(`${BASE_URL}/circuits/${circuitId}/results/2.json?limit=200`).catch(() => emptyRaces),
     fetchWithCache<{
       MRData: { RaceTable: { Races: ApiRace[] } };
-    }>(`${BASE_URL}/circuits/${circuitId}/results/3.json?limit=200`),
+    }>(`${BASE_URL}/circuits/${circuitId}/results/3.json?limit=200`).catch(() => emptyRaces),
     fetchWithCache<{
       MRData: { CircuitTable: { Circuits: ApiCircuit[] } };
     }>(`${BASE_URL}/circuits/${circuitId}.json`),
@@ -1021,13 +1027,14 @@ export async function fetchCircuitRaceHistory(circuitId: string): Promise<Circui
 
 export async function fetchSeasonCalendarDetailed(): Promise<DetailedCalendarRace[]> {
   // Fetch both the calendar (with session times) and results in parallel
+  const emptyResults = { MRData: { RaceTable: { Races: [] as ApiRace[] } } };
   const [calendarData, resultsData] = await Promise.all([
     fetchWithCache<{
       MRData: { RaceTable: { season: string; Races: ApiRace[] } };
     }>(`${BASE_URL}/current.json`),
     fetchWithCache<{
       MRData: { RaceTable: { Races: ApiRace[] } };
-    }>(`${BASE_URL}/current/results.json?limit=600`),
+    }>(`${BASE_URL}/current/results.json?limit=600`).catch(() => emptyResults),
   ]);
 
   const calendarRaces = calendarData.MRData.RaceTable.Races;

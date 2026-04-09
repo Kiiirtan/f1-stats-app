@@ -1,7 +1,10 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { fetchCircuitRaceHistory, getCountryFlag, type CircuitDetail } from '../data/api';
+import { useSettings } from '../context/SettingsContext';
 import DataState from '../components/ui/DataState';
+import { useDocumentMeta } from '../hooks/useDocumentMeta';
+import { CIRCUIT_MAPS } from '../data/circuitMaps';
 
 const PODIUM_MEDALS = ['🥇', '🥈', '🥉'];
 const PODIUM_COLORS = ['#FFD700', '#C0C0C0', '#CD7F32'];
@@ -24,11 +27,14 @@ interface CircuitPhysicalStats {
 
 export default function CircuitProfile() {
   const { id } = useParams<{ id: string }>();
+  useDocumentMeta('Circuit Profile', 'Explore F1 circuit layout, history, and physical statistics.');
   const [data, setData] = useState<CircuitDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [trackImageUrl, setTrackImageUrl] = useState<string | null>(null);
   const [circuitStats, setCircuitStats] = useState<CircuitPhysicalStats | null>(null);
+  const { settings } = useSettings();
+  const glass = settings.glassMorphism;
 
   // Filter state — decade-based filter
   const [selectedDecade, setSelectedDecade] = useState<string>('RECENT');
@@ -56,100 +62,16 @@ export default function CircuitProfile() {
     return () => { mounted = false; };
   }, [id]);
 
-  // Fetch robust track map from Wikipedia
+  // Fetch robust track map from Official F1 CDN
   useEffect(() => {
-    if (!data?.circuit.wikiUrl) return;
-    const title = getWikiTitle(data.circuit.wikiUrl);
-    if (!title) return;
-
-    let mounted = true;
-
-    async function loadTrackMap() {
-      try {
-        // 1. Get all images on the page
-        const res1 = await fetch(`https://en.wikipedia.org/w/api.php?action=query&titles=${title}&prop=images&imlimit=100&format=json&origin=*`);
-        const json1 = await res1.json();
-        const pages = json1.query?.pages;
-        if (!pages) throw new Error("No pages returned from Wiki API");
-        
-        const pageId = Object.keys(pages)[0];
-        const images = pages[pageId].images || [];
-
-        // Filter potential track maps — accept both SVG and PNG
-        const blocklist = [
-          'ambox', 'flag', 'icon', 'logo', 'symbol', 'question',
-          'arrow', 'edit-clear', 'commons', 'wikimedia', 'stub',
-          'star', 'lock', 'portal', 'nuvola', 'button', 'badge',
-          'medal', 'pictogram', 'sign', 'wikidata', 'merge',
-          'redirect', 'category', 'talk', 'move', 'protect',
-          'location', 'topographic', 'relief', 'satellite',
-        ];
-
-        const candidates = images
-          .map((img: any) => img.title)
-          .filter((t: string) => {
-            const lower = t.toLowerCase();
-            // Accept SVG or PNG only
-            if (!lower.endsWith('.svg') && !lower.endsWith('.png')) return false;
-            return !blocklist.some(word => lower.includes(word));
-          });
-
-        let bestImage: string | null = null;
-        let highestScore = 0; // minimum score of 1 required
-
-        const titleLower = title.replace(/_/g, ' ').toLowerCase();
-        const firstTitleWord = titleLower.split(' ')[0];
-
-        for (const img of candidates) {
-          const lower = img.toLowerCase();
-          let score = 0;
-          if (lower.endsWith('.svg')) score += 1; // prefer vector over raster
-          if (lower.includes('circuit')) score += 2;
-          if (lower.includes('map')) score += 2;
-          if (lower.includes('track')) score += 2;
-          if (lower.includes('layout')) score += 2;
-          if (lower.includes(firstTitleWord)) score += 3;
-
-          if (score > highestScore) {
-            highestScore = score;
-            bestImage = img;
-          }
-        }
-
-        if (bestImage) {
-          // 2. Fetch the URL for the best image
-          const res2 = await fetch(`https://en.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(bestImage)}&prop=imageinfo&iiprop=url|thumburl&iiurlwidth=800&format=json&origin=*`);
-          const json2 = await res2.json();
-          const imgPages = json2.query?.pages;
-          if (imgPages) {
-            const imgPageId = Object.keys(imgPages)[0];
-            const info = imgPages[imgPageId].imageinfo?.[0];
-            // Prefer the pre-rendered thumbnail (PNG) — this bypasses Wikimedia SVG CSP blocks
-            const url = info?.thumburl || info?.url;
-            if (url && mounted) {
-              setTrackImageUrl(url);
-              return;
-            }
-          }
-        }
-
-        // 3. Fallback to summary API if no valid SVG track map was found
-        const fallbackRes = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${title}`);
-        const fallbackJson = await fallbackRes.json();
-        if (mounted && fallbackJson.thumbnail?.source) {
-          const highRes = fallbackJson.thumbnail.source.replace(/\/\d+px-/, '/800px-');
-          setTrackImageUrl(highRes);
-        }
-
-      } catch (err) {
-        console.error("Failed to load track map:", err);
-      }
+    if (!data?.circuit.circuitId) return;
+    const url = CIRCUIT_MAPS[data.circuit.circuitId];
+    if (url) {
+      setTrackImageUrl(url);
+    } else {
+      setTrackImageUrl(null);
     }
-
-    loadTrackMap();
-
-    return () => { mounted = false; };
-  }, [data?.circuit.wikiUrl]);
+  }, [data?.circuit.circuitId]);
 
   // Fetch circuit physical stats (length, turns, lap record) from Wikipedia infobox HTML
   useEffect(() => {
@@ -275,7 +197,7 @@ export default function CircuitProfile() {
 
   if (loading) {
     return (
-      <div className="pt-24 md:pt-32 pb-20 flex flex-col justify-center items-center min-h-[60vh] gap-6">
+      <div className="pt-20 pb-20 flex flex-col justify-center items-center min-h-[60vh] gap-6">
         <div className="w-20 h-20 border-2 border-primary-container/20 border-t-primary-container animate-spin" style={{ borderRadius: '50%' }}></div>
         <p className="headline-font font-bold italic uppercase tracking-[0.3em] text-sm text-on-surface-variant animate-pulse">
           LOADING CIRCUIT HISTORY
@@ -286,7 +208,7 @@ export default function CircuitProfile() {
 
   if (error || !data) {
     return (
-      <div className="pt-24 min-h-screen flex items-center justify-center">
+      <div className="pt-20 min-h-screen flex items-center justify-center">
         <DataState type="not-found" actionLink="/circuits" actionText="VIEW ALL CIRCUITS" />
       </div>
     );
@@ -308,7 +230,7 @@ export default function CircuitProfile() {
   const topDrivers = Object.values(driverWins).sort((a, b) => b.wins - a.wins).slice(0, 5);
 
   return (
-    <div className="pt-24 md:pt-32 pb-20 px-6 md:px-12 max-w-[1600px] mx-auto w-full">
+    <div className="pt-20 pb-20 px-6 md:px-12 max-w-[1600px] mx-auto w-full">
       {/* Breadcrumb */}
       <div className="flex items-center gap-2 text-sm text-on-surface-variant mb-8">
         <Link to="/circuits" className="hover:text-primary-fixed-dim transition-colors flex items-center gap-1">
@@ -320,7 +242,7 @@ export default function CircuitProfile() {
       </div>
 
       {/* Header */}
-      <header className="mb-12">
+      <header className={`mb-12 ${glass ? 'bg-transparent backdrop-blur-[2px] border border-white/20 rounded-[2.5rem] shadow-lg p-8 md:p-12' : ''}`}>
         <div className="flex items-center gap-4 mb-4">
           <span className="text-4xl">{getCountryFlag(circuit.country)}</span>
           <div className="w-2 h-8 bg-tertiary-container"></div>
@@ -337,8 +259,8 @@ export default function CircuitProfile() {
         <div className="lg:col-span-2 flex flex-col gap-4">
           {/* Track Layout Image from Wikipedia */}
           {trackImageUrl && (
-            <div className="bg-surface-container border border-white/5 overflow-hidden">
-              <div className="p-4 flex items-center justify-between border-b border-white/5">
+            <div className={`overflow-hidden ${glass ? 'bg-black/10 backdrop-blur-md border border-white/20 rounded-[2rem]' : 'bg-surface-container border border-white/5'}`}>
+              <div className={`p-4 flex items-center justify-between border-b ${glass ? 'border-white/10' : 'border-white/5'}`}>
                 <div className="flex items-center gap-2">
                   <span className="material-symbols-outlined text-tertiary text-lg">route</span>
                   <span className="headline-font font-black italic uppercase tracking-tighter text-sm">TRACK LAYOUT</span>
@@ -357,17 +279,21 @@ export default function CircuitProfile() {
                 <img
                   src={trackImageUrl}
                   alt={`${circuit.circuitName} Track Layout`}
-                  className="max-h-[340px] w-auto object-contain drop-shadow-lg"
+                  className="max-h-[340px] w-auto object-contain drop-shadow-lg p-4"
                   loading="lazy"
                   onError={() => setTrackImageUrl(null)}
+                  style={{
+                    filter: 'grayscale(1) invert(1) brightness(2) contrast(1.8)',
+                    mixBlendMode: 'screen',
+                  }}
                 />
               </div>
             </div>
           )}
 
           {/* Location Map */}
-          <div className="bg-surface-container border border-white/5 overflow-hidden">
-            <div className="p-4 flex items-center gap-2 border-b border-white/5">
+          <div className={`overflow-hidden ${glass ? 'bg-black/10 backdrop-blur-md border border-white/20 rounded-[2rem]' : 'bg-surface-container border border-white/5'}`}>
+            <div className={`p-4 flex items-center gap-2 border-b ${glass ? 'border-white/10' : 'border-white/5'}`}>
               <span className="material-symbols-outlined text-primary-fixed-dim text-lg">location_on</span>
               <span className="headline-font font-black italic uppercase tracking-tighter text-sm">LOCATION</span>
             </div>
@@ -399,7 +325,7 @@ export default function CircuitProfile() {
         {/* Stats Panel */}
         <div className="flex flex-col gap-4">
           {/* Key Stats */}
-          <div className="bg-surface-container border border-white/5 p-6">
+          <div className={`p-6 ${glass ? 'bg-black/15 backdrop-blur-md border border-white/20 rounded-[2rem]' : 'bg-surface-container border border-white/5'}`}>
             <h3 className="headline-font font-black italic uppercase tracking-tighter text-lg mb-4 flex items-center gap-2">
               <span className="material-symbols-outlined text-primary-container" style={{ fontVariationSettings: "'FILL' 1" }}>query_stats</span>
               CIRCUIT STATS
@@ -466,7 +392,7 @@ export default function CircuitProfile() {
 
           {/* Most Successful Drivers */}
           {topDrivers.length > 0 && (
-            <div className="bg-surface-container border border-white/5 p-6">
+            <div className={`p-6 ${glass ? 'bg-black/15 backdrop-blur-md border border-white/20 rounded-[2rem]' : 'bg-surface-container border border-white/5'}`}>
               <h3 className="headline-font font-black italic uppercase tracking-tighter text-base mb-4 flex items-center gap-2">
                 <span className="material-symbols-outlined text-[#FFD700]" style={{ fontVariationSettings: "'FILL' 1" }}>emoji_events</span>
                 MOST WINS HERE
@@ -491,7 +417,7 @@ export default function CircuitProfile() {
               href={circuit.wikiUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="bg-surface-container border border-white/5 p-4 flex items-center gap-3 hover:bg-surface-container-high transition-colors group"
+              className={`p-4 flex items-center gap-3 transition-colors group ${glass ? 'bg-black/15 backdrop-blur-md border border-white/20 rounded-2xl hover:bg-black/30' : 'bg-surface-container border border-white/5 hover:bg-surface-container-high'}`}
             >
               <span className="material-symbols-outlined text-tertiary">language</span>
               <span className="flex-1 text-sm text-on-surface-variant group-hover:text-on-surface transition-colors">Wikipedia Article</span>
@@ -516,8 +442,9 @@ export default function CircuitProfile() {
               className={`px-3 py-1.5 text-xs headline-font font-bold uppercase tracking-wider transition-all border ${
                 selectedDecade === 'RECENT'
                   ? 'bg-primary-container text-on-primary-container border-primary-container'
-                  : 'bg-surface-container text-on-surface-variant border-white/10 hover:border-primary-container/30 hover:text-on-surface'
+                  : `${glass ? 'bg-black/20 backdrop-blur-sm' : 'bg-surface-container'} text-on-surface-variant border-white/10 hover:border-primary-container/30 hover:text-on-surface`
               }`}
+              style={{ borderRadius: glass ? '0.75rem' : '0' }}
             >
               Recent 10
             </button>
@@ -528,8 +455,9 @@ export default function CircuitProfile() {
                 className={`px-3 py-1.5 text-xs headline-font font-bold uppercase tracking-wider transition-all border ${
                   selectedDecade === String(decade)
                     ? 'bg-primary-container text-on-primary-container border-primary-container'
-                    : 'bg-surface-container text-on-surface-variant border-white/10 hover:border-primary-container/30 hover:text-on-surface'
+                    : `${glass ? 'bg-black/20 backdrop-blur-sm' : 'bg-surface-container'} text-on-surface-variant border-white/10 hover:border-primary-container/30 hover:text-on-surface`
                 }`}
+                style={{ borderRadius: glass ? '0.75rem' : '0' }}
               >
                 {decade}s
               </button>
@@ -544,7 +472,7 @@ export default function CircuitProfile() {
         </p>
 
         {/* Desktop Table */}
-        <div className="hidden md:block overflow-x-auto w-full">
+        <div className={`hidden md:block overflow-x-auto w-full ${glass ? 'bg-black/10 backdrop-blur-md border border-white/20 rounded-[2rem] shadow-xl p-8' : ''}`}>
           <table className="w-full text-left min-w-[800px]">
             <thead>
               <tr className="border-b-2 border-primary-container/30">

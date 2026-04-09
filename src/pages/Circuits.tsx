@@ -1,14 +1,20 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { fetchAllCircuits, getCountryFlag, type CircuitInfo } from '../data/api';
+import { useSettings } from '../context/SettingsContext';
 import DataState from '../components/ui/DataState';
+import { CircuitsSkeleton } from '../components/ui/SkeletonLoader';
+import { useDocumentMeta } from '../hooks/useDocumentMeta';
 
 export default function Circuits() {
+  useDocumentMeta('Circuit Encyclopedia', 'Explore official Formula 1 circuit layouts, history, and physical track data.');
   const [circuits, setCircuits] = useState<CircuitInfo[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCountry, setSelectedCountry] = useState<string>('ALL');
   const [error, setError] = useState<string | null>(null);
+  const { settings } = useSettings();
+  const glass = settings.glassMorphism;
 
   useEffect(() => {
     let mounted = true;
@@ -39,28 +45,21 @@ export default function Circuits() {
   });
 
   if (loading) {
-    return (
-      <div className="pt-24 md:pt-32 pb-20 flex flex-col justify-center items-center min-h-[60vh] gap-6">
-        <div className="w-20 h-20 border-2 border-primary-container/20 border-t-primary-container animate-spin" style={{ borderRadius: '50%' }}></div>
-        <p className="headline-font font-bold italic uppercase tracking-[0.3em] text-sm text-on-surface-variant animate-pulse">
-          LOADING CIRCUIT DATA
-        </p>
-      </div>
-    );
+    return <CircuitsSkeleton />;
   }
 
   if (error) {
     return (
-      <div className="pt-24 min-h-screen flex items-center justify-center">
+      <div className="pt-20 min-h-screen flex items-center justify-center">
         <DataState type="error" onAction={() => window.location.reload()} />
       </div>
     );
   }
 
   return (
-    <div className="pt-24 md:pt-32 pb-20 px-6 md:px-12 max-w-[1600px] mx-auto w-full">
+    <div className="pt-20 pb-20 px-6 md:px-12 max-w-[1600px] mx-auto w-full">
       {/* Header */}
-      <header className="mb-12">
+      <header className={`mb-12 ${glass ? 'bg-transparent backdrop-blur-[2px] border border-white/20 rounded-[2rem] shadow-lg p-8 md:p-12' : ''}`}>
         <div className="flex items-center gap-4 mb-4">
           <div className="w-2 h-8 bg-tertiary-container"></div>
           <span className="headline-font text-sm font-bold italic uppercase tracking-[0.3em] text-tertiary">CIRCUIT ENCYCLOPEDIA</span>
@@ -90,7 +89,7 @@ export default function Circuits() {
             placeholder="Search circuits..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-surface-container border border-white/10 pl-12 pr-4 py-3 text-on-surface headline-font text-sm focus:outline-none focus:border-primary-container/50 transition-colors placeholder:text-on-surface-variant/40"
+            className={`w-full pl-12 pr-4 py-3 text-on-surface headline-font text-sm focus:outline-none focus:border-primary-container/50 transition-colors placeholder:text-on-surface-variant/40 ${glass ? 'bg-black/20 backdrop-blur-sm border border-white/20 rounded-xl' : 'bg-surface-container border border-white/10'}`}
           />
         </div>
 
@@ -98,7 +97,7 @@ export default function Circuits() {
           <select
             value={selectedCountry}
             onChange={(e) => setSelectedCountry(e.target.value)}
-            className="w-full md:w-auto bg-surface-container border border-white/10 px-4 py-3 text-on-surface headline-font text-sm focus:outline-none focus:border-primary-container/50 appearance-none pr-10 cursor-pointer min-w-[180px]"
+            className={`w-full md:w-auto px-4 py-3 text-on-surface headline-font text-sm focus:outline-none focus:border-primary-container/50 appearance-none pr-10 cursor-pointer min-w-[180px] ${glass ? 'bg-black/20 backdrop-blur-sm border border-white/20 rounded-xl' : 'bg-surface-container border border-white/10'}`}
           >
             {countries.map((c) => (
               <option key={c} value={c}>
@@ -121,7 +120,7 @@ export default function Circuits() {
           <Link
             key={circuit.circuitId}
             to={`/circuit/${circuit.circuitId}`}
-            className="group relative bg-surface-container-low border border-white/5 overflow-hidden transition-all duration-400 hover:bg-surface-container hover:border-primary-container/30 hover:shadow-[0_0_30px_rgba(225,6,0,0.08)] block"
+            className={`group relative overflow-hidden transition-all duration-400 block ${glass ? 'bg-black/10 backdrop-blur-sm border border-white/20 rounded-xl hover:bg-black/20 hover:border-white/40 hover:shadow-[0_0_30px_rgba(225,6,0,0.08)]' : 'bg-surface-container-low border border-white/5 hover:bg-surface-container hover:border-primary-container/30 hover:shadow-[0_0_30px_rgba(225,6,0,0.08)]'}`}
             style={{ animationDelay: `${idx * 30}ms` }}
           >
             {/* Map Preview */}

@@ -1,81 +1,151 @@
 import React, { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
+import { supabase } from '../lib/supabase';
+import type { User as SupabaseUser, Session } from '@supabase/supabase-js';
 
-interface User {
-  username: string;
+/* ─── Types ─── */
+
+export interface AuthUser {
+  id: string;
+  email: string;
+  displayName: string;
+  avatarUrl: string | null;
+  createdAt: string;
 }
 
 interface AuthContextType {
-  user: User | null;
+  user: AuthUser | null;
+  session: Session | null;
   isAuthenticated: boolean;
-  login: (username: string, password: string) => { success: boolean; error?: string };
-  register: (username: string, password: string) => { success: boolean; error?: string };
-  logout: () => void;
+  loading: boolean;
+  signUp: (email: string, password: string, displayName?: string) => Promise<{ success: boolean; error?: string }>;
+  signIn: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
+  signOut: () => Promise<void>;
+  updateProfile: (data: { displayName?: string; avatarUrl?: string }) => Promise<{ success: boolean; error?: string }>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-const USERS_KEY = 'f1app_users';
-const SESSION_KEY = 'f1app_session';
+/* ─── Helpers ─── */
 
-function getStoredUsers(): Record<string, string> {
-  try {
-    return JSON.parse(localStorage.getItem(USERS_KEY) || '{}');
-  } catch {
-    return {};
-  }
+function mapUser(su: SupabaseUser): AuthUser {
+  return {
+    id: su.id,
+    email: su.email ?? '',
+    displayName: su.user_metadata?.display_name || su.user_metadata?.full_name || su.email?.split('@')[0] || 'F1 Fan',
+    avatarUrl: su.user_metadata?.avatar_url || null,
+    createdAt: su.created_at,
+  };
 }
 
+/* ─── Provider ─── */
+
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<AuthUser | null>(null);
+  const [session, setSession] = useState<Session | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const session = localStorage.getItem(SESSION_KEY);
-    if (session) {
-      try {
-        setUser(JSON.parse(session));
-      } catch { /* ignore corrupt session */ }
+    if (!supabase) {
+      setLoading(false);
+      return;
     }
+
+    // Get initial session
+    supabase.auth.getSession().then(({ data: { session: s } }) => {
+      setSession(s);
+      setUser(s?.user ? mapUser(s.user) : null);
+      setLoading(false);
+    });
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, s) => {
+      setSession(s);
+      setUser(s?.user ? mapUser(s.user) : null);
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
 
-  const login = (username: string, password: string) => {
-    const trimmed = username.trim().toLowerCase();
-    if (!trimmed || !password) return { success: false, error: 'Please fill in all fields.' };
+  const signUp = async (email: string, password: string, displayName?: string): Promise<{ success: boolean; error?: string }> => {
+    if (!supabase) return { success: false, error: 'Authentication service unavailable.' };
 
-    const users = getStoredUsers();
-    if (!users[trimmed]) return { success: false, error: 'Account not found. Please register first.' };
-    if (users[trimmed] !== password) return { success: false, error: 'Incorrect password.' };
+    const trimmedEmail = email.trim().toLowerCase();
+    if (!trimmedEmail || !password) return { success: false, error: 'Please fill in all fields.' };
+    if (password.length < 6) return { success: false, error: 'Password must be at least 6 characters.' };
 
-    const u = { username: trimmed };
-    setUser(u);
-    localStorage.setItem(SESSION_KEY, JSON.stringify(u));
+    const { data, error } = await supabase.auth.signUp({
+      email: trimmedEmail,
+      password,
+      options: {
+        data: {
+          display_name: displayName || trimmedEmail.split('@')[0],
+        },
+      },
+    });
+
+    if (error) return { success: false, error: error.message };
+    if (data.user) {
+      // For projects with email confirmation disabled, user is auto-logged in
+      return { success: true };
+    }
     return { success: true };
   };
 
-  const register = (username: string, password: string) => {
-    const trimmed = username.trim().toLowerCase();
-    if (!trimmed || !password) return { success: false, error: 'Please fill in all fields.' };
-    if (trimmed.length < 3) return { success: false, error: 'Username must be at least 3 characters.' };
-    if (password.length < 4) return { success: false, error: 'Password must be at least 4 characters.' };
+  const signIn = async (email: string, password: string): Promise<{ success: boolean; error?: string }> => {
+    if (!supabase) return { success: false, error: 'Authentication service unavailable.' };
 
-    const users = getStoredUsers();
-    if (users[trimmed]) return { success: false, error: 'Username already taken.' };
+    const trimmedEmail = email.trim().toLowerCase();
+    if (!trimmedEmail || !password) return { success: false, error: 'Please fill in all fields.' };
 
-    users[trimmed] = password;
-    localStorage.setItem(USERS_KEY, JSON.stringify(users));
+    const { error } = await supabase.auth.signInWithPassword({
+      email: trimmedEmail,
+      password,
+    });
 
-    const u = { username: trimmed };
-    setUser(u);
-    localStorage.setItem(SESSION_KEY, JSON.stringify(u));
+    if (error) {
+      if (error.message.includes('Invalid login credentials')) {
+        return { success: false, error: 'Invalid email or password.' };
+      }
+      return { success: false, error: error.message };
+    }
     return { success: true };
   };
 
-  const logout = () => {
+  const signOut = async () => {
+    if (!supabase) return;
+    await supabase.auth.signOut();
     setUser(null);
-    localStorage.removeItem(SESSION_KEY);
+    setSession(null);
+  };
+
+  const updateProfile = async (data: { displayName?: string; avatarUrl?: string }): Promise<{ success: boolean; error?: string }> => {
+    if (!supabase) return { success: false, error: 'Authentication service unavailable.' };
+
+    const updates: Record<string, string> = {};
+    if (data.displayName !== undefined) updates.display_name = data.displayName;
+    if (data.avatarUrl !== undefined) updates.avatar_url = data.avatarUrl;
+
+    const { error } = await supabase.auth.updateUser({
+      data: updates,
+    });
+
+    if (error) return { success: false, error: error.message };
+    return { success: true };
   };
 
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated: !!user, login, register, logout }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        session,
+        isAuthenticated: !!user,
+        loading,
+        signUp,
+        signIn,
+        signOut,
+        updateProfile,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

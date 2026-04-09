@@ -1,8 +1,13 @@
 import { Link } from 'react-router-dom';
+import { useSettings } from '../context/SettingsContext';
+import { useDocumentMeta } from '../hooks/useDocumentMeta';
 
 export default function NotFound() {
+  useDocumentMeta('Page Not Found', 'The requested page could not be found.');
+  const { settings } = useSettings();
+  const glass = settings.glassMorphism;
   return (
-    <div className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden px-6 w-full -mt-16 md:-mt-24">
+    <div className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden px-6 w-full">
       {/* Massive Watermark Background */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0 overflow-hidden">
         <span className="font-headline font-bold italic text-f1-cyan opacity-[0.03] select-none tracking-tighter leading-none whitespace-nowrap" style={{ fontSize: "14rem" }}>
@@ -11,7 +16,7 @@ export default function NotFound() {
       </div>
 
       {/* 404 Section with Technical Glow */}
-      <section className="relative z-10 w-full max-w-2xl text-center py-24 flex flex-col items-center" style={{ background: "radial-gradient(circle at center, rgba(102, 252, 241, 0.1) 0%, rgba(19, 19, 27, 0) 70%)" }}>
+      <section className={`relative z-10 w-full max-w-2xl text-center py-24 flex flex-col items-center ${glass ? 'backdrop-blur-[2px] bg-black/10 border border-white/20 rounded-[3rem] shadow-2xl p-12' : ''}`} style={{ background: glass ? 'none' : "radial-gradient(circle at center, rgba(102, 252, 241, 0.1) 0%, rgba(19, 19, 27, 0) 70%)" }}>
         {/* Icon/Indicator */}
         <div className="mb-8 flex items-center justify-center">
           <div className="w-16 h-1 bg-[#66FCF1] animate-pulse"></div>

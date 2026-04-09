@@ -2,15 +2,21 @@ import { useParams, Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { fetchDriverStandings, fetchRaceResults, fetchDriverCareerStats, getNationalityFlag, type Driver, type Race, type DriverCareerStats } from '../data/api';
 import { getDriverPortrait } from '../data/driverImages';
+import { getConstructorSpecs } from '../data/constructorDetails';
+import { useSettings } from '../context/SettingsContext';
 import DataState from '../components/ui/DataState';
+import { useDocumentMeta } from '../hooks/useDocumentMeta';
 
 export default function DriverProfile() {
   const { id } = useParams<{ id: string }>();
   const [driver, setDriver] = useState<Driver | null>(null);
+  useDocumentMeta(driver ? `${driver.firstName} ${driver.lastName}` : 'Driver Profile', 'Comprehensive Formula 1 driver profile, statistics, and history.');
   const [driverRaces, setDriverRaces] = useState<{ race: Race; result: any }[]>([]);
   const [careerStats, setCareerStats] = useState<DriverCareerStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { settings } = useSettings();
+  const glass = settings.glassMorphism;
 
   useEffect(() => {
     let mounted = true;
@@ -50,7 +56,7 @@ export default function DriverProfile() {
 
   if (loading) {
     return (
-      <div className="pt-32 pb-20 flex justify-center items-center min-h-[80vh]">
+      <div className="pt-20 pb-20 flex justify-center items-center min-h-[80vh]">
         <div className="w-16 h-1 bg-primary-container animate-pulse"></div>
       </div>
     );
@@ -58,7 +64,7 @@ export default function DriverProfile() {
 
   if (error) {
     return (
-      <div className="pt-24 min-h-screen flex items-center justify-center">
+      <div className="pt-20 min-h-screen flex items-center justify-center">
         <DataState type="error" onAction={() => window.location.reload()} />
       </div>
     );
@@ -66,7 +72,7 @@ export default function DriverProfile() {
 
   if (!driver) {
     return (
-      <div className="pt-24 min-h-screen flex items-center justify-center">
+      <div className="pt-20 min-h-screen flex items-center justify-center">
         <DataState type="not-found" actionLink="/drivers" actionText="RETURN TO GRID" />
       </div>
     );
@@ -95,9 +101,14 @@ export default function DriverProfile() {
         <div className="relative z-10 w-full px-8 pb-24 md:pb-32 grid grid-cols-12 max-w-[1600px] mx-auto">
           <div className="col-span-12 md:col-span-8">
             <div className="flex items-center gap-4 mb-6">
-              <span className="bg-primary/20 text-white border border-primary/40 px-3 py-1 font-label text-xs tracking-[0.3em] uppercase backdrop-blur-sm" style={{ borderColor: `${driver.teamColor}66`, backgroundColor: `${driver.teamColor}33`}}>
-                {driver.team}
-              </span>
+              <div className="flex items-center bg-primary/20 text-white border border-primary/40 px-3 py-1 font-label text-xs tracking-[0.3em] uppercase backdrop-blur-sm gap-3" style={{ borderColor: `${driver.teamColor}66`, backgroundColor: `${driver.teamColor}33`}}>
+                {getConstructorSpecs(driver.teamId).logo && (
+                  <div className="bg-white/95 p-1 rounded-sm flex items-center justify-center shadow-lg">
+                    <img src={getConstructorSpecs(driver.teamId).logo} alt={driver.team} className="w-5 h-5 object-contain" />
+                  </div>
+                )}
+                <span>{driver.team}</span>
+              </div>
               <div className="h-[1px] w-24" style={{ backgroundColor: driver.teamColor }}></div>
             </div>
             <h1 className="font-headline text-7xl md:text-9xl font-black italic uppercase leading-[0.85] tracking-tighter mb-8 -ml-1">
@@ -116,7 +127,7 @@ export default function DriverProfile() {
       </section>
       
       {/* Current Season Stats Grid */}
-      <section className="bg-surface-container-low px-8 py-24 relative overflow-hidden">
+      <section className={`px-8 py-24 relative overflow-hidden ${glass ? 'bg-transparent backdrop-blur-[2px]' : 'bg-surface-container-low'}`}>
         <div className="absolute top-0 right-0 w-96 h-96 blur-[100px] rounded-full -translate-y-1/2 translate-x-1/2" style={{ backgroundColor: `${driver.teamColor}1a` }}></div>
         <div className="max-w-[1600px] mx-auto relative z-10">
           <div className="flex items-center justify-between mb-12">
@@ -125,28 +136,28 @@ export default function DriverProfile() {
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-0 border-l border-t border-outline-variant/10">
             {/* Season Wins */}
-            <div className="p-12 border-r border-b border-outline-variant/10 group transition-all duration-500 bg-surface/40 backdrop-blur-sm hover:!bg-surface-container-high">
+            <div className={`p-12 border-r border-b border-outline-variant/10 group transition-all duration-500 backdrop-blur-sm ${glass ? 'bg-black/10 hover:!bg-black/20' : 'bg-surface/40 hover:!bg-surface-container-high'}`}>
               <span className="font-label text-xs tracking-widest text-on-surface-variant uppercase block mb-6">Season Wins</span>
               <div className="flex items-baseline gap-2">
                 <span className="font-headline text-7xl font-bold transition-colors" style={{ color: 'inherit' }} onMouseEnter={(e) => (e.currentTarget.style.color = driver.teamColor)} onMouseLeave={(e) => (e.currentTarget.style.color = 'inherit')}>{driver.seasonWins}</span>
               </div>
             </div>
             {/* Points */}
-            <div className="p-12 border-r border-b border-outline-variant/10 group transition-all duration-500 bg-surface/40 backdrop-blur-sm hover:!bg-surface-container-high">
+            <div className={`p-12 border-r border-b border-outline-variant/10 group transition-all duration-500 backdrop-blur-sm ${glass ? 'bg-black/10 hover:!bg-black/20' : 'bg-surface/40 hover:!bg-surface-container-high'}`}>
               <span className="font-label text-xs tracking-widest text-on-surface-variant uppercase block mb-6">Season Points</span>
               <div className="flex items-baseline gap-2">
                 <span className="font-headline text-7xl font-bold transition-colors" style={{ color: 'inherit' }} onMouseEnter={(e) => (e.currentTarget.style.color = driver.teamColor)} onMouseLeave={(e) => (e.currentTarget.style.color = 'inherit')}>{driver.seasonPoints}</span>
               </div>
             </div>
             {/* Best Finish */}
-            <div className="p-12 border-r border-b border-outline-variant/10 group transition-all duration-500 bg-surface/40 backdrop-blur-sm hover:!bg-surface-container-high">
+            <div className={`p-12 border-r border-b border-outline-variant/10 group transition-all duration-500 backdrop-blur-sm ${glass ? 'bg-black/10 hover:!bg-black/20' : 'bg-surface/40 hover:!bg-surface-container-high'}`}>
               <span className="font-label text-xs tracking-widest text-on-surface-variant uppercase block mb-6">Best Finish</span>
               <div className="flex items-baseline gap-2">
                 <span className="font-headline text-7xl font-bold transition-colors" style={{ color: 'inherit' }} onMouseEnter={(e) => (e.currentTarget.style.color = driver.teamColor)} onMouseLeave={(e) => (e.currentTarget.style.color = 'inherit')}>P{bestResults[0]?.result.position || '-'}</span>
               </div>
             </div>
             {/* Races */}
-            <div className="p-12 border-r border-b border-outline-variant/10 group transition-all duration-500 bg-surface/40 backdrop-blur-sm hover:!bg-surface-container-high">
+            <div className={`p-12 border-r border-b border-outline-variant/10 group transition-all duration-500 backdrop-blur-sm ${glass ? 'bg-black/10 hover:!bg-black/20' : 'bg-surface/40 hover:!bg-surface-container-high'}`}>
               <span className="font-label text-xs tracking-widest text-on-surface-variant uppercase block mb-6">Races Completed</span>
               <div className="flex items-baseline gap-2">
                 <span className="font-headline text-7xl font-bold transition-colors" style={{ color: 'inherit' }} onMouseEnter={(e) => (e.currentTarget.style.color = driver.teamColor)} onMouseLeave={(e) => (e.currentTarget.style.color = 'inherit')}>{driverRaces.length}</span>
@@ -158,7 +169,7 @@ export default function DriverProfile() {
 
       {/* Career Overview Section */}
       {careerStats && (
-        <section className="bg-background px-6 md:px-8 py-24 relative overflow-hidden border-t border-outline-variant/10">
+        <section className={`px-6 md:px-8 py-24 relative overflow-hidden border-t border-outline-variant/10 ${glass ? 'bg-transparent backdrop-blur-[2px]' : 'bg-background'}`}>
           <div className="max-w-[1600px] mx-auto relative z-10">
             <div className="flex items-center justify-between mb-12">
               <h2 className="font-headline text-3xl font-bold uppercase tracking-widest border-l-4 pl-6" style={{ borderColor: driver.teamColor }}>Career Overview</h2>
@@ -196,7 +207,7 @@ export default function DriverProfile() {
 
       {/* Season History Section */}
       {careerStats && careerStats.seasons.length > 0 && (
-        <section className="px-6 md:px-8 py-24 bg-surface-container-low relative border-t border-outline-variant/10">
+        <section className={`px-6 md:px-8 py-24 relative border-t border-outline-variant/10 ${glass ? 'bg-transparent backdrop-blur-[2px]' : 'bg-surface-container-low'}`}>
           <div className="max-w-[1600px] mx-auto">
             <div className="flex items-center justify-between mb-16">
               <h2 className="font-headline text-3xl font-bold uppercase tracking-widest border-l-4 pl-6" style={{ borderColor: driver.teamColor }}>Season History</h2>
@@ -237,7 +248,7 @@ export default function DriverProfile() {
       
       {/* Top Results Section (Current Season) */}
       {bestResults.length > 0 && (
-        <section className="px-6 md:px-8 py-24 bg-surface-container relative border-t border-outline-variant/10">
+        <section className={`px-6 md:px-8 py-24 relative border-t border-outline-variant/10 ${glass ? 'bg-transparent backdrop-blur-[2px]' : 'bg-surface-container'}`}>
           <div className="max-w-[1600px] mx-auto">
             <div className="flex items-center justify-between mb-16">
               <h2 className="font-headline text-3xl font-bold uppercase tracking-widest border-l-4 pl-6" style={{ borderColor: driver.teamColor }}>Best Performances</h2>

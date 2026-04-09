@@ -1,9 +1,14 @@
 import PageTransition from '../components/ui/PageTransition';
+import { useSettings } from '../context/SettingsContext';
+import { useDocumentMeta } from '../hooks/useDocumentMeta';
 
 export default function Terms() {
+  useDocumentMeta('Terms of Service', 'Terms of service and usage conditions for F1 Stats.');
+  const { settings } = useSettings();
+  const glass = settings.glassMorphism;
   return (
     <PageTransition>
-      <div className="pt-24 md:pt-32 pb-20 px-6 md:px-12 max-w-4xl mx-auto w-full">
+      <div className={`pt-20 pb-20 px-6 md:px-12 max-w-4xl mx-auto w-full ${glass ? 'bg-transparent backdrop-blur-[2px] border border-white/20 rounded-[2rem] shadow-lg mt-12 mb-12 p-8 md:p-12' : ''}`}>
         <header className="mb-12 border-b border-white/10 pb-8">
           <span className="font-['Space_Grotesk'] font-bold italic uppercase tracking-[0.3em] text-[var(--theme-accent)] text-xs mb-2 block">Legal Information</span>
           <h1 className="f1-heading text-4xl md:text-5xl text-white leading-tight">TERMS OF SERVICE</h1>
