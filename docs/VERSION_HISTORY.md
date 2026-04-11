@@ -6,8 +6,8 @@
 |---|---|
 | **Project** | F1 Stats — Live F1 Dashboard |
 | **Repository** | [Kiiirtan/f1-stats-app](https://github.com/Kiiirtan/f1-stats-app) |
-| **Current Version** | 2.0.1.0 |
-| **Last Updated** | April 11, 2026 |
+| **Current Version** | 2.0.2.0 |
+| **Last Updated** | April 12, 2026 |
 
 ---
 
@@ -26,6 +26,7 @@
 | **1.3.0.0** | Added Supabase database fallback, GitHub Actions CRON sync (every 30 min), 3-tier data fallback chain |
 | **2.0.0.0** | Full production overhaul — Supabase Auth, Notifications, Skeleton Loaders, Season Calendar, Archives, dynamic SEO, complete UI/UX redesign of every page, Render deployment |
 | **2.0.1.0** | Fixed auto-login on signup, email confirmation bypass, mobile horizontal scroll, missing footer links |
+| **2.0.2.0** | Framer Motion Page Transitions (Pure Crossfade) |
 
 ## Version Index
 
@@ -42,6 +43,7 @@
 | [1.3.0.0](#1300--zero-downtime-architecture) | 🟢 Minor | March 29, 2026 | *Zero-Downtime Architecture* |
 | [2.0.0.0](#2000--production-release-v2) | 🔴 **MAJOR** | April 10, 2026 | *Production Release V2* |
 | [2.0.1.0](#2010--auth-hotfix) | 🟢 Minor | April 11, 2026 | *Auth Hotfix* |
+| [2.0.2.0](#2020--cinematic-transitions) | 🟢 Minor | April 12, 2026 | *Cinematic Transitions* |
 
 ---
 
@@ -350,14 +352,27 @@ Critical authentication UX fix and mobile layout corrections.
 
 ---
 
+## 2.0.2.0 — Cinematic Transitions
+
+> 🟢 **MINOR UPDATE** · April 12, 2026
+
+Implemented simple, elegant `framer-motion` page transitions globally.
+
+### ✨ Features
+- **Pure Crossfade:** All route changes now dynamically crossfade without jarring vertical jumps.
+- **Skeleton Continuity:** Page transitions elegantly wrap the skeleton loader fallback fetching states.
+- **Dependency Added:** `framer-motion` incorporated into `package.json`.
+
+---
+
 ## Summary Statistics
 
 | Metric | Value |
 |---|---|
-| **Total Versions** | 11 |
+| **Total Versions** | 12 |
 | **Major Releases** | 2 (v1.0.0.0, v2.0.0.0) |
-| **Minor Updates** | 9 |
-| **Development Span** | March 27 → April 11, 2026 (16 days) |
+| **Minor Updates** | 10 |
+| **Development Span** | March 27 → April 12, 2026 (17 days) |
 | **Total Source Files** | 40+ TypeScript/TSX files |
 | **Total Pages** | 20 routes |
 | **Total Components** | 21 components (7 features + 4 layout + 10 UI) |

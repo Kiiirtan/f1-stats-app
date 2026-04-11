@@ -1,45 +1,38 @@
-import { useEffect, useState, type ReactNode } from 'react';
-import { useLocation } from 'react-router-dom';
+import { motion, Variants } from 'framer-motion';
 import { useSettings } from '../../context/SettingsContext';
+import type { ReactNode } from 'react';
 
 interface Props {
   children: ReactNode;
 }
 
+const transitionVariants: Variants = {
+  hidden: { opacity: 0 },
+  visible: { 
+    opacity: 1, 
+    transition: { duration: 0.4, ease: 'easeInOut' }
+  },
+  exit: { 
+    opacity: 0, 
+    transition: { duration: 0.2, ease: 'easeInOut' }
+  }
+};
+
 export default function PageTransition({ children }: Props) {
   const { settings } = useSettings();
-  const location = useLocation();
-  const [isVisible, setIsVisible] = useState(true);
-  const [displayLocation, setDisplayLocation] = useState(location);
-
-  useEffect(() => {
-    if (location.pathname !== displayLocation.pathname) {
-      if (!settings.showAnimations) {
-        setDisplayLocation(location);
-        window.scrollTo(0, 0);
-        return;
-      }
-      setIsVisible(false);
-      const timer = setTimeout(() => {
-        setDisplayLocation(location);
-        setIsVisible(true);
-        window.scrollTo(0, 0);
-      }, 200);
-      return () => clearTimeout(timer);
-    }
-  }, [location, displayLocation, settings.showAnimations]);
 
   if (!settings.showAnimations) {
     return <>{children}</>;
   }
 
   return (
-    <div
-      className={`transition-all duration-200 ease-in-out ${
-        isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'
-      }`}
+    <motion.div
+      initial="hidden"
+      animate="visible"
+      exit="exit"
+      variants={transitionVariants}
     >
       {children}
-    </div>
+    </motion.div>
   );
 }

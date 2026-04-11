@@ -1,5 +1,6 @@
 import { useEffect, Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
+import { AnimatePresence } from 'framer-motion';
 import { SettingsProvider, useSettings } from './context/SettingsContext';
 import { AuthProvider } from './context/AuthContext';
 import ErrorBoundary from './components/ui/ErrorBoundary';
@@ -55,6 +56,41 @@ function InitialRedirect() {
   return null;
 }
 
+function AnimatedRoutes() {
+  const location = useLocation();
+  
+  return (
+    <AnimatePresence mode="wait">
+      <PageTransition key={location.pathname}>
+        <Suspense fallback={<RouteFallback />}>
+          <Routes location={location}>
+            <Route path="/" element={<Dashboard />} />
+            <Route path="/news" element={<News />} />
+            <Route path="/drivers" element={<Drivers />} />
+            <Route path="/driver/:id" element={<DriverProfile />} />
+            <Route path="/calendar" element={<SeasonCalendar />} />
+            <Route path="/circuits" element={<Circuits />} />
+            <Route path="/circuit/:id" element={<CircuitProfile />} />
+            <Route path="/races" element={<Races />} />
+            <Route path="/archives" element={<Archives />} />
+            <Route path="/results" element={<Results />} />
+            <Route path="/constructors" element={<Constructors />} />
+            <Route path="/constructor/:id" element={<ConstructorProfile />} />
+            <Route path="/constructor/:id/season/:year" element={<ConstructorSeasonDetails />} />
+            <Route path="/settings" element={<Settings />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/credits" element={<Credits />} />
+            <Route path="/privacy" element={<Privacy />} />
+            <Route path="/terms" element={<Terms />} />
+            <Route path="/cookies" element={<Cookies />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </Suspense>
+      </PageTransition>
+    </AnimatePresence>
+  );
+}
+
 function App() {
   return (
     <SettingsProvider>
@@ -63,35 +99,10 @@ function App() {
           <SmoothLoader />
           <CursorGlow />
           <Router>
-          <InitialRedirect />
-          <Layout>
-            <PageTransition>
-              <Suspense fallback={<RouteFallback />}>
-                <Routes>
-                  <Route path="/" element={<Dashboard />} />
-                  <Route path="/news" element={<News />} />
-                  <Route path="/drivers" element={<Drivers />} />
-                  <Route path="/driver/:id" element={<DriverProfile />} />
-                  <Route path="/calendar" element={<SeasonCalendar />} />
-                  <Route path="/circuits" element={<Circuits />} />
-                  <Route path="/circuit/:id" element={<CircuitProfile />} />
-                  <Route path="/races" element={<Races />} />
-                  <Route path="/archives" element={<Archives />} />
-                  <Route path="/results" element={<Results />} />
-                  <Route path="/constructors" element={<Constructors />} />
-                  <Route path="/constructor/:id" element={<ConstructorProfile />} />
-                  <Route path="/constructor/:id/season/:year" element={<ConstructorSeasonDetails />} />
-                  <Route path="/settings" element={<Settings />} />
-                  <Route path="/contact" element={<Contact />} />
-                  <Route path="/credits" element={<Credits />} />
-                  <Route path="/privacy" element={<Privacy />} />
-                  <Route path="/terms" element={<Terms />} />
-                  <Route path="/cookies" element={<Cookies />} />
-                  <Route path="*" element={<NotFound />} />
-                </Routes>
-              </Suspense>
-            </PageTransition>
-          </Layout>
+            <InitialRedirect />
+            <Layout>
+              <AnimatedRoutes />
+            </Layout>
           </Router>
         </ErrorBoundary>
       </AuthProvider>
