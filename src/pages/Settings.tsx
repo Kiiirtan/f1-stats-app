@@ -819,6 +819,18 @@ export default function Settings() {
                     >
                       TERMS OF SERVICE <span className="material-symbols-outlined text-xs">arrow_forward</span>
                     </Link>
+                    <Link
+                      to="/cookies"
+                      className="text-[10px] font-headline font-bold tracking-widest text-[#8b8d92] hover:text-white hover:underline flex items-center gap-1"
+                    >
+                      COOKIE PREFERENCES <span className="material-symbols-outlined text-xs">arrow_forward</span>
+                    </Link>
+                    <Link
+                      to="/credits"
+                      className="text-[10px] font-headline font-bold tracking-widest text-[#8b8d92] hover:text-white hover:underline flex items-center gap-1"
+                    >
+                      CREDITS <span className="material-symbols-outlined text-xs">arrow_forward</span>
+                    </Link>
                   </div>
                 </section>
               </>

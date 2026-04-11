@@ -66,8 +66,8 @@ export default function Dashboard() {
 
 
       {/* LAYER 2: The Independent Scrollable Transparent Foreground */}
-      {/* We make this container `overflow-y-auto` so the mouse scroll only moves these boxes, not the page window. */}
-      <div className="relative z-10 w-full h-full overflow-y-auto custom-scrollbar pb-24">
+      {/* We make this container `overflow-y-auto` so the mouse scroll only moves these boxes, not the page window. We explicitly add overflow-x-hidden. */}
+      <div className="relative z-10 w-full h-full overflow-y-auto overflow-x-hidden custom-scrollbar pb-24">
         <div className="max-w-5xl mx-auto space-y-10 px-4 md:px-8 py-8 md:py-12">
 
           {/* HERO SECTION */}
@@ -214,21 +214,21 @@ export default function Dashboard() {
                 {latestRace.results.slice(0, 4).map((result, idx) => (
                   <div key={result.driverId} className={`flex items-center justify-between p-4 px-6 rounded-xl bg-black/10 backdrop-blur-sm border ${idx === 0 || idx === 1 ? 'border-red-500/60 shadow-[0_0_20px_rgba(225,6,0,0.15)]' : 'border-white/20'} hover:border-white/50 transition-all`}>
 
-                    <div className="flex items-center gap-4 flex-1">
-                      <span className="font-headline font-black text-lg w-6 text-center text-white drop-shadow-md">
+                    <div className="flex items-center gap-2 sm:gap-4 flex-1 min-w-0">
+                      <span className="font-headline font-black text-sm sm:text-lg w-5 sm:w-6 text-center text-white drop-shadow-md">
                         {String(idx + 1).padStart(2, '0')}
                       </span>
                       <span className={`w-0.5 h-4 shadow-sm ${idx <= 0 ? 'bg-[#00F0E0]' : idx === 1 ? 'bg-[#ff8000]' : idx === 2 ? 'bg-[#E10600]' : 'bg-[#00F0E0]'}`}></span>
-                      <span className="font-bold text-xs uppercase text-white tracking-[0.15em] w-[150px] truncate drop-shadow-md">{result.driverName}</span>
-                      <span className="text-[10px] uppercase tracking-[0.15em] text-white/80 font-bold hidden sm:block w-[120px] truncate drop-shadow-md">{result.team}</span>
+                      <span className="font-bold text-[10px] sm:text-xs uppercase text-white tracking-[0.05em] sm:tracking-[0.15em] flex-1 truncate drop-shadow-md">{result.driverName}</span>
+                      <span className="text-[10px] uppercase tracking-[0.15em] text-white/80 font-bold hidden lg:block w-[120px] truncate drop-shadow-md">{result.team}</span>
                     </div>
 
-                    <div className="flex items-center gap-6">
+                    <div className="flex items-center gap-2 sm:gap-6 shrink-0">
                       <span className="text-[10px] uppercase tracking-[0.15em] text-white/80 font-bold hidden md:block w-[80px] drop-shadow-md">
                         {idx === 0 ? result.laps + ' LAPS' : ' '}
                       </span>
-                      <span className="text-[11px] font-mono text-white w-[80px] text-right font-bold drop-shadow-md">{result.time}</span>
-                      <span className="font-bold text-[10px] text-white/90 w-[50px] tracking-[0.1em] text-right drop-shadow-md">{result.points > 0 ? `${result.points} PTS` : ''}</span>
+                      <span className="text-[9px] sm:text-[11px] font-mono text-white text-right font-bold drop-shadow-md w-[50px] sm:w-[80px] truncate">{result.time}</span>
+                      <span className="font-bold text-[9px] sm:text-[10px] text-white/90 tracking-[0.05em] sm:tracking-[0.1em] text-right drop-shadow-md w-[35px] sm:w-[50px] truncate">{result.points > 0 ? `${result.points} PTS` : ''}</span>
                     </div>
 
                   </div>
