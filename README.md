@@ -29,14 +29,11 @@ A premium, high-fidelity real-time Formula 1 web application designed to track t
 ---
 
 ## 📸 Screenshots
+<img width="1919" height="971" alt="image" src="https://github.com/user-attachments/assets/5a1b1e97-936c-423e-8fcb-514884196af1" />
 
 <img width="1918" height="971" alt="image" src="https://github.com/user-attachments/assets/c596261c-98c8-4522-9087-ebb705fc6611" />
+<img width="1919" height="969" alt="image" src="https://github.com/user-attachments/assets/6d0a2ce6-2393-4f91-b796-37e14997c058" />
 
-
-<p align="center">
-  <img src="https://via.placeholder.com/800x400/13131b/ffffff?text=F1+Settings+Menu" alt="Dashboard" width="48%">
-  <img src="https://via.placeholder.com/800x400/13131b/E10600?text=Interactive+Telemetry+Visualizer" alt="Drivers Page" width="48%">
-</p>
 
 ---
 
