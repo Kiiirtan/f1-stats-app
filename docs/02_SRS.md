@@ -2,8 +2,8 @@
 
 | Field | Detail |
 |---|---|
-| **Document Version** | 4.0 |
-| **Date** | March 31, 2026 |
+| **Document Version** | 5.0 |
+| **Date** | April 11, 2026 |
 | **Project** | F1 Stats |
 | **Prepared By** | Development Team |
 
@@ -15,7 +15,7 @@
 This document defines the functional and non-functional requirements for F1 Stats, a real-time Formula 1 dashboard web application with premium interactive effects and zero-downtime data resilience.
 
 ### 1.2 Scope
-The system is a client-side Single Page Application (SPA) that fetches and displays live F1 data through an immersive, animation-rich interface. Data is sourced from the Jolpica F1 public API with automatic fallback to a **Supabase PostgreSQL database** when the primary API is unreachable. A **GitHub Actions** CRON job keeps the Supabase cache fresh every 30 minutes. Settings are persisted client-side via localStorage.
+The system is a client-side Single Page Application (SPA) that fetches and displays live F1 data through an immersive, animation-rich interface. Data is sourced from the Jolpica F1 public API with automatic fallback to a **Supabase PostgreSQL database** when the primary API is unreachable. A **GitHub Actions** CRON job keeps the Supabase cache fresh every 30 minutes. **Supabase Auth** provides real email/password authentication with session management. Settings are persisted client-side via localStorage.
 
 ### 1.3 Definitions
 
@@ -44,11 +44,13 @@ The system is a client-side Single Page Application (SPA) that fetches and displ
 │  Settings   │                         │   Supabase DB    │
 │  Store      │                         │   (api_cache)    │
 └─────────────┘                         └──────┬───────────┘
-                                               │
-                                      ┌────────┴────────┐
-                                      │  GitHub Actions  │
-                                      │  (CRON sync)     │
-                                      └─────────────────┘
+       │                                       │
+       │                              ┌────────┴────────┐
+       ▼                              │  GitHub Actions  │
+┌─────────────┐                       │  (CRON sync)     │
+│ Supabase    │                       └─────────────────┘
+│ Auth        │
+└─────────────┘
 ```
 
 ---
@@ -186,6 +188,31 @@ The system is a client-side Single Page Application (SPA) that fetches and displ
 | FR-14.4 | Credits & Attributions page |
 | FR-14.5 | Contact form page with social links |
 
+### 3.16 Authentication (FR-15)
+| ID | Requirement |
+|---|---|
+| FR-15.1 | Email/password sign-up with Supabase Auth |
+| FR-15.2 | Email format validation (regex) and password minimum length (8 chars) |
+| FR-15.3 | Display name validation (2-30 chars) |
+| FR-15.4 | Auto-login on successful registration |
+| FR-15.5 | Sign-in with email/password |
+| FR-15.6 | Sign-out functionality |
+| FR-15.7 | Profile update (display name, avatar) |
+| FR-15.8 | Auth state persists across page reloads via Supabase session |
+| FR-15.9 | AuthModal overlay for sign-up/sign-in |
+
+### 3.17 Skeleton Loading States (FR-16)
+| ID | Requirement |
+|---|---|
+| FR-16.1 | Page-specific skeleton shimmer loaders for all major pages |
+| FR-16.2 | Skeleton matches actual page layout to prevent CLS |
+
+### 3.18 Notifications (FR-17)
+| ID | Requirement |
+|---|---|
+| FR-17.1 | In-app notifications tray accessible from TopNavBar |
+| FR-17.2 | Real-time alert display |
+
 ---
 
 ## 4. Non-Functional Requirements
@@ -258,15 +285,17 @@ The system is a client-side Single Page Application (SPA) that fetches and displ
 | Table | Purpose |
 |---|---|
 | `api_cache` | Persistent JSON cache (`endpoint`, `data`, `updated_at`) |
+| `auth.users` | Supabase Auth managed user accounts |
 
 ---
 
 ## 6. Constraints
 
-- No custom backend — fully client-side with optional Supabase fallback
+- No custom backend — fully client-side with Supabase Auth + DB fallback
 - API rate limits governed by Jolpica's fair-use policy
-- No server-side rendering
+- No server-side rendering (client-side SPA)
 - Image assets depend on Wikimedia Commons availability
+- Supabase anon key exposed in browser bundle (by design; mitigate with RLS)
 
 ---
 
@@ -274,7 +303,7 @@ The system is a client-side Single Page Application (SPA) that fetches and displ
 
 | Criteria | Status |
 |---|---|
-| All 18+ routes render without errors | ✅ |
+| All 20+ routes render without errors | ✅ |
 | TypeScript compiles with zero errors | ✅ |
 | All interactive effects functional | ✅ |
 | Responsive on mobile and desktop | ✅ |
@@ -286,3 +315,7 @@ The system is a client-side Single Page Application (SPA) that fetches and displ
 | Circuit pages display race history | ✅ |
 | Season calendar shows session times | ✅ |
 | GitHub Actions CRON syncs data to Supabase | ✅ |
+| Supabase Auth sign-up/sign-in works | ✅ |
+| Auto-login on registration works | ✅ |
+| Skeleton loaders display during data fetch | ✅ |
+| Dynamic SEO meta tags per page | ✅ |

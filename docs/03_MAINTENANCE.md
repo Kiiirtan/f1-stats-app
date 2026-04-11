@@ -2,8 +2,8 @@
 
 | Field | Detail |
 |---|---|
-| **Document Version** | 4.0 |
-| **Date** | March 31, 2026 |
+| **Document Version** | 5.0 |
+| **Date** | April 11, 2026 |
 
 ---
 
@@ -44,7 +44,7 @@ demo/
 │   │       ├── TiltCard.tsx           # 3D perspective tilt on hover
 │   │       └── Tooltip.tsx            # Hover tooltip component
 │   ├── context/
-│   │   ├── AuthContext.tsx            # Authentication context (localStorage-based)
+│   │   ├── AuthContext.tsx            # Supabase Auth context (email/password, sessions)
 │   │   └── SettingsContext.tsx         # Settings context (theme, accent, animations, etc.)
 │   ├── data/
 │   │   ├── api.ts                     # API layer + cache + Supabase fallback (Jolpica + RSS)
@@ -191,9 +191,10 @@ Colors, fonts, and tokens are defined in `tailwind.config.js`:
 
 | Limitation | Impact | Mitigation |
 |---|---|---|
-| No SSR | SEO limited to static meta tags | Migrate to Next.js for SSR |
+| No SSR | SEO limited to dynamic meta tags | Migrate to Next.js for SSR |
 | In-memory cache | Clears on refresh | Supabase fallback ensures continuity |
 | No component tests | Only API layer tested | Add React Testing Library tests |
 | Cursor glow hidden on mobile | Touch devices don't have mouse hover | Effect gracefully hidden |
 | Wikipedia image dependency | Images may break if renamed/removed | Self-hosted CDN planned |
-| localStorage auth | Demo-quality only | Replace with proper auth before production |
+| Supabase anon key in bundle | Exposed in browser JS by design | Mitigate with RLS policies |
+| Temp files in root | 8 debug/scratch files cluttering repo | Delete or gitignore |

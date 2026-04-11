@@ -1,6 +1,8 @@
 # F1 Stats — Performance Optimization Backlog
 
-*This plan has been intentionally deferred. It serves as a backlog reference if the application encounters Lighthouse performance issues, high bandwidth usage warnings, or mobile rate-limiting from Wikipedia's servers when traffic scales.*
+> **Last Updated:** April 11, 2026 — Current version: v2.0.1.0
+
+*This plan has been intentionally deferred. It serves as a backlog reference if the application encounters Lighthouse performance issues, high bandwidth usage warnings, or mobile rate-limiting from Wikipedia's servers when traffic scales. Some items (like skeleton loaders) have already been implemented independently.*
 
 ---
 

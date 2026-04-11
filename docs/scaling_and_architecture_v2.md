@@ -1,5 +1,7 @@
 # F1 Stats — Scaling Guide & Architecture V2 Roadmap
 
+> **Last Updated:** April 11, 2026 — Current version: v2.0.1.0
+
 This document outlines the current structural limitations and provides specific, technical architectural upgrades required to transition F1 Stats into a highly scalable, commercial-grade F1 platform.
 
 ---
@@ -14,7 +16,10 @@ F1 Stats has already addressed some critical architectural concerns since v1.0:
 | Data freshness during downtime | ✅ Mitigated | Automated sync every 30 minutes via `sync_f1_data.yml` |
 | User preferences | ✅ Implemented | SettingsContext with localStorage persistence |
 | Theme support | ✅ Implemented | Dark/Light mode via Tailwind + CSS variables |
-| Mobile responsiveness | ✅ Implemented | Full responsive design across all 19 pages |
+| Mobile responsiveness | ✅ Implemented | Full responsive design across all 20+ pages |
+| User authentication | ✅ Implemented | Supabase Auth (email/password, sessions, auto-login) |
+| Dynamic SEO | ✅ Implemented | Per-page `<title>` and meta description via `useDocumentMeta` |
+| Skeleton loading | ✅ Implemented | Page-specific shimmer loaders to prevent CLS |
 
 ---
 

@@ -1,23 +1,24 @@
 > [!NOTE]
 > **Suggested Roadmap & Expansions (v3.0)**
+> **Last Updated:** April 11, 2026 — Current version: v2.0.1.0
 
 ## Privacy and Security Audit (Pre-Public Launch)
 
 As we prepare to make the repository public on GitHub, we must ensure all sensitive data is secured. The following steps are required:
 
 1. **Remove Hardcoded Secrets & Environment Files**
-   - Ensure `.env` and `.env.production` files are robustly ignored by `.gitignore` (already verified).
-   - Verify no Supabase credentials or other API keys are hardcoded in the codebase, `render.yaml`, or `vercel.json`.
-   - Create a `.env.example` with dummy values for public developers.
+   - ✅ `.env` and `.env.production` are robustly ignored by `.gitignore`.
+   - ✅ No Supabase credentials are hardcoded in the codebase, `render.yaml`, or `vercel.json`.
+   - [ ] Create a `.env.example` with dummy values for public developers.
 
 2. **Git History Cleanup**
-   - Review Git history for accidental commits of API keys or `.env` files. If any exist, rotate all secrets (generate new Supabase Anon keys) before making the repository public to prevent historical token scraping.
+   - ✅ Verified: `.env` was **never committed** to Git history. No key rotation required for historical exposure.
 
 3. **Database Security (Supabase RLS)**
    - Protect against malicious use of the public `VITE_SUPABASE_ANON_KEY` by enforcing Row Level Security (RLS) on all Supabase tables. Ensure anonymous users have restricted access (e.g., read-only).
 
 4. **Clean up Temporary & Log Files**
-   - Review and purge root debug and log files (e.g., `test_errors.txt`, `tmp_silverstone_debug.js`) to prevent leakage of internal paths, stack traces, or project metadata.
+   - ⚠️ **Still pending:** 8 temp/debug files remain in root (`test_errors.txt`, `tmp_silverstone_debug.js`, `tsc.txt`, `search1.txt`, `search2.txt`, `scratch_meta.py`, `fix-imports.mjs`, `update-colors.mjs`). Delete before next public push.
 
 5. **Private Documentation Audit**
    - Audit `README.md` and the `docs/` directory to ensure no private IPs, local file paths, or custom deployment commands intended only for private development are exposed.
@@ -43,4 +44,7 @@ As we prepare to make the repository public on GitHub, we must ensure all sensit
 
 
 ver.4
- live telementry with openf1 api
+ live telemetry with openf1 api
+
+> [!IMPORTANT]
+> See `BIGF1.md` for the comprehensive master blueprint covering all v3/v4 features and the full scaling strategy.

@@ -1,5 +1,7 @@
 # F1 Stats — Analysis & Monitoring Guide
 
+> **Last Updated:** April 11, 2026 — Current version: v2.0.1.0
+
 This document outlines how to monitor the health, traffic, and performance of the F1 Stats application when deployed as a Static Site on [Render's Free Tier](https://render.com/).
 
 ---
@@ -33,6 +35,11 @@ Since F1 Stats now uses Supabase as a persistent data fallback, you should also 
 - **Database Size:** Track storage usage in the `api_cache` table.
 - **API Requests:** Monitor the number of reads/writes from the client SDK.
 - **Egress:** Track bandwidth usage for data served via Supabase.
+
+### Supabase Auth Monitoring
+- **User Registrations:** Track new sign-ups in the Supabase Auth dashboard → Users tab.
+- **Auth Errors:** Monitor failed login attempts and rate-limit triggers.
+- **Session Management:** Verify JWT token refresh is working correctly.
 
 ### GitHub Actions Sync Health
 - **Where to find:** GitHub repo → Actions tab → "Automatically Sync F1 Data to Supabase" workflow.

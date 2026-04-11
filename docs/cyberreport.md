@@ -1,9 +1,27 @@
 # F1 Stats — Cybersecurity Threat Model & Defense Report
 
 > **Classification:** Internal Engineering Reference
-> **Date:** 2026-04-04
-> **Scope:** Threat analysis for a Vite/React SPA with Supabase backend, deployed on Render/Vercel
+> **Version:** 2.0 (Updated for v2.0.1.0)
+> **Date:** April 11, 2026
+> **Scope:** Threat analysis for a Vite/React SPA with Supabase Auth & DB, deployed on Render
 > **Author:** Security Audit — Dual Red/Blue Team Analysis
+
+---
+
+## Executive Summary — What Changed Since v1.0 of This Report
+
+| Item | Status in v1.0 (Apr 4) | Status Today (Apr 11) |
+|---|---|---|
+| `.env` committed to Git | ⚠️ **CRITICAL** — keys exposed | ✅ **FIXED** — `.gitignore` covers `.env` and `.env.*`, files are NOT tracked |
+| `.env` in Git history | ⚠️ Risk | ✅ **CLEAN** — `.env` was never committed to Git history (verified) |
+| Authentication | ❌ None (localStorage demo) | ✅ **Supabase Auth** — real email/password, session management, input validation |
+| `dangerouslySetInnerHTML` | ✅ Not used | ✅ Still not used (verified via codebase search) |
+| Security headers (CSP, X-Frame, etc.) | ❌ Not implemented | ❌ **Still not implemented** — no CSP, no X-Frame-Options |
+| Temp/debug files in root | ⚠️ Present | ⚠️ **Still present** — 8 temp files remain in root |
+| Supabase RLS | ❌ Not configured | ❓ **Unknown** — not verifiable from client code, needs dashboard check |
+| Rate limiting | ❌ None | ❌ **Still none** — no request throttling |
+| CDN (Cloudflare) | ❌ Not configured | ❌ **Still not configured** — origin IP exposed |
+| CRON sync uses service key | ✅ Via GitHub Secrets | ✅ Still secure — `SUPABASE_SERVICE_KEY` in `secrets`, not in code |
 
 ---
 
@@ -43,7 +61,7 @@ Understanding how attacks work is the foundation of building defensible systems.
                                           ▼
                                   ┌──────────────┐
                                   │ YOUR SERVER  │ ← Drowning in
-                                  │ (Render/Vercel)│   unsolicited traffic
+                                  │ (Render)     │   unsolicited traffic
                                   └──────────────┘
 ```
 
@@ -53,10 +71,10 @@ Understanding how attacks work is the foundation of building defensible systems.
 
 **How it works conceptually:**
 
-1. **App Profiling** — Attacker studies your application to find expensive endpoints. For your F1 Stats app, this would be:
-   - `/driver/:id` — triggers 15+ parallel API calls to Jolpica
-   - `/constructor/:id` — triggers 20+ API calls including season history
-   - `/circuits` — renders 77 iframes (OpenStreetMap embeds)
+1. **App Profiling** — Attacker studies your application to find expensive endpoints. For your F1 Stats app, the costliest pages are:
+   - `/driver/:id` — triggers 3+ parallel API calls to Jolpica (wins, poles, all seasons + per-season standings)
+   - `/constructor/:id` — triggers 5+ API calls including season history (last 15 seasons), current/previous year standings, all drivers
+   - `/circuits` — renders up to 77 circuit cards with potential Wikipedia scraping on profile pages
 
 2. **Slowloris / Slow POST Variants** — Open thousands of connections to your server but send data extremely slowly (1 byte per second). Each connection holds a server thread/socket open. Your server's connection pool exhausts while the attacker uses minimal bandwidth.
 
@@ -70,10 +88,11 @@ Understanding how attacks work is the foundation of building defensible systems.
 - Hard to distinguish from real traffic
 - Targets application logic, not just bandwidth
 
-**Why your app is especially vulnerable:**
-- No request rate limiting
-- No concurrency control on API calls
-- Each page load fires 15-20 downstream API requests (amplification against Jolpica)
+**Why your app is still vulnerable:**
+- No request rate limiting at application level
+- No concurrency control on downstream API calls
+- Each page load fires 3-15+ downstream API requests (amplification against Jolpica)
+- In-memory cache only — bypassed if a new user visits
 - No CDN caching configured for API responses
 
 ---
@@ -82,14 +101,14 @@ Understanding how attacks work is the foundation of building defensible systems.
 
 #### Attack Vector Analysis (Relevant to Your Stack)
 
-Your app is a **static SPA** — no server-side code execution, no file uploads, no user auth. This significantly reduces the attack surface. But threats still exist:
+Your app is now an **SPA with real Supabase Auth** (email/password), Supabase database integration, and external API consumption. The attack surface has expanded compared to v1.
 
 **Supply Chain Attack (Most Realistic Threat):**
 
-1. **Dependency Compromise** — Your `package.json` has ~30 dependencies. An attacker compromises a popular npm package (or its subdependency). When you run `npm install`, malicious code executes in a `postinstall` script.
+1. **Dependency Compromise** — Your `package.json` has 4 runtime + 8 dev dependencies (12 direct, 100s transitive). An attacker compromises a popular npm package (or its subdependency). When you run `npm install`, malicious code executes in a `postinstall` script.
 
 2. **What happens:**
-   - The script reads environment variables (your Supabase keys are in `.env`)
+   - The script reads environment variables (your Supabase keys are in `.env` locally)
    - Exfiltrates them to an external server
    - May inject a backdoor into your `node_modules` that modifies your build output
    - Your production bundle now contains code that runs in every visitor's browser
@@ -97,57 +116,84 @@ Your app is a **static SPA** — no server-side code execution, no file uploads,
 3. **Persistence:**
    - The compromised package stays in your `package-lock.json`
    - Every CI/CD rebuild reinfects
-   - The injected client-side code can: steal cookies, redirect users, mine crypto, or serve as a watering hole for further attacks
+   - The injected client-side code can: steal auth tokens, redirect users, mine crypto, or serve as a watering hole for further attacks
 
-**Supabase Credential Abuse (Your Specific Vulnerability):**
+**Supabase Credential Abuse:**
 
-1. **Attacker finds your `.env` on GitHub** (which currently has your keys committed)
-2. Uses the anon key to query your Supabase:
+> **UPDATE (v2.0.1.0):** The `.env` file was **never committed to Git history** (verified). The anon key is exposed only in the browser bundle at runtime (standard for Supabase SPAs), NOT in the Git repository.
+
+1. **Attacker extracts the anon key** from the browser's network tab or bundled JS (this is by design for Supabase client-side use)
+2. Uses the anon key to query your Supabase directly:
    ```
-   GET https://rjgrvwqrebdzdeduikpj.supabase.co/rest/v1/api_cache
-   Authorization: Bearer <your_anon_key>
+   GET https://<your-project>.supabase.co/rest/v1/api_cache
+   Authorization: Bearer <anon_key_from_browser>
    ```
-3. Can now:
-   - **Read** all cached API data
-   - **Overwrite** cache entries with poisoned data (if no RLS)
+3. **With proper RLS:** Can only READ public data (intended behavior) ✅
+4. **Without RLS:** Can potentially INSERT/UPDATE/DELETE cache entries → **data poisoning** ⚠️
    - Replace legitimate F1 standings data with fake data
-   - Inject XSS payloads into cached JSON that your React app renders
-4. Your app fetches this poisoned cache → serves manipulated data to all users
+   - Inject malicious URLs into cached JSON that `onError` image handlers could load
 
 **Client-Side Injection (XSS via Cached Data):**
 
-If the Supabase cache is poisoned, the attacker could insert HTML/JS into cached JSON fields. Although React escapes JSX by default, there are bypass vectors:
-- `dangerouslySetInnerHTML` (you don't use this — good)
-- URLs in `href` or `src` attributes (`javascript:` protocol)
-- CSS injection via `style` props
-- The `News.tsx` image `onError` handler could be a vector if the image URL is user-controlled
+Current XSS assessment:
+- `dangerouslySetInnerHTML` — ✅ **Not used anywhere** (verified via full codebase search)
+- `javascript:` protocol in URLs — ✅ **Not present** (verified)
+- Image `onError` handlers — ⚠️ **Found in 5 pages** (News.tsx ×2, Dashboard.tsx, ConstructorProfile.tsx ×2, DriverProfile.tsx, CircuitProfile.tsx). These set fallback `src` URLs inline. If cached data included a malicious image URL, the `onError` handler itself is safe (just sets a hardcoded fallback), but the initial load attempt could be to an attacker-controlled server for tracking.
+- CSS injection via `style` props — ⚠️ Low risk but unaudited
+
+**Auth-Specific Threats (New in v2.0):**
+
+| Threat | Risk | Notes |
+|---|---|---|
+| Brute force login | Medium | No client-side lockout after N failed attempts (Supabase has server-side limits) |
+| Session hijacking | Low | Supabase uses HttpOnly cookies / short-lived JWTs |
+| Account enumeration | Low | Supabase returns generic errors on invalid credentials ✅ |
+| Password policy bypass | ✅ Mitigated | Minimum 8 chars enforced client-side, email format validated |
 
 ---
 
-### Threat Matrix Summary
+### Threat Matrix Summary (Updated for v2.0.1.0)
 
-| Attack Vector | Likelihood | Impact | Your Current Exposure |
-|---|---|---|---|
-| Volumetric DDoS | Low (Render/Vercel absorb this) | Medium | LOW — hosting provider handles L3/4 |
-| Layer 7 DDoS | Medium | High | **HIGH — no rate limiting, no CDN** |
-| Supply chain (npm) | Low-Medium | Critical | MEDIUM — standard npm, no lockfile audit |
-| Supabase key exposure | **HIGH** | Critical | **CRITICAL — keys in .env, committed to git** |
-| Cache poisoning via Supabase | Medium (depends on RLS) | High | **HIGH — no RLS enabled** |
-| XSS via injected data | Low | High | LOW — React escapes by default |
-| CSRF | N/A | N/A | N/A — no auth, no state mutations |
+| Attack Vector | Likelihood | Impact | Current Exposure | Previous |
+|---|---|---|---|---|
+| Volumetric DDoS | Low | Medium | 🟢 LOW — Render absorbs L3/4 | Same |
+| Layer 7 DDoS | Medium | High | 🔴 **HIGH — no rate limiting, no CDN** | Same |
+| Supply chain (npm) | Low-Medium | Critical | 🟡 MEDIUM — standard npm, no lockfile audit | Same |
+| Supabase key exposure (Git) | **Was HIGH** | Critical | 🟢 **RESOLVED** — `.env` never in Git history | Was CRITICAL |
+| Supabase key in browser bundle | Low (by design) | Medium | 🟡 MEDIUM — expected for SPA, mitigate with RLS | New |
+| Cache poisoning via Supabase | Medium | High | 🟡 **MEDIUM** — depends on RLS config (unverified) | Was HIGH |
+| XSS via injected data | Low | High | 🟢 LOW — React escapes, no dangerouslySetInnerHTML | Same |
+| CSRF / session attacks | Low | Medium | 🟢 LOW — Supabase handles session tokens securely | Was N/A |
+| Info disclosure (temp files) | Low | Low | 🟡 **MEDIUM — 8 temp/debug files still in root** | Same |
+| Missing security headers | Medium | Medium | 🔴 **HIGH — no CSP, X-Frame, HSTS** | Same |
 
 ---
 
 ## Phase 2: Architecture of Defense (Blue Team Perspective)
 
-### 2A. DDoS Mitigation Architecture
+### 2A. Mitigations Already Applied ✅
+
+| # | Mitigation | When Applied | Detail |
+|---|---|---|---|
+| 1 | `.env` excluded from Git | v1.0.0+ | `.gitignore` covers `.env` and `.env.*` — keys never committed |
+| 2 | Supabase Auth | v2.0.0 | Real email/password auth with session management, replacing localStorage demo |
+| 3 | Input validation | v2.0.1 | Email regex, password length (8+), display name length (2-30) enforced |
+| 4 | Auto-login on signup | v2.0.1 | Eliminates account enumeration via "user exists" errors during manual re-login |
+| 5 | Environment vars on Render | v2.0.0 | `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` set via Render Dashboard, not `render.yaml` |
+| 6 | CRON sync via GitHub Secrets | v1.3.0 | `SUPABASE_SERVICE_KEY` stored in GitHub Secrets, not in code |
+| 7 | 3-tier fetch fallback | v1.3.0 | In-memory cache → Jolpica API (3 retries with exponential backoff) → Supabase DB |
+| 8 | React XSS defaults | v1.0.0 | No `dangerouslySetInnerHTML`, no `javascript:` URLs, JSX auto-escaping |
+
+---
+
+### 2B. DDoS Mitigation Architecture
 
 #### How Your Hosting Provider Already Helps
 
 ```
                                     ┌─────────────────┐
-                                    │ Cloudflare /     │
-          Internet Traffic          │ Vercel Edge      │
+                                    │ Cloudflare       │
+          Internet Traffic          │ (NOT YET ADDED)  │
   ──────────────────────────────▶   │                  │
   (Volumetric + L7 mixed)          │  ① L3/4 Scrubbing│ ← Drops spoofed/amplified packets
                                     │  ② Rate Limiting │ ← Per-IP request throttling
@@ -171,15 +217,15 @@ If the Supabase cache is poisoned, the attacker could insert HTML/JS into cached
 
 2. **Configure CDN caching headers** — Your SPA's `index.html`, JS bundles, and CSS are static. Set `Cache-Control: public, max-age=31536000, immutable` on hashed assets. Attacks hitting cached assets never reach your origin.
 
-3. **Rate limiting at the application level** — Even with Cloudflare, add a rate limit middleware. Since you're a static SPA hitting external APIs (Jolpica), the main concern is protecting Jolpica from amplified traffic:
+3. **Rate limiting at the application level** — Even with Cloudflare, add a rate limit. Since you're a static SPA hitting external APIs, the main concern is protecting Jolpica from amplified traffic:
    - Cap concurrent Jolpica requests at 5 globally
    - Implement a request queue in your `fetchWithCache()`
 
 ---
 
-### 2B. Zero-Trust Defense Against Payload Attacks
+### 2C. Zero-Trust Defense Against Payload Attacks
 
-#### Supabase Hardening (Immediate)
+#### Supabase Hardening (Verify in Dashboard)
 
 ```sql
 -- Enable RLS on api_cache
@@ -189,7 +235,7 @@ ALTER TABLE api_cache ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Allow public read" ON api_cache
   FOR SELECT USING (true);
 
--- Only allow writes from the service role (your backend/CI, not the browser)
+-- Only allow writes from the service role (GitHub Actions CRON, not the browser)
 CREATE POLICY "Deny anon writes" ON api_cache
   FOR INSERT WITH CHECK (auth.role() = 'service_role');
 
@@ -200,11 +246,11 @@ CREATE POLICY "Deny anon deletes" ON api_cache
   FOR DELETE USING (auth.role() = 'service_role');
 ```
 
-**Problem:** Your SPA uses the anon key to WRITE to Supabase (the `syncToSupabase` function). With the above RLS, the sync from the browser will be blocked.
+**Current situation:** Your `syncToSupabase()` function in `src/lib/supabase.ts` uses the **anon key** to WRITE to `api_cache` from the browser. With the above RLS, browser writes will be blocked.
 
 **Solution Options:**
-- **Option A:** Accept read-only cache from browser. Pre-populate cache via a cron job or Supabase Edge Function that uses the service role key.
-- **Option B:** Create a Supabase Edge Function that validates and writes cache entries. The browser calls the function (which uses the service role internally). This way the anon key never has direct table write access.
+- **Option A (Recommended):** Remove `syncToSupabase()` calls from the browser entirely. Rely solely on the GitHub Actions CRON (`sync_f1_data.yml`) which already uses the `service_role` key for writes. The browser app only needs READ access.
+- **Option B:** Create a Supabase Edge Function that validates and writes cache entries. The browser calls the function (which uses the service role internally).
 
 #### Supply Chain Defense
 
@@ -220,9 +266,10 @@ CREATE POLICY "Deny anon deletes" ON api_cache
 
 **Additional measures:**
 - [ ] Run `npm audit` before every deploy
-- [ ] Pin exact dependency versions (no `^` or `~` prefixes) in `package.json`
+- [ ] Pin exact dependency versions (remove `^` prefixes) in `package.json`
 - [ ] Use `npm ci` instead of `npm install` in CI/CD (respects lockfile exactly)
 - [ ] Consider using Socket.dev or Snyk for real-time dependency monitoring
+- [ ] Review the 4 runtime deps (`@supabase/supabase-js`, `react`, `react-dom`, `react-router-dom`) — all are well-maintained, low risk
 
 #### Input Sanitization (Defense-in-Depth)
 
@@ -252,48 +299,130 @@ The simulation will present:
 - Simulated server logs and Cloudflare telemetry
 - Anomalous traffic patterns you must identify
 - Decision points where you choose defensive actions
-- A DDoS smokescreen masking a cache poisoning attempt via your exposed Supabase keys
+- A DDoS smokescreen masking a cache poisoning attempt via the browser-exposed Supabase anon key
 
 **Begin when ready — reply "START SIMULATION" to proceed.**
 
 ---
 
-## Appendix: Immediate Action Items
+## Appendix A: Remaining Action Items
 
-### Before Next Git Push (Priority Order)
+### 🔴 Critical (Do Before Next Release)
 
-| # | Action | Time | Risk Mitigated |
-|---|--------|------|----------------|
-| 1 | `echo ".env" >> .gitignore && git rm --cached .env` | 2 min | Credential exposure |
-| 2 | Rotate Supabase anon key in dashboard | 5 min | Compromised keys |
-| 3 | Enable RLS + create policies on `api_cache` | 10 min | Cache poisoning |
-| 4 | Run `npm audit --audit-level=high` | 2 min | Supply chain |
-| 5 | Delete temp files from root | 2 min | Info disclosure |
-| 6 | Add Cloudflare DNS proxy | 15 min | L3/4 DDoS + origin IP exposure |
+| # | Action | Time | Risk Mitigated | Status |
+|---|---|---|---|---|
+| 1 | Verify RLS is enabled on `api_cache` table in Supabase Dashboard | 5 min | Cache poisoning | 🔲 Pending |
+| 2 | Remove browser-side `syncToSupabase()` calls (rely on CRON only) | 15 min | Unauthorized writes | 🔲 Pending |
+| 3 | Add security headers via `render.yaml` (see Appendix B) | 10 min | XSS, clickjacking, MIME sniffing | 🔲 Pending |
+| 4 | Delete temp/debug files from root (see list below) | 2 min | Info disclosure | 🔲 Pending |
 
-### Security Headers to Add (via `vercel.json` or Render)
+### 🟡 Important (Do This Sprint)
 
-```json
-{
-  "headers": [
-    {
-      "source": "/(.*)",
-      "headers": [
-        { "key": "X-Content-Type-Options", "value": "nosniff" },
-        { "key": "X-Frame-Options", "value": "DENY" },
-        { "key": "X-XSS-Protection", "value": "1; mode=block" },
-        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
-        { "key": "Permissions-Policy", "value": "camera=(), microphone=(), geolocation=()" },
-        {
-          "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' https: data:; connect-src 'self' https://api.jolpi.ca https://*.supabase.co https://api.rss2json.com; frame-src https://www.openstreetmap.org"
-        }
-      ]
-    }
-  ]
-}
+| # | Action | Time | Risk Mitigated | Status |
+|---|---|---|---|---|
+| 5 | Add Cloudflare DNS proxy in front of `statsf1web.onrender.com` | 15 min | L3/4 DDoS + origin IP exposure | 🔲 Pending |
+| 6 | Run `npm audit --audit-level=high` and fix findings | 10 min | Supply chain vulns | 🔲 Pending |
+| 7 | Pin exact dependency versions (remove `^` from `package.json`) | 5 min | Supply chain drift | 🔲 Pending |
+| 8 | Add rate limiting / request queue to `fetchWithCache()` | 30 min | L7 DDoS / Jolpica abuse | 🔲 Pending |
+
+### Temp/Debug Files Still in Root (Should Be Deleted or Gitignored)
+
+| File | Size | Risk |
+|---|---|---|
+| `test_errors.txt` | 473 B | Stack trace / path disclosure |
+| `tmp_silverstone_debug.js` | 1,569 B | Debug script leaks internal logic |
+| `tsc.txt` | 200 B | TypeScript error output |
+| `search1.txt` | 2 B | Dev artifact |
+| `search2.txt` | 2 B | Dev artifact |
+| `scratch_meta.py` | 2,812 B | Python scraper with potential internal URLs |
+| `fix-imports.mjs` | 1,840 B | Build migration script |
+| `update-colors.mjs` | 1,017 B | One-time color migration script |
+
+---
+
+## Appendix B: Security Headers to Add
+
+Add to `render.yaml` under the static site `headers` configuration, or implement via Cloudflare:
+
+```yaml
+services:
+  - type: web
+    name: f1-stats-app
+    env: static
+    buildCommand: npm install && npm run build
+    staticPublishPath: ./dist
+    headers:
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff
+      - path: /*
+        name: X-Frame-Options
+        value: DENY
+      - path: /*
+        name: X-XSS-Protection
+        value: "1; mode=block"
+      - path: /*
+        name: Referrer-Policy
+        value: strict-origin-when-cross-origin
+      - path: /*
+        name: Permissions-Policy
+        value: "camera=(), microphone=(), geolocation=()"
+      - path: /*
+        name: Content-Security-Policy
+        value: >-
+          default-src 'self';
+          script-src 'self';
+          style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+          font-src 'self' https://fonts.gstatic.com;
+          img-src 'self' https: data:;
+          connect-src 'self' https://api.jolpi.ca https://*.supabase.co https://api.rss2json.com;
+          frame-src 'none'
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: VITE_SUPABASE_URL
+        sync: false
+      - key: VITE_SUPABASE_ANON_KEY
+        sync: false
 ```
 
 ---
 
-*This report is a living document. Update as mitigations are applied.*
+## Appendix C: Current Auth Architecture
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant Browser as React SPA
+    participant Supabase as Supabase Auth
+
+    User->>Browser: Enter email + password
+    Browser->>Browser: Client-side validation (email regex, password >= 8 chars)
+    Browser->>Supabase: signUp({ email, password, metadata })
+    Supabase-->>Browser: { user, session } or error
+
+    alt Session returned (auto-confirmed)
+        Browser->>Browser: setUser(mapUser(user))
+        Browser-->>User: Logged in ✅
+    else No session (email confirmation required)
+        Browser->>Supabase: signInWithPassword({ email, password })
+        Supabase-->>Browser: { session }
+        Browser->>Browser: setUser(mapUser(user))
+        Browser-->>User: Logged in ✅
+    end
+
+    Note over Browser,Supabase: onAuthStateChange listener keeps state in sync
+```
+
+**Validation enforced:**
+- Email: trimmed, lowercased, regex validated (`^[^\s@]+@[^\s@]+\.[^\s@]+$`)
+- Password: minimum 8 characters
+- Display name: 2–30 characters
+- Rate limit errors surfaced to user with guidance
+
+---
+
+*This report is a living document. Last updated: April 11, 2026 (v2.0.1.0).*
+*Previous version: April 4, 2026 (v1.0.0.0).*

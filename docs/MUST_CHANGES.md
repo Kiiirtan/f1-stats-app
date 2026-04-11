@@ -1,20 +1,22 @@
 # F1 Stats — Must Changes Before & After Launch
 
-> **Last Updated:** 2026-04-04
-> **Status:** Pre-Launch Audit
+> **Last Updated:** 2026-04-11
+> **Status:** Post-Launch (v2.0.1.0 — Live on Render)
 
 ---
 
 ## 🔴 CRITICAL — Fix Before Pushing to GitHub
 
-### 1. `.env` File Exposed in Git
-Your Supabase URL and anon key are in a plain `.env` file. If this repo goes public, anyone can access your database.
+### 1. ~~`.env` File Exposed in Git~~ ✅ RESOLVED
+~~Your Supabase URL and anon key are in a plain `.env` file.~~
+
+**Status:** `.gitignore` covers `.env` and `.env.*`. Keys were **never committed** to Git history (verified). Render Dashboard holds production values securely.
 
 **Action:**
-- [ ] Add `.env` to `.gitignore` immediately
-- [ ] Run `git rm --cached .env` to untrack it
-- [ ] Rotate your Supabase anon key from the Supabase dashboard
-- [ ] Use environment variables on your hosting platform (Render/Vercel) instead
+- [x] Add `.env` to `.gitignore`
+- [x] Verify `.env` was never committed to Git history
+- [x] Use environment variables on Render Dashboard
+- [ ] Rotate Supabase anon key periodically (best practice)
 
 ---
 
@@ -51,12 +53,12 @@ The Cadillac constructor logo URL in `src/data/constructorDetails.ts` returns a 
 
 ---
 
-### 5. Remove or Implement Archive Filter Buttons
-The "DECADE", "DRIVER", and "TEAM" buttons on `src/pages/Archives.tsx` render but do nothing on click. Fake interactive elements are worse than no elements.
+### 5. ~~Remove or Implement Archive Filter Buttons~~ ⚠️ VERIFY
+The "DECADE", "DRIVER", and "TEAM" buttons on the Archives page may still be non-functional.
 
 **Action (pick one):**
 - [ ] **Remove them** — delete the button markup entirely
-- [ ] **Implement them** — wire up filtering logic against the `HISTORICAL_SEASONS` array
+- [ ] **Implement them** — wire up filtering logic
 
 ---
 
@@ -104,11 +106,11 @@ Driver profile pages fire 15+ parallel API calls. Multiply by concurrent users a
 
 ---
 
-### 10. No SEO — Pure Client-Side SPA
-React Router client-side rendering means search engines see an empty `<div id="root">`. Only 2 pages use `useDocumentMeta`. No sitemap, no structured data.
+### 10. ~~No SEO~~ — Partially Resolved
+~~React Router client-side rendering means search engines see an empty `<div id="root">`.~~ Dynamic `<title>` and meta description tags are now set per-page via `useDocumentMeta` hook.
 
-**Action:**
-- [ ] Add `useDocumentMeta` to every page
+**Remaining Action:**
+- [x] Add `useDocumentMeta` to every page
 - [ ] Generate a static `sitemap.xml`
 - [ ] Long-term: consider SSR (Next.js) or pre-rendering if SEO matters
 
@@ -133,11 +135,12 @@ Every page independently fetches data. Dashboard → Drivers → Dashboard = 6 r
 
 ---
 
-### 13. Zero Tests
-No unit tests, integration tests, or e2e tests. Every deploy is a gamble.
+### 13. ~~Zero Tests~~ — Partially Resolved
+~~No unit tests, integration tests, or e2e tests.~~ 8 API unit tests exist via Vitest.
 
-**Action:**
-- [ ] Add Vitest for unit tests (data transformers are easy wins)
+**Remaining Action:**
+- [x] Add Vitest for unit tests (API transformers)
+- [ ] Add React Testing Library tests for components
 - [ ] Add Playwright for critical user flows (Dashboard load, Driver profile)
 
 ---
@@ -165,32 +168,36 @@ If `fetchDriverCareerStats` fails, the career section silently disappears. User 
 |------|-------|--------|
 | **Mobile** | Untested on small screens; glassmorphism + complex grids likely break | Medium |
 | **Offline/PWA** | No service worker; sports apps need offline support for live events | High |
-| **Auth** | Settings are localStorage-only; no user accounts, favorites, or sync | High |
+| **Auth** | ~~Settings are localStorage-only; no user accounts~~ **Supabase Auth implemented** ✅ | ~~High~~ Done |
 | **Monitoring** | No Sentry, no analytics; zero visibility into production errors | Low |
 | **Accessibility** | No ARIA labels, no keyboard nav, no reduced-motion, no focus management | Medium |
 | **i18n** | English-only; F1 has a global audience | High |
 | **Dark/Light Toggle** | Settings has `theme: 'dark' | 'light'` but only dark mode works | Low |
+| **Security Headers** | No CSP, X-Frame-Options, or HSTS configured on Render | Low |
 
 ---
 
 ## Priority Execution Order
 
 ```
-BEFORE NEXT GIT PUSH (30 minutes):
-  1. .gitignore + rotate Supabase keys
-  2. Enable RLS on Supabase
-  3. Delete temp files
-  4. Fix Cadillac logo
-  5. Remove fake Archive filter buttons
+✅ ALREADY DONE:
+  1. .gitignore covers .env and .env.*
+  2. Supabase Auth implemented (email/password)
+  3. Dynamic SEO meta tags on all pages
+  4. 8 API unit tests via Vitest
+  5. Skeleton loading states on major pages
 
-FIRST WEEK POST-LAUNCH:
-  6. Cache news in Supabase
-  7. Add useDocumentMeta to all pages
-  8. Request queue / concurrency limit
+NEXT SPRINT:
+  1. Verify/enable RLS on Supabase api_cache table
+  2. Delete temp files from root
+  3. Fix Cadillac logo 404
+  4. Add security headers to Render config
+  5. Cache news in Supabase
 
 BEFORE ADDING NEW FEATURES:
-  9. Split api.ts
-  10. Adopt React Query
-  11. Add basic tests
-  12. Remove all `any` types
+  6. Split api.ts
+  7. Adopt React Query
+  8. Add component tests
+  9. Remove all `any` types
+  10. Add request queue / concurrency limit
 ```

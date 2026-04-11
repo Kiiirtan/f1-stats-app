@@ -67,6 +67,7 @@ If you want zero-downtime data resilience:
 2. Create an `api_cache` table with columns: `endpoint` (text, unique), `data` (jsonb), `updated_at` (timestamptz)
 3. Set `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` environment variables
 4. The app will automatically sync data and fall back to Supabase when the API is down
+5. **Authentication:** Supabase Auth handles real email/password sign-up/sign-in automatically when the above env vars are set
 
 ### Optional: GitHub Actions Data Sync
 The `.github/workflows/sync_f1_data.yml` CRON job keeps Supabase data fresh:
@@ -114,3 +115,4 @@ The `.github/workflows/sync_f1_data.yml` CRON job keeps Supabase data fresh:
 | Animations janky | Check hardware acceleration is enabled in browser settings |
 | Supabase not connecting | Verify `.env` variables or run without (fully optional) |
 | Theme not changing | Check Settings page → Theme dropdown. Clear localStorage if stuck |
+| Can't register/login | Check Supabase env vars are set. If rate-limited, wait or disable email confirmation in Supabase dashboard |

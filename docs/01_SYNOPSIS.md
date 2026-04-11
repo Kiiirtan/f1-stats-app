@@ -3,8 +3,8 @@
 | Field | Detail |
 |---|---|
 | **Project Title** | F1 Stats — Live F1 Dashboard |
-| **Version** | 4.0.0 |
-| **Date** | March 31, 2026 |
+| **Version** | 2.0.1.0 |
+| **Date** | April 11, 2026 |
 | **Technology** | React 18, React Router v7, TypeScript, Vite 5, Tailwind CSS 3 |
 | **Data Source** | Jolpica F1 API, Supabase (DB Fallback), RSS2JSON, Wikimedia Commons |
 | **Deployment** | Render (Static Site) |
@@ -14,7 +14,7 @@
 
 ## 1. Overview
 
-F1 Stats is a real-time Formula 1 web dashboard delivering live championship standings, breaking global news, historical constructor analytics, individual driver profiles, circuit encyclopedias, and a detailed season calendar. The application consumes authentic telemetry from the Jolpica F1 API and Motorsport.com, with a **Supabase database fallback** for zero-downtime resilience. Data is presented through a **premium, immersive, dark-themed interface** featuring **3D tilt cards, parallax scrolling, cursor-interactive effects, scroll-triggered reveals, and micro-animations** — fully optimized for both desktop and mobile.
+F1 Stats is a real-time Formula 1 web dashboard delivering live championship standings, breaking global news, historical constructor analytics, individual driver profiles, circuit encyclopedias, and a detailed season calendar. The application consumes authentic telemetry from the Jolpica F1 API and Motorsport.com, with a **Supabase database fallback** for zero-downtime resilience and **Supabase Auth** for real user authentication. Data is presented through a **premium, immersive, dark-themed interface** featuring **3D tilt cards, parallax scrolling, cursor-interactive effects, scroll-triggered reveals, and micro-animations** — fully optimized for both desktop and mobile.
 
 ## 2. Problem Statement
 
@@ -53,6 +53,11 @@ A lightweight SPA built with modern web technologies that:
 | Global Interactive Effects | Cyan radial gradient orb following the mouse, smooth loaders, and route transitions. |
 | Supabase Fallback | Zero-downtime data architecture — serves cached data from Supabase when Jolpica API is unreachable. |
 | GitHub Actions Sync | Automated CRON job syncing fresh F1 data to Supabase every 30 minutes. |
+| Supabase Authentication | Real email/password auth with input validation, auto-login on signup, and session management. |
+| Skeleton Loaders | Premium page-specific shimmer loading states for every major page. |
+| Dynamic SEO | Per-page dynamic `<title>` and meta tags via `useDocumentMeta` hook. |
+| Notifications Tray | In-app notification system with real-time alerts. |
+| Archives | Historical season browsing with curated data. |
 
 ## 5. Target Audience
 
@@ -61,7 +66,7 @@ A lightweight SPA built with modern web technologies that:
 
 ## 6. Deliverables
 
-- Fully functional SPA with 18+ routes
+- Fully functional SPA with 20+ routes
 - Deep historical data architecture (drivers & constructors)
 - Driver career statistics (championships, wins, poles, season history)
 - Circuit encyclopedia with race history

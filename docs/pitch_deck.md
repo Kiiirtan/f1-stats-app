@@ -30,6 +30,8 @@ Current F1 data websites suffer from severe UX bloat. They are plagued by ad-clu
 - **Premium UI/UX:** Built on Material Design 3 dark-mode principles with heavy contrast, semantic coloring, and high-fidelity racing photography.
 - **Zero-Downtime Architecture:** Supabase database fallback + GitHub Actions CRON ensures data availability even when APIs are down.
 - **Settings & Personalization:** Theme (Dark/Light), accent colors, animation preferences, and default page configuration.
+- **Real Authentication:** Supabase Auth with email/password, input validation, and auto-login on signup.
+- **Premium Loading States:** Page-specific skeleton shimmer loaders that match the actual layout.
 
 ![News Feed Layout](./assets/news_feed.png)
 
@@ -107,7 +109,7 @@ How does F1 Stats generate revenue in the future?
 - **API Dependency:** Reliant on third-party uptime (Jolpica F1 API), mitigated by Supabase fallback.
 - **Image Licensing:** Relying on Wikipedia Creative Commons limits exclusive branding.
 - **No Official Telemetry:** We lack live-lap GPS data without paying exorbitant FIA commercial fees.
-- **Client-Side Rendering:** SEO limited without SSR migration.
+- **Client-Side Rendering:** SEO limited without SSR migration (mitigated by dynamic meta tags).
 
 ---
 # The Future Roadmap

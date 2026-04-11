@@ -2,17 +2,17 @@
 
 | Field | Detail |
 |---|---|
-| **Document Version** | 4.0 |
-| **Date** | March 31, 2026 |
+| **Document Version** | 5.0 |
+| **Date** | April 11, 2026 |
 | **Project** | F1 Stats |
 
 ---
 
 ## 1. What Is F1 Stats?
 
-F1 Stats is a client-side web application that displays real-time Formula 1 data in an **immersive, interactive, dark-themed interface**. It pulls live data from the **Jolpica F1 API** with a **Supabase database fallback** for zero-downtime resilience, and presents it across 18+ pages with **3D motion, parallax scrolling, cursor-interactive effects, and scroll-triggered reveals**.
+F1 Stats is a client-side web application that displays real-time Formula 1 data in an **immersive, interactive, dark-themed interface**. It pulls live data from the **Jolpica F1 API** with a **Supabase database fallback** for zero-downtime resilience, provides **real user authentication via Supabase Auth**, and presents data across 20+ pages with **3D motion, parallax scrolling, cursor-interactive effects, and scroll-triggered reveals**.
 
-**In one sentence**: A premium animated F1 dashboard built with React + TypeScript featuring 3D tilt cards, parallax hero, cursor glow, scroll reveals, zero-downtime data architecture, and full driver/constructor/circuit analytics — powered by live API data with Supabase database fallback.
+**In one sentence**: A premium animated F1 dashboard built with React + TypeScript featuring 3D tilt cards, parallax hero, cursor glow, scroll reveals, zero-downtime data architecture, Supabase Auth, and full driver/constructor/circuit analytics — powered by live API data with Supabase database fallback.
 
 ---
 
@@ -26,6 +26,7 @@ F1 Stats is a client-side web application that displays real-time Formula 1 data
 | Styling | Tailwind CSS 3 | Utility-first CSS with Material Design 3 tokens |
 | Routing | React Router v7 | Client-side routing with URL params |
 | Database | Supabase (PostgreSQL) | Persistent API cache for zero-downtime fallback |
+| Authentication | Supabase Auth | Real email/password auth with session management |
 | CI/CD | GitHub Actions | Automated CRON sync to Supabase every 30 min |
 | Icons | Material Symbols (Google Fonts) | Consistent icon set via CDN |
 | Typography | Space Grotesk + Inter (Google Fonts) | Modern, sporty headline + clean body text |
@@ -48,6 +49,7 @@ SmoothLoader (F1-themed splash screen)
     │
     ▼
 App.tsx renders:
+  ├── AuthProvider (Supabase Auth context — sessions, sign-up/in/out)
   ├── SettingsProvider (settings context — theme, accent, animations)
   ├── ErrorBoundary (catches render errors)
   ├── SmoothLoader (loading splash)
@@ -258,9 +260,9 @@ Next time a user visits with Jolpica down →
 | Context | Purpose |
 |---|---|
 | `SettingsContext` | Theme (dark/light), accent color, animation toggle, data density, auto-refresh, units, default page |
-| `AuthContext` | Demo-quality auth (localStorage-based login/register/logout) |
+| `AuthContext` | Supabase Auth — email/password sign-up/sign-in, session management, profile updates, auto-login on registration |
 
-### 5.8 Pages (19 total)
+### 5.8 Pages (20 total)
 
 | Page | Key Features |
 |---|---|
