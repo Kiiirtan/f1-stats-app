@@ -301,7 +301,7 @@ export default function TopNavBar() {
 
       {/* Mobile Navigation Overlay */}
       {mobileMenuOpen && (
-        <div className="md:hidden fixed inset-0 top-16 z-40 bg-[#13131b]/95 backdrop-blur-xl border-t border-[var(--theme-accent)]/10 overflow-y-auto">
+        <div className="lg:hidden fixed inset-0 top-16 z-40 bg-[#13131b]/95 backdrop-blur-xl border-t border-[var(--theme-accent)]/10 overflow-y-auto">
           <nav className="flex flex-col p-4 space-y-2">
             {mobileNavLinks.map((link) => (
               <Link
