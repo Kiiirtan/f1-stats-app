@@ -16,7 +16,7 @@ export default function Layout({ children }: Readonly<LayoutProps>) {
   const showBg = true;
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#0B0C10] text-[#E0E1DD] font-body selection:bg-primary-container selection:text-white relative">
+    <div className="flex flex-col min-h-screen bg-[#0B0C10] text-[#E0E1DD] font-body selection:bg-primary-container selection:text-white relative overflow-x-hidden">
       {/* Global static background for all pages except Dashboard and News */}
       {showBg && (
         <div className="fixed inset-0 z-0 bg-black pointer-events-none">

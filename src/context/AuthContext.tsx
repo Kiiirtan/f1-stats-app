@@ -70,8 +70,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (!supabase) return { success: false, error: 'Authentication service unavailable.' };
 
     const trimmedEmail = email.trim().toLowerCase();
+    
+    // Strict Structural/Data Validate
     if (!trimmedEmail || !password) return { success: false, error: 'Please fill in all fields.' };
-    if (password.length < 6) return { success: false, error: 'Password must be at least 6 characters.' };
+    
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(trimmedEmail)) {
+      return { success: false, error: 'Please enter a valid, format-compliant email address.' };
+    }
+    
+    if (password.length < 8) {
+      return { success: false, error: 'For your security, password must be at least 8 characters.' };
+    }
+    
+    if (displayName && (displayName.trim().length < 2 || displayName.trim().length > 30)) {
+      return { success: false, error: 'Display name must be between 2 and 30 characters.' };
+    }
 
     const { data, error } = await supabase.auth.signUp({
       email: trimmedEmail,
@@ -83,11 +97,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       },
     });
 
-    if (error) return { success: false, error: error.message };
-    if (data.user) {
-      // For projects with email confirmation disabled, user is auto-logged in
-      return { success: true };
+    if (error) {
+      if (error.message.includes('rate limit')) {
+         return { success: false, error: 'Too many requests. Please wait, or disable "Confirm Email" in your Supabase Auth Providers dashboard.' };
+      }
+      return { success: false, error: error.message };
     }
+    
+    // If Supabase didn't auto-login the user (session is null), force a manual login
+    if (!data.session) {
+      const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
+        email: trimmedEmail,
+        password,
+      });
+      
+      if (!signInError && signInData.session) {
+        return { success: true };
+      }
+    }
+
     return { success: true };
   };
 
@@ -95,7 +123,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (!supabase) return { success: false, error: 'Authentication service unavailable.' };
 
     const trimmedEmail = email.trim().toLowerCase();
+    
     if (!trimmedEmail || !password) return { success: false, error: 'Please fill in all fields.' };
+    
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(trimmedEmail)) {
+      return { success: false, error: 'Please enter a valid email address.' };
+    }
 
     const { error } = await supabase.auth.signInWithPassword({
       email: trimmedEmail,
@@ -122,7 +156,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (!supabase) return { success: false, error: 'Authentication service unavailable.' };
 
     const updates: Record<string, string> = {};
-    if (data.displayName !== undefined) updates.display_name = data.displayName;
+    if (data.displayName !== undefined) {
+      const trimmedName = data.displayName.trim();
+      if (trimmedName.length < 2 || trimmedName.length > 30) {
+        return { success: false, error: 'Display name must be between 2 and 30 characters.' };
+      }
+      updates.display_name = trimmedName;
+    }
     if (data.avatarUrl !== undefined) updates.avatar_url = data.avatarUrl;
 
     const { error } = await supabase.auth.updateUser({

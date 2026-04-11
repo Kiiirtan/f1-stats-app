@@ -459,7 +459,7 @@ export default function Settings() {
                   </h3>
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6">
                     {[
-                      { label: 'VERSION', value: '2.0.0' },
+                      { label: 'VERSION', value: '2.0.1.0' },
                       { label: 'API SOURCE', value: 'Jolpica' },
                       { label: 'SEASON', value: '2026' },
                       { label: 'CACHE TTL', value: '5 min' },
