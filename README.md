@@ -23,6 +23,8 @@ A premium, high-fidelity real-time Formula 1 web application designed to track t
 - **🖼️ High-Fidelity Imagery:** Seamless fallback integration with Wikimedia Commons and Unsplash for premium, globally-accessible driver portraits and hero car backgrounds.
 - **🎨 Dynamic Theming Engine:** The UI accent colors dynamically shift to match the exact hexadecimal branding of your favorite Constructor (e.g., Ferrari Red, Mercedes Teal) without touching any CSS.
 - **📱 Responsive Glassmorphism:** Fully optimized mobile-first experiences built on TailwindCSS, featuring backdrop blur filters, smooth route transitions, and collapsed mobile-navigation.
+- **🔐 Secure Authentication:** Seamless user authentication and profile management powered by Supabase.
+- **🤖 AI-Powered Assistant:** Integrated Kalcend AI widget for intelligent insights and interactive user queries directly on the dashboard.
 
 ---
 
@@ -43,10 +45,12 @@ A premium, high-fidelity real-time Formula 1 web application designed to track t
 
 - **Frontend Core:** React 18, Vite, TypeScript, React Router DOM v6
 - **Styling:** Tailwind CSS, PostCSS, Custom Semantic Component Tokens
-- **Data Syndication:** 
+- **Backend & Auth:** Supabase (PostgreSQL, GoTrue)
+- **Data Syndication & AI:** 
   - [Jolpica F1 API](https://jolpi.ca/) (Live Telemetry & Standings)
   - Motorsport.com RSS Feed via AllOrigins API Proxy (News)
   - Wikimedia Commons & Unsplash (Dynamic Media)
+  - Kalcend AI (Interactive Widget)
 - **Deployment & CI/CD:** Render Cloud Infrastructure
 
 ---
@@ -64,7 +68,13 @@ If you want to run this application locally on your machine, simply follow these
    cd demo
    npm install
    ```
-3. **Start the development server:**
+3. **Configure Environment Variables:**
+   Create a `.env` file in the root directory and add your Supabase credentials:
+   ```env
+   VITE_SUPABASE_URL=your_supabase_project_url
+   VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+   ```
+4. **Start the development server:**
    ```bash
    npm run dev
    ```
