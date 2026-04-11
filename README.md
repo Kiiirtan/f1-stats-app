@@ -30,8 +30,7 @@ A premium, high-fidelity real-time Formula 1 web application designed to track t
 
 ## 📸 Screenshots
 
-<img width="1918" height="971" alt="image" src="https://github.com/user-attachments/assets/305c15d1-12b7-4d4c-b2b2-abefa40933a9" />
-<img width="1919" height="971" alt="image" src="https://github.com/user-attachments/assets/163a7ce8-c6ea-4eee-b095-296ca07e7f09" />
+<img width="1918" height="971" alt="image" src="https://github.com/user-attachments/assets/c596261c-98c8-4522-9087-ebb705fc6611" />
 
 
 <p align="center">
