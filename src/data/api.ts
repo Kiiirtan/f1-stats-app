@@ -62,6 +62,16 @@ export interface ApiCircuit {
   Location: { lat: string; long: string; locality: string; country: string };
 }
 
+export interface ApiQualifyingResult {
+  number: string;
+  position: string;
+  Driver: ApiDriver;
+  Constructor: ApiConstructor;
+  Q1: string;
+  Q2?: string;
+  Q3?: string;
+}
+
 export interface ApiRace {
   season: string;
   round: string;
@@ -71,6 +81,8 @@ export interface ApiRace {
   date: string;
   time?: string;
   Results?: ApiRaceResult[];
+  SprintResults?: ApiRaceResult[];
+  QualifyingResults?: ApiQualifyingResult[];
   FirstPractice?: { date: string; time: string };
   Qualifying?: { date: string; time: string };
   Sprint?: { date: string; time: string };
@@ -124,6 +136,18 @@ export interface RaceResult {
   points: number;
   time: string;
   fastestLap?: string;
+}
+
+export interface QualifyingResult {
+  position: number;
+  driverId: string;
+  driverName: string;
+  driverCode: string;
+  team: string;
+  teamId: string;
+  q1: string;
+  q2?: string;
+  q3?: string;
 }
 
 export interface ConstructorStanding {
@@ -360,6 +384,57 @@ export async function fetchRaceResults(): Promise<Race[]> {
       fastestLap: res.FastestLap?.Time?.time,
     })),
   }));
+}
+
+export async function fetchQualifyingResults(round: number): Promise<QualifyingResult[]> {
+  const data = await fetchWithCache<{
+    MRData: { RaceTable: { season: string; Races: ApiRace[] } };
+  }>(`${BASE_URL}/current/${round}/qualifying.json`);
+
+  const race = data.MRData.RaceTable.Races[0];
+  if (!race || !race.QualifyingResults) return [];
+
+  return race.QualifyingResults.map((res) => ({
+    position: parseInt(res.position, 10),
+    driverId: res.Driver.driverId,
+    driverName: `${res.Driver.givenName === 'Andrea Kimi' ? 'K.' : res.Driver.givenName.charAt(0)}. ${res.Driver.familyName}`,
+    driverCode: res.Driver.code,
+    team: res.Constructor.name,
+    teamId: res.Constructor.constructorId,
+    q1: res.Q1,
+    q2: res.Q2,
+    q3: res.Q3,
+  }));
+}
+
+export async function fetchSprintResults(round: number): Promise<RaceResult[]> {
+  // If a weekend doesn't have a sprint, this endpoint will simply return an empty array or missing Races[0]
+  try {
+    const data = await fetchWithCache<{
+      MRData: { RaceTable: { season: string; Races: ApiRace[] } };
+    }>(`${BASE_URL}/current/${round}/sprint.json`);
+
+    const race = data.MRData.RaceTable.Races[0];
+    if (!race || !race.SprintResults) return [];
+
+    return race.SprintResults.map((res) => ({
+      position: parseInt(res.position, 10),
+      positionText: res.positionText,
+      driverId: res.Driver.driverId,
+      driverName: `${res.Driver.givenName === 'Andrea Kimi' ? 'K.' : res.Driver.givenName.charAt(0)}. ${res.Driver.familyName}`,
+      driverCode: res.Driver.code,
+      team: res.Constructor.name,
+      teamId: res.Constructor.constructorId,
+      grid: parseInt(res.grid, 10),
+      laps: parseInt(res.laps, 10),
+      status: res.status,
+      points: parseFloat(res.points),
+      time: res.Time?.time || res.status,
+      fastestLap: res.FastestLap?.Time?.time,
+    }));
+  } catch (err) {
+    return [];
+  }
 }
 
 export async function fetchConstructorStandings(): Promise<ConstructorStanding[]> {

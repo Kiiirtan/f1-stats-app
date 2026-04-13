@@ -104,6 +104,93 @@ export default function Dashboard() {
             </div>
           </section>
 
+          {/* RACE RESULTS */}
+          {latestRace && (
+            <section className="w-full bg-transparent border border-white/20 rounded-[2rem] p-6 lg:p-8 backdrop-blur-[2px] shadow-lg">
+              <div className="flex items-center gap-3 mb-8 bg-black/20 p-4 rounded-2xl backdrop-blur-md border border-white/10">
+                <h2 className="font-headline text-xl lg:text-2xl font-bold uppercase tracking-wide text-white m-0 drop-shadow-sm ml-2">
+                  RACE RESULTS : {latestRace.name.replace('Grand Prix', 'GP').toUpperCase()}
+                </h2>
+                <span className="text-xl drop-shadow-md">{latestRace.flag}</span>
+              </div>
+
+              <div className="flex flex-col space-y-3">
+                {latestRace.results.slice(0, 4).map((result, idx) => (
+                  <div key={result.driverId} className={`flex items-center justify-between p-4 px-6 rounded-xl bg-black/10 backdrop-blur-sm border ${idx === 0 || idx === 1 ? 'border-red-500/60 shadow-[0_0_20px_rgba(225,6,0,0.15)]' : 'border-white/20'} hover:border-white/50 transition-all`}>
+
+                    <div className="flex items-center gap-2 sm:gap-4 flex-1 min-w-0">
+                      <span className="font-headline font-black text-sm sm:text-lg w-5 sm:w-6 text-center text-white drop-shadow-md">
+                        {String(idx + 1).padStart(2, '0')}
+                      </span>
+                      <span className={`w-0.5 h-4 shadow-sm ${idx <= 0 ? 'bg-[#00F0E0]' : idx === 1 ? 'bg-[#ff8000]' : idx === 2 ? 'bg-[#E10600]' : 'bg-[#00F0E0]'}`}></span>
+                      <span className="font-bold text-[10px] sm:text-xs uppercase text-white tracking-[0.05em] sm:tracking-[0.15em] flex-1 truncate drop-shadow-md">{result.driverName}</span>
+                      <span className="text-[10px] uppercase tracking-[0.15em] text-white/80 font-bold hidden lg:block w-[120px] truncate drop-shadow-md">{result.team}</span>
+                    </div>
+
+                    <div className="flex items-center gap-2 sm:gap-6 shrink-0">
+                      <span className="text-[10px] uppercase tracking-[0.15em] text-white/80 font-bold hidden md:block w-[80px] drop-shadow-md">
+                        {idx === 0 ? result.laps + ' LAPS' : ' '}
+                      </span>
+                      <span className="text-[9px] sm:text-[11px] font-mono text-white text-right font-bold drop-shadow-md w-[50px] sm:w-[80px] truncate">{result.time}</span>
+                      <span className="font-bold text-[9px] sm:text-[10px] text-white/90 tracking-[0.05em] sm:tracking-[0.1em] text-right drop-shadow-md w-[35px] sm:w-[50px] truncate">{result.points > 0 ? `${result.points} PTS` : ''}</span>
+                    </div>
+
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-8">
+                <Link to={`/results?round=${latestRace.round}`} className="block w-full text-center bg-gradient-to-b from-[#E10600]/60 to-[#990000]/60 backdrop-blur-md border border-red-500/50 hover:shadow-[0_0_30px_rgba(225,6,0,0.4)] text-white text-[11px] font-bold tracking-[0.2em] uppercase rounded-xl py-4 transition-all duration-300">
+                  LOAD FULL CLASSIFICATION
+                </Link>
+              </div>
+            </section>
+          )}
+
+          {/* SEASON CALENDAR */}
+          <section className="w-full bg-transparent border border-white/20 rounded-[2rem] p-6 lg:p-8 backdrop-blur-[2px] shadow-lg">
+            <div className="flex justify-between items-center mb-8 bg-black/20 p-4 rounded-2xl backdrop-blur-md border border-white/10">
+              <h2 className="font-headline text-xl lg:text-2xl font-bold uppercase tracking-wide text-white flex-1 drop-shadow-sm ml-2">SEASON CALENDAR</h2>
+              <Link to="/calendar" className="flex items-center justify-center w-8 h-8 rounded-full bg-white/10 hover:bg-white/30 text-white transition-colors border border-white/20">
+                <span className="material-symbols-outlined text-[1rem]">chevron_right</span>
+              </Link>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {timelineRaces.map((race) => {
+                let statusText = 'LOCKED';
+                let statusColorClass = 'text-[#c7c6ca]';
+                if (race.completed) {
+                  statusText = 'COMPLETED';
+                  statusColorClass = 'text-[#00F0E0]'; // brightened for contrast
+                } else if (nextRace && race.round === nextRace.round) {
+                  statusText = 'UPCOMING';
+                  statusColorClass = 'text-white';
+                }
+                return (
+                  <Link 
+                    key={race.id} 
+                    to={race.completed ? `/results?round=${race.round}` : `/races?round=${race.round}`} 
+                    className="group relative bg-black/10 backdrop-blur-sm rounded-[1.5rem] p-6 lg:p-8 border border-white/20 hover:border-white/50 transition-all duration-300 block flex flex-col justify-between h-[200px] shadow-lg"
+                  >
+                    <div>
+                      <p className="text-[10px] text-white/80 font-medium tracking-[0.15em] uppercase mb-1 drop-shadow-md">ROUND {String(race.round).padStart(2, '0')}</p>
+                      <h4 className="font-headline text-2xl lg:text-3xl font-black text-white uppercase tracking-widest mb-1 drop-shadow-lg leading-tight">
+                        {race.country}
+                      </h4>
+                      <p className={`text-[10px] font-bold uppercase tracking-[0.1em] drop-shadow-md ${statusColorClass}`}>
+                        ({statusText})
+                      </p>
+                    </div>
+                    <p className="text-[11px] text-white uppercase font-bold tracking-[0.1em] drop-shadow-md">
+                      {new Date(race.date).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }).replace(',', '.')}
+                    </p>
+                  </Link>
+                );
+              })}
+            </div>
+          </section>
+
           {/* DRIVER STANDINGS */}
           <section className="w-full bg-transparent border border-white/20 rounded-[2rem] p-6 lg:p-8 backdrop-blur-[2px] shadow-lg">
             <div className="flex justify-between items-center mb-8 bg-black/20 p-4 rounded-2xl backdrop-blur-md border border-white/10">
@@ -159,89 +246,6 @@ export default function Dashboard() {
               })}
             </div>
           </section>
-
-          {/* SEASON CALENDAR */}
-          <section className="w-full bg-transparent border border-white/20 rounded-[2rem] p-6 lg:p-8 backdrop-blur-[2px] shadow-lg">
-            <div className="flex justify-between items-center mb-8 bg-black/20 p-4 rounded-2xl backdrop-blur-md border border-white/10">
-              <h2 className="font-headline text-xl lg:text-2xl font-bold uppercase tracking-wide text-white flex-1 drop-shadow-sm ml-2">SEASON CALENDAR</h2>
-              <Link to="/calendar" className="flex items-center justify-center w-8 h-8 rounded-full bg-white/10 hover:bg-white/30 text-white transition-colors border border-white/20">
-                <span className="material-symbols-outlined text-[1rem]">chevron_right</span>
-              </Link>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {timelineRaces.map((race) => {
-                let statusText = 'LOCKED';
-                let statusColorClass = 'text-[#c7c6ca]';
-                if (race.completed) {
-                  statusText = 'COMPLETED';
-                  statusColorClass = 'text-[#00F0E0]'; // brightened for contrast
-                } else if (nextRace && race.round === nextRace.round) {
-                  statusText = 'UPCOMING';
-                  statusColorClass = 'text-white';
-                }
-                return (
-                  <Link key={race.id} to={`/races?round=${race.round}`} className="group relative bg-black/10 backdrop-blur-sm rounded-[1.5rem] p-6 lg:p-8 border border-white/20 hover:border-white/50 transition-all duration-300 block flex flex-col justify-between h-[200px] shadow-lg">
-                    <div>
-                      <p className="text-[10px] text-white/80 font-medium tracking-[0.15em] uppercase mb-1 drop-shadow-md">ROUND {String(race.round).padStart(2, '0')}</p>
-                      <h4 className="font-headline text-2xl lg:text-3xl font-black text-white uppercase tracking-widest mb-1 drop-shadow-lg leading-tight">
-                        {race.country}
-                      </h4>
-                      <p className={`text-[10px] font-bold uppercase tracking-[0.1em] drop-shadow-md ${statusColorClass}`}>
-                        ({statusText})
-                      </p>
-                    </div>
-                    <p className="text-[11px] text-white uppercase font-bold tracking-[0.1em] drop-shadow-md">
-                      {new Date(race.date).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }).replace(',', '.')}
-                    </p>
-                  </Link>
-                );
-              })}
-            </div>
-          </section>
-
-          {/* RACE RESULTS */}
-          {latestRace && (
-            <section className="w-full bg-transparent border border-white/20 rounded-[2rem] p-6 lg:p-8 backdrop-blur-[2px] shadow-lg">
-              <div className="flex items-center gap-3 mb-8 bg-black/20 p-4 rounded-2xl backdrop-blur-md border border-white/10">
-                <h2 className="font-headline text-xl lg:text-2xl font-bold uppercase tracking-wide text-white m-0 drop-shadow-sm ml-2">
-                  RACE RESULTS : {latestRace.name.replace('Grand Prix', 'GP').toUpperCase()}
-                </h2>
-                <span className="text-xl drop-shadow-md">{latestRace.flag}</span>
-              </div>
-
-              <div className="flex flex-col space-y-3">
-                {latestRace.results.slice(0, 4).map((result, idx) => (
-                  <div key={result.driverId} className={`flex items-center justify-between p-4 px-6 rounded-xl bg-black/10 backdrop-blur-sm border ${idx === 0 || idx === 1 ? 'border-red-500/60 shadow-[0_0_20px_rgba(225,6,0,0.15)]' : 'border-white/20'} hover:border-white/50 transition-all`}>
-
-                    <div className="flex items-center gap-2 sm:gap-4 flex-1 min-w-0">
-                      <span className="font-headline font-black text-sm sm:text-lg w-5 sm:w-6 text-center text-white drop-shadow-md">
-                        {String(idx + 1).padStart(2, '0')}
-                      </span>
-                      <span className={`w-0.5 h-4 shadow-sm ${idx <= 0 ? 'bg-[#00F0E0]' : idx === 1 ? 'bg-[#ff8000]' : idx === 2 ? 'bg-[#E10600]' : 'bg-[#00F0E0]'}`}></span>
-                      <span className="font-bold text-[10px] sm:text-xs uppercase text-white tracking-[0.05em] sm:tracking-[0.15em] flex-1 truncate drop-shadow-md">{result.driverName}</span>
-                      <span className="text-[10px] uppercase tracking-[0.15em] text-white/80 font-bold hidden lg:block w-[120px] truncate drop-shadow-md">{result.team}</span>
-                    </div>
-
-                    <div className="flex items-center gap-2 sm:gap-6 shrink-0">
-                      <span className="text-[10px] uppercase tracking-[0.15em] text-white/80 font-bold hidden md:block w-[80px] drop-shadow-md">
-                        {idx === 0 ? result.laps + ' LAPS' : ' '}
-                      </span>
-                      <span className="text-[9px] sm:text-[11px] font-mono text-white text-right font-bold drop-shadow-md w-[50px] sm:w-[80px] truncate">{result.time}</span>
-                      <span className="font-bold text-[9px] sm:text-[10px] text-white/90 tracking-[0.05em] sm:tracking-[0.1em] text-right drop-shadow-md w-[35px] sm:w-[50px] truncate">{result.points > 0 ? `${result.points} PTS` : ''}</span>
-                    </div>
-
-                  </div>
-                ))}
-              </div>
-
-              <div className="mt-8">
-                <Link to={`/results?round=${latestRace.round}`} className="block w-full text-center bg-gradient-to-b from-[#E10600]/60 to-[#990000]/60 backdrop-blur-md border border-red-500/50 hover:shadow-[0_0_30px_rgba(225,6,0,0.4)] text-white text-[11px] font-bold tracking-[0.2em] uppercase rounded-xl py-4 transition-all duration-300">
-                  LOAD FULL CLASSIFICATION
-                </Link>
-              </div>
-            </section>
-          )}
         </div>
       </div>
     </div>

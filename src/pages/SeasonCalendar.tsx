@@ -99,9 +99,8 @@ function RaceCard({ race, isNext }: { race: DetailedCalendarRace; isNext: boolea
         isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'
       } h-full`}
     >
-    <Link
-      to={`/circuit/${race.circuitId}`}
-      className={`block group relative overflow-hidden rounded-2xl transition-all duration-300 no-underline h-full ${
+    <div
+      className={`block group relative overflow-hidden rounded-2xl transition-all duration-300 h-full ${
         isNext
           ? 'border-2 border-primary-container shadow-[0_0_30px_rgba(225,6,0,0.25)] hover:shadow-[0_0_50px_rgba(225,6,0,0.4)]'
           : 'border border-white/10 hover:border-white/30 hover:shadow-[0_0_20px_rgba(255,255,255,0.06)]'
@@ -113,6 +112,8 @@ function RaceCard({ race, isNext }: { race: DetailedCalendarRace; isNext: boolea
         backdropFilter: 'blur(12px)',
       }}
     >
+      {/* Full card background link for circuit */}
+      <Link to={`/circuit/${race.circuitId}`} className="absolute inset-0 z-0" aria-label={`View ${race.name} circuit layout`} />
       {/* Sprint badge */}
       {race.isSprint && (
         <div className="absolute top-2.5 right-10 z-10 text-[9px] headline-font font-black italic uppercase px-2 py-0.5"
@@ -161,12 +162,22 @@ function RaceCard({ race, isNext }: { race: DetailedCalendarRace; isNext: boolea
           </div>
 
           {race.completed && winner && winnerLastName ? (
-            <div
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs headline-font font-black italic uppercase tracking-tight text-white"
-              style={{ background: 'linear-gradient(90deg,#b00,#e10600)', borderRadius: 6, boxShadow: '0 2px 10px rgba(225,6,0,0.45)' }}
-            >
-              <span className="material-symbols-outlined" style={{ fontSize: 13, fontVariationSettings: "'FILL' 1" }}>emoji_events</span>
-              WINNER: {winnerLastName}
+            <div className="flex items-center gap-2 relative z-10">
+              <div
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs headline-font font-black italic uppercase tracking-tight text-white"
+                style={{ background: 'linear-gradient(90deg,#b00,#e10600)', borderRadius: 6, boxShadow: '0 2px 10px rgba(225,6,0,0.45)' }}
+              >
+                <span className="material-symbols-outlined" style={{ fontSize: 13, fontVariationSettings: "'FILL' 1" }}>emoji_events</span>
+                WINNER: {winnerLastName}
+              </div>
+              
+              <Link
+                to={`/results?round=${race.round}`}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[10px] headline-font font-bold uppercase tracking-widest text-[#29DEC9] bg-[#29DEC9]/10 hover:bg-[#29DEC9]/20 border border-[#29DEC9]/20 rounded-md transition-colors"
+              >
+                RESULTS
+                <span className="material-symbols-outlined" style={{ fontSize: 13 }}>arrow_forward</span>
+              </Link>
             </div>
           ) : isNext ? (
             <div>
@@ -181,7 +192,7 @@ function RaceCard({ race, isNext }: { race: DetailedCalendarRace; isNext: boolea
           )}
         </div>
       </div>
-    </Link>
+    </div>
     </div>
   );
 }

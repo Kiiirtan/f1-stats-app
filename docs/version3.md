@@ -48,3 +48,7 @@ ver.4
 
 > [!IMPORTANT]
 > See `BIGF1.md` for the comprehensive master blueprint covering all v3/v4 features and the full scaling strategy.
+
+two seperate things 
+1.currently using with addition to extra button for moving to next things
+2. seperate ml lab , with its own nav bar with different features and a extra button for moving back to 1.
