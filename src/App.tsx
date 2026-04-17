@@ -6,7 +6,7 @@ import { AuthProvider } from './context/AuthContext';
 import ErrorBoundary from './components/ui/ErrorBoundary';
 import PageTransition from './components/ui/PageTransition';
 import CursorGlow from './components/ui/CursorGlow';
-import SmoothLoader from './components/ui/SmoothLoader';
+import SmoothLoaderV6 from './components/ui/SmoothLoaderV6';
 import Layout from './components/layout/Layout';
 
 // Lazy loaded routes for code-splitting
@@ -23,6 +23,7 @@ const Results = lazy(() => import('./pages/Results'));
 const Constructors = lazy(() => import('./pages/Constructors'));
 const ConstructorProfile = lazy(() => import('./pages/ConstructorProfile'));
 const ConstructorSeasonDetails = lazy(() => import('./pages/ConstructorSeasonDetails'));
+const LiveTelemetry = lazy(() => import('./pages/LiveTelemetry'));
 const Settings = lazy(() => import('./pages/Settings'));
 const Contact = lazy(() => import('./pages/Contact'));
 const Credits = lazy(() => import('./pages/Credits'));
@@ -77,6 +78,7 @@ function AnimatedRoutes() {
             <Route path="/constructors" element={<Constructors />} />
             <Route path="/constructor/:id" element={<ConstructorProfile />} />
             <Route path="/constructor/:id/season/:year" element={<ConstructorSeasonDetails />} />
+            <Route path="/live" element={<LiveTelemetry />} />
             <Route path="/settings" element={<Settings />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/credits" element={<Credits />} />
@@ -96,7 +98,7 @@ function App() {
     <SettingsProvider>
       <AuthProvider>
         <ErrorBoundary>
-          <SmoothLoader />
+          <SmoothLoaderV6 />
           <CursorGlow />
           <Router>
             <InitialRedirect />

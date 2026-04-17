@@ -1,0 +1,66 @@
+# OpenF1 Live Telemetry Integration Report
+
+## 1. Executive Summary
+This report outlines the feasibility, required architectural changes, potential risks, and interface design options for integrating real-time Formula 1 telemetry using the OpenF1 API into our application. The goal is to provide a low-latency, high-fidelity data experience during live Grand Prix sessions without compromising application stability or performance.
+
+## 2. Capabilities & Features
+The OpenF1 API provides robust real-time data pipelines (traditionally sampled around 3.7 Hz). By tapping into these streams, we can offer the following features:
+
+*   **High-Frequency Telemetry:** Driver-specific speed, throttle application (0-100%), brake application (0-100%), engine RPM, current gear, and DRS status.
+*   **Spatial Track Data:** X, Y, and Z positional coordinates for real-time track mapping.
+*   **Timing & Scoring:** Live sector times, lap times, gaps to leader, driver intervals, and speed trap figures.
+*   **Session Context:** Track status (flags/safety cars), weather conditions (air/track temp, rainfall), pit stop events, and team radio transcripts.
+
+## 3. Implementation Strategy
+
+> [!TIP]
+> To ensure UI responsiveness, all real-time data processing should be decoupled from the main React rendering cycle as much as possible.
+
+### 3.1 Networking Layer
+*   **Protocol:** Prefer Server-Sent Events (SSE) or WebSockets for continuous streams. If unavailable, implement intelligent, low-latency HTTP polling (e.g., ~500ms intervals) targeted at the `/car_data` and `/position` endpoints.
+*   **Services:** Introduce a new dedicated service (`src/services/liveApi.ts`) optimized for streaming connections instead of standard generic `fetch()` promises used for historical data.
+
+### 3.2 State Management
+*   **Buffer Store:** Utilize a lightweight state manager (like Zustand) to act as a **circular buffer**. 
+*   **Data Pruning:** The store will rigorously maintain only a rolling window of recent data (e.g., the last 30-60 seconds) to prevent local memory bloat.
+
+### 3.3 UI Architecture
+*   **Targeted Re-renders:** Real-time components must be wrapped in `React.memo` or split into micro-components that subscribe only to their specific slivers of state.
+*   **Visualization Engine:** Switch from SVG-based static charts to high-performance canvas-based libraries (like Chart.js or specialized WebGL implementations) for rendering rapidly updating telemetry graphs without jank.
+
+## 4. Risk Assessment & Mitigations
+
+> [!CAUTION]
+> Integrating 3.7Hz streams for 20 active drivers simultaneously requires stringent memory management.
+
+| Risk Factor | Description | Mitigation Strategy |
+| :--- | :--- | :--- |
+| **Memory Leaks / UI Lag** | Storing an unbounded array of high-frequency data states in React will crash the browser. | Implement strict rolling buffers; discard state older than 60 seconds; use Canvas instead of DOM/SVG for charts. |
+| **Data Desynchronization** | Telemetry and timing data streams may arrive slightly out of order. | Align incoming data points strictly by their canonical timestamps (`date` field) before charting. |
+| **Connection Instability** | Live polling connections may drop due to server loads or network hiccups. | Build robust auto-reconnect routines with visual "buffering / reconnecting" skeleton states for the user. |
+| **Rate Limiting** | Exceeding OpenF1 API thresholds, especially during HTTP polling. | Optimize polling intervals and batch network requests where possible. |
+
+## 5. Interface Design Options
+
+We can approach the frontend implementation through several different aesthetic and functional lenses:
+
+### Option A: The Pitwall Dashboard (Technical)
+*   **Concept:** Split-screen driver comparisons. Overlapping multi-line charts showing throttle against brake, speed, and shifting.
+*   **Vibe:** Data-dense, analytical, resembling actual team software.
+
+### Option B: The "On-Board" HUD (Immersive)
+*   **Concept:** A minimalist, glassmorphism widget resembling an F1 steering column display. Digital RPM lights that sequentially fill up, a prominent central gear indicator, and a dynamic speedometer.
+*   **Vibe:** Sleek, singular focus, easily dockable to the side of the screen.
+
+### Option C: The Live Track Minimap (Spatial)
+*   **Concept:** An SVG silhouette of the current circuit. X/Y coordinates stream in, animating 20 glowing driver dots racing around the track in real-time, displaying live gaps.
+*   **Vibe:** High-level strategic overview, visually captivating.
+
+### Option D: The Race Engineer View (Comprehensive)
+*   **Concept:** A unified view featuring a scrolling event ticker (yellow flags, pit stops, radio), a dynamic leaderboard, and mini sparkline telemetry charts for the top 3 drivers.
+*   **Vibe:** Broad context, tracking unfolding race narratives.
+
+---
+
+> [!NOTE]
+> No codebase modifications have been made. This report serves as the architectural blueprint for when development on the live telemetry module begins.

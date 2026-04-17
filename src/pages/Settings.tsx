@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { Link } from 'react-router-dom';
 import AuthModal from '../components/features/AuthModal';
 import { useDocumentMeta } from '../hooks/useDocumentMeta';
+import { usePushNotifications } from '../hooks/usePushNotifications';
 
 /* ─── Constants ─── */
 
@@ -143,6 +144,8 @@ export default function Settings() {
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [profileSaving, setProfileSaving] = useState(false);
   const [editName, setEditName] = useState('');
+  
+  const { isSupported: pushSupported, permission: pushPermission, requestPermission, sendLocalTestNotification } = usePushNotifications();
 
   const handleUpdate = <K extends keyof SettingsState>(key: K, value: SettingsState[K]) => {
     updateSetting(key, value);
@@ -761,6 +764,61 @@ export default function Settings() {
                         onChange={() => handleUpdate('teamRadioAlerts', !settings.teamRadioAlerts)}
                       />
                     </SettingsRow>
+                    
+                    {/* Native Web Push Toggle */}
+                    <div className="mt-8 pt-6 border-t border-white/5">
+                      <div className="flex items-center justify-between mb-4">
+                        <div>
+                          <h4 className="font-headline font-bold text-sm tracking-tight text-white flex items-center gap-2">
+                            <span className="material-symbols-outlined text-[var(--theme-accent)]">phonelink_ring</span>
+                            OS PUSH NOTIFICATIONS
+                          </h4>
+                          <p className="text-[10px] sm:text-xs text-[#8b8d92] font-body mt-1 max-w-sm">
+                            Receive native alerts directly to your device even when the dashboard is closed.
+                          </p>
+                        </div>
+                        {pushSupported && (
+                          <div className={`px-3 py-1 rounded text-[10px] font-headline font-bold tracking-widest ${pushPermission === 'granted' ? 'bg-green-500/10 text-green-400 border border-green-500/20' : pushPermission === 'denied' ? 'bg-red-500/10 text-red-400 border border-red-500/20' : 'bg-white/5 text-[#8b8d92]'}`}>
+                            {pushPermission === 'granted' ? 'ENABLED' : pushPermission === 'denied' ? 'BLOCKED' : 'NOT SET'}
+                          </div>
+                        )}
+                      </div>
+                      
+                      {!pushSupported ? (
+                        <p className="text-xs text-red-400 bg-red-400/10 p-3 rounded-lg">Your browser does not support Web Push Notifications.</p>
+                      ) : (
+                        <div className="flex flex-col sm:flex-row gap-3 mt-4">
+                          {pushPermission !== 'granted' && pushPermission !== 'denied' && (
+                            <button 
+                              onClick={requestPermission}
+                              className="px-5 py-2.5 bg-[var(--theme-accent)] text-[#13131b] rounded-lg font-headline font-bold text-xs tracking-wider hover:brightness-110 transition-all flex items-center justify-center gap-2"
+                            >
+                              <span className="material-symbols-outlined text-sm">notifications_active</span>
+                              AUTHORIZE DEVICE
+                            </button>
+                          )}
+                          {(pushPermission === 'granted' || pushPermission === 'denied') && (
+                            <button 
+                              disabled
+                              className="px-5 py-2.5 bg-white/5 text-white/40 rounded-lg font-headline font-bold text-xs tracking-wider cursor-not-allowed flex items-center justify-center gap-2"
+                            >
+                              <span className="material-symbols-outlined text-sm">{pushPermission === 'granted' ? 'check_circle' : 'block'}</span>
+                              {pushPermission === 'granted' ? 'DEVICE AUTHORIZED' : 'PERMISSION BLOCKED IN BROWSER'}
+                            </button>
+                          )}
+                          
+                          {pushPermission === 'granted' && (
+                            <button 
+                              onClick={sendLocalTestNotification}
+                              className="px-5 py-2.5 bg-white/5 border border-white/10 text-white rounded-lg font-headline font-bold text-xs tracking-wider hover:bg-white/10 transition-all flex items-center justify-center gap-2"
+                            >
+                              <span className="material-symbols-outlined text-sm text-[var(--theme-accent)]">send</span>
+                              SEND TEST ALERT
+                            </button>
+                          )}
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </section>
 

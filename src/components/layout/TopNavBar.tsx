@@ -110,6 +110,7 @@ export default function TopNavBar() {
 
   const mobileNavLinks = [
     { label: 'Dashboard', to: '/', icon: 'dashboard' },
+    { label: 'Live', to: '/live', icon: 'speed' },
     { label: 'News', to: '/news', icon: 'newspaper' },
     { label: 'Calendar', to: '/calendar', icon: 'calendar_month' },
     { label: 'Circuits', to: '/circuits', icon: 'map' },

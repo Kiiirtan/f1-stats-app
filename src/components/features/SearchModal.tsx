@@ -86,7 +86,7 @@ export default function SearchModal({ open, onClose }: Props) {
         subtitle: `HQ: ${c.nationality} • P${c.position} in Championship`,
         color: c.color,
         icon: 'precision_manufacturing',
-        route: `/constructors/${c.constructorId}`,
+        route: `/constructor/${c.constructorId}`,
         badge: 'TEAM'
       }));
 
