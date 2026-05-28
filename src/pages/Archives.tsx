@@ -49,6 +49,21 @@ export default function Archives() {
           </div>
         ))}
       </div>
+
+      {/* Return button */}
+      <div className="mt-12">
+        <a 
+          href="/"
+          className={`inline-flex items-center gap-2 px-8 py-3 rounded-xl font-headline font-bold uppercase tracking-wider transition-all ${
+            glass 
+              ? 'bg-white/10 hover:bg-white/20 text-white backdrop-blur-md border border-white/20' 
+              : 'bg-white/5 hover:bg-white/10 text-white border border-white/10'
+          }`}
+        >
+          <span className="material-symbols-outlined text-xl">arrow_back</span>
+          Return to Dashboard
+        </a>
+      </div>
     </div>
   );
 }

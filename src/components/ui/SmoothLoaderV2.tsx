@@ -1,170 +1,132 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function SmoothLoaderV2() {
   const [progress, setProgress] = useState(0);
-  const [phase, setPhase] = useState<'build' | 'shift' | 'done'>('build');
+  const [phase, setPhase] = useState<'reveal' | 'loading' | 'exit' | 'done'>('reveal');
   const [visible, setVisible] = useState(true);
 
+  // Phase sequencing
   useEffect(() => {
-    const interval = setInterval(() => {
-      setProgress((p) => {
-        if (p >= 100) {
-          clearInterval(interval);
-          return 100;
-        }
-        // Accelerating curve
-        const increment = p < 40 ? 1 : p < 70 ? 2 : p < 90 ? 4 : 8;
-        return Math.min(p + increment, 100);
-      });
-    }, 25);
-    return () => clearInterval(interval);
+    setTimeout(() => setPhase('loading'), 600);
   }, []);
 
   useEffect(() => {
-    if (progress >= 100 && phase === 'build') {
-      setPhase('shift');
-      setTimeout(() => setPhase('done'), 400); // 400ms for hyperdrive flash
-      setTimeout(() => setVisible(false), 900); // Wait for transition to finish
+    if (phase !== 'loading') return;
+    const interval = setInterval(() => {
+      setProgress((p) => Math.min(p + 1.4, 100));
+    }, 35);
+    return () => clearInterval(interval);
+  }, [phase]);
+
+  useEffect(() => {
+    if (progress >= 100 && phase === 'loading') {
+      setPhase('exit');
+      setTimeout(() => setPhase('done'), 1000);
+      setTimeout(() => setVisible(false), 1400);
     }
   }, [progress, phase]);
 
+  // Scramble text effect
+  const scrambleChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  const [scramble, setScramble] = useState('F1 STATS');
+  useEffect(() => {
+    if (phase !== 'loading') return;
+    const target = 'F1 STATS';
+    const interval = setInterval(() => {
+      const revealed = Math.floor((progress / 100) * target.length);
+      setScramble(
+        target.split('').map((ch, i) => {
+          if (ch === ' ') return ' ';
+          if (i < revealed) return ch;
+          return scrambleChars[Math.floor(Math.random() * scrambleChars.length)];
+        }).join('')
+      );
+    }, 60);
+    return () => clearInterval(interval);
+  }, [phase, progress]);
+
   if (!visible) return null;
 
-  // Calculate dynamic properties
-  const radius = 120;
-  const circumference = 2 * Math.PI * radius;
-  const strokeDashoffset = circumference - (progress / 100) * circumference;
-  
-  const rpm = Math.floor((progress / 100) * 15000);
-  const currentGear = Math.max(1, Math.ceil((progress / 100) * 8));
-
   return (
-    <div className={`fixed inset-0 z-[10000] flex items-center justify-center overflow-hidden bg-[#0A0A0C] transition-opacity duration-500 ${phase === 'done' ? 'opacity-0' : 'opacity-100'}`}>
-      
-      {/* Background Hyper-Drive / Wind Tunnel Particles */}
-      <div className="absolute inset-0 pointer-events-none perspective-1000">
-        {[...Array(30)].map((_, i) => {
-          const depth = Math.random() * 200 + 10;
-          const isRed = i % 4 === 0;
-          return (
-             <div
-              key={i}
-              className="absolute bg-gradient-to-r from-transparent to-white rounded-full"
-              style={{
-                top: `${Math.random() * 100}%`,
-                left: '-10%',
-                width: `${Math.random() * 150 + 50}px`,
-                height: `${Math.random() * 2 + 1}px`,
-                background: isRed 
-                  ? 'linear-gradient(90deg, transparent, rgba(225,6,0,0.8))' 
-                  : 'linear-gradient(90deg, transparent, rgba(200,200,255,0.4))',
-                opacity: phase === 'shift' ? 0 : 0.6 + (Math.random() * 0.4),
-                animation: phase === 'shift' 
-                  ? 'none' 
-                  : `windStreak ${0.2 + (Math.random() * 0.4)}s linear infinite`,
-                animationDelay: `${Math.random()}s`,
-                transform: `scaleZ(${depth})`,
+    <div className="fixed inset-0 z-[10000] bg-black overflow-hidden">
+      {/* Diagonal wipe panels */}
+      <AnimatePresence>
+        {phase !== 'done' && (
+          <>
+            {/* Left panel */}
+            <motion.div
+              className="absolute inset-0 bg-[#E10600]"
+              style={{ clipPath: 'polygon(0 0, 55% 0, 45% 100%, 0% 100%)' }}
+              initial={{ x: '-100%' }}
+              animate={{
+                x: phase === 'exit' ? '-110%' : '0%',
+              }}
+              transition={{
+                duration: phase === 'exit' ? 0.5 : 0.6,
+                ease: [0.76, 0, 0.24, 1],
               }}
             />
-          );
-        })}
-      </div>
-
-      {/* Shift Flash Effect */}
-      <AnimatePresence>
-        {phase === 'shift' && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 2 }}
-            exit={{ opacity: 0, scale: 3 }}
-            transition={{ duration: 0.4, ease: "easeOut" }}
-            className="absolute inset-0 bg-gradient-to-r from-cyan-500/30 via-white/80 to-blue-500/30 blur-2xl z-20 pointer-events-none flex items-center justify-center"
-          />
+            {/* Right panel */}
+            <motion.div
+              className="absolute inset-0 bg-[#1a1a1a]"
+              style={{ clipPath: 'polygon(55% 0, 100% 0, 100% 100%, 45% 100%)' }}
+              initial={{ x: '100%' }}
+              animate={{
+                x: phase === 'exit' ? '110%' : '0%',
+              }}
+              transition={{
+                duration: phase === 'exit' ? 0.5 : 0.6,
+                ease: [0.76, 0, 0.24, 1],
+              }}
+            />
+          </>
         )}
       </AnimatePresence>
 
-      {/* Main Steering Wheel HUD */}
-      <motion.div 
-        className="relative z-10 flex flex-col items-center justify-center"
-        animate={{ 
-           scale: phase === 'shift' ? 1.5 : 1,
-           filter: phase === 'shift' ? 'blur(10px)' : 'blur(0px)',
-           opacity: phase === 'shift' ? 0 : 1
-        }}
-        transition={{ duration: 0.4, ease: "easeIn" }}
-      >
-        {/* SVG Arc Gauge */}
-        <div className="relative flex items-center justify-center drop-shadow-[0_0_15px_rgba(225,6,0,0.4)]">
-          <svg width="300" height="300" className="transform -rotate-90">
-            {/* Background Track */}
-            <circle
-              cx="150"
-              cy="150"
-              r={radius}
-              stroke="rgba(255, 255, 255, 0.05)"
-              strokeWidth="6"
-              fill="transparent"
-            />
-            {/* Active RPM Fill */}
-            <circle
-              cx="150"
-              cy="150"
-              r={radius}
-              stroke="url(#rpm-gradient)"
-              strokeWidth="8"
-              fill="transparent"
-              strokeDasharray={circumference}
-              strokeDashoffset={strokeDashoffset}
-              strokeLinecap="round"
-              className="transition-all duration-75 ease-linear"
-            />
-            <defs>
-              <linearGradient id="rpm-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stopColor="#29DEC9" />     {/* Cyan */}
-                <stop offset="50%" stopColor="#EAB308" />    {/* Yellow */}
-                <stop offset="100%" stopColor="#E10600" />   {/* Red */}
-              </linearGradient>
-            </defs>
-          </svg>
+      {/* Content layer */}
+      <AnimatePresence>
+        {(phase === 'loading' || phase === 'reveal') && (
+          <motion.div
+            className="absolute inset-0 flex flex-col items-center justify-center z-10"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0, y: -40 }}
+            transition={{ duration: 0.4 }}
+          >
+            {/* Scramble text */}
+            <div className="font-headline font-black italic text-6xl md:text-8xl tracking-[-0.03em] text-white mb-8 relative">
+              {scramble.split('').map((ch, i) => (
+                <span
+                  key={i}
+                  className={ch === scramble[i] && 'F1 STATS'[i] === ch ? 'text-white' : 'text-white/30'}
+                  style={{ display: 'inline-block', minWidth: ch === ' ' ? '0.3em' : undefined }}
+                >
+                  {ch}
+                </span>
+              ))}
+            </div>
 
-          {/* Inner HUD Data */}
-          <div className="absolute flex flex-col items-center text-center">
-            <span className="text-[10px] font-headline font-bold uppercase tracking-[0.4em] text-[#8b8d92] drop-shadow-md mb-1">
-              GEAR {currentGear}
-            </span>
-            <div className="flex items-baseline gap-1">
-              <span className="text-5xl font-mono items-center tabular-nums font-black text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.7)]">
-                {rpm.toLocaleString()}
+            {/* Horizontal progress bar */}
+            <div className="relative w-72 h-[2px] bg-white/10 rounded-full overflow-hidden">
+              <motion.div
+                className="absolute left-0 top-0 h-full bg-white rounded-full"
+                style={{ width: `${progress}%`, boxShadow: '0 0 12px rgba(255,255,255,0.5)' }}
+              />
+            </div>
+
+            {/* Status text */}
+            <div className="mt-4 flex items-center gap-3">
+              <span className="text-[9px] font-mono text-white/30 tracking-[0.3em] uppercase">
+                Initializing
+              </span>
+              <span className="text-[9px] font-mono text-[#E10600] tracking-[0.2em]">
+                {Math.floor(progress)}%
               </span>
             </div>
-            <span className="text-xs font-headline font-bold text-[var(--theme-accent)] tracking-widest mt-1 opacity-80">
-              RPM
-            </span>
-            
-            {/* Connection Status Text inside HUD */}
-            <div className="mt-4 text-[9px] font-mono uppercase tracking-widest text-[#29DEC9] animate-pulse">
-               {progress < 40 ? 'Calibrating...' : progress < 80 ? 'Syncing Telemetry...' : 'Ready'}
-            </div>
-          </div>
-        </div>
-        
-        {/* Optional Branding Text below wheel */}
-        <div className="mt-12 flex items-baseline gap-1 select-none opacity-40">
-           <span className="font-headline font-black italic text-4xl text-white">F</span>
-           <span className="font-headline font-black italic text-4xl text-[#E10600]">1</span>
-           <span className="font-headline font-black italic text-xl tracking-widest ml-2 text-white">STATS</span>
-        </div>
-      </motion.div>
-
-      <style>{`
-        @keyframes windStreak {
-          0% { transform: translateX(0) scaleX(1); opacity: 0; }
-          10% { opacity: 1; }
-          80% { opacity: 1; }
-          100% { transform: translateX(200vw) scaleX(3); opacity: 0; }
-        }
-      `}</style>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

@@ -135,11 +135,9 @@ function SettingsRow({
 
 export default function Settings() {
   useDocumentMeta('Settings', 'Configure F1 Stats application preferences, appearance, and notifications.');
-  const { settings, updateSetting, resetSettings, saveSettings } = useSettings();
+  const { settings, updateSetting, resetSettings } = useSettings();
   const { user, isAuthenticated, signOut, updateProfile } = useAuth();
-  const [saved, setSaved] = useState(false);
   const [activeTab, setActiveTab] = useState<SettingsTab>('ACCOUNT');
-  const [hasChanges, setHasChanges] = useState(false);
   const [showResetConfirm, setShowResetConfirm] = useState(false);
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [profileSaving, setProfileSaving] = useState(false);
@@ -149,15 +147,6 @@ export default function Settings() {
 
   const handleUpdate = <K extends keyof SettingsState>(key: K, value: SettingsState[K]) => {
     updateSetting(key, value);
-    setSaved(false);
-    setHasChanges(true);
-  };
-
-  const handleSave = () => {
-    saveSettings();
-    setSaved(true);
-    setHasChanges(false);
-    setTimeout(() => setSaved(false), 2500);
   };
 
   const handleReset = () => {
@@ -167,8 +156,6 @@ export default function Settings() {
       return;
     }
     resetSettings();
-    setSaved(false);
-    setHasChanges(false);
     setShowResetConfirm(false);
   };
 
@@ -200,14 +187,6 @@ export default function Settings() {
           <p className="text-[#8b8d92] font-body text-sm sm:text-base">
             Configure your cockpit telemetry and interface behavior.
           </p>
-          {hasChanges && (
-            <div className="mt-3 flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
-              <span className="text-amber-400 text-[10px] font-headline font-bold tracking-widest uppercase">
-                UNSAVED CHANGES
-              </span>
-            </div>
-          )}
         </header>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 md:gap-8">
@@ -694,12 +673,16 @@ export default function Settings() {
                     KEYBOARD_SHORTCUTS
                   </h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
-                    {[
-                      { keys: '⌘ K', description: 'Open Search' },
-                      { keys: 'ESC', description: 'Close Modal / Go Back' },
-                      { keys: '↑ ↓', description: 'Navigate Results' },
-                      { keys: 'ENTER', description: 'Select Result' },
-                    ].map((shortcut) => (
+                    {(() => {
+                      const isMac = typeof navigator !== 'undefined' && /Mac|iPod|iPhone|iPad/.test(navigator.platform);
+                      const mod = isMac ? '⌘' : 'Ctrl';
+                      return [
+                        { keys: `${mod} K`, description: 'Open Search' },
+                        { keys: 'ESC', description: 'Close Modal / Go Back' },
+                        { keys: '↑ ↓', description: 'Navigate Results' },
+                        { keys: 'ENTER', description: 'Select Result' },
+                      ];
+                    })().map((shortcut) => (
                       <div
                         key={shortcut.keys}
                         className="flex items-center justify-between bg-[#111417] px-4 sm:px-5 py-2.5 sm:py-3 border border-white/5 rounded-xl"
@@ -906,16 +889,7 @@ export default function Settings() {
               >
                 {showResetConfirm ? '⚠ TAP AGAIN TO CONFIRM' : 'RESET_DEFAULTS'}
               </button>
-              <button
-                onClick={handleSave}
-                className={`px-8 sm:px-10 py-3 rounded-xl font-headline font-black tracking-widest text-xs transition-all duration-200 shadow-lg active:scale-95 ${
-                  saved
-                    ? 'bg-[#29DEC9] text-[#003731] shadow-[#29DEC9]/20'
-                    : 'bg-gradient-to-br from-[var(--theme-accent)] to-[#E10600] text-white hover:scale-105 hover:shadow-xl'
-                }`}
-              >
-                {saved ? '✓ CONFIG_SAVED' : 'SAVE_CONFIG'}
-              </button>
+              {/* Removed Save button as settings auto-save */}
             </div>
 
           </div>

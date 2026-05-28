@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../../context/AuthContext';
 import { useSettings } from '../../context/SettingsContext';
 import SearchModal from '../features/SearchModal';
@@ -32,9 +33,13 @@ const TopFlipNavItem = ({ to, icon, label, path }: { to: string; icon: string; l
           <span className={`material-symbols-outlined text-[20px] ${isActive ? 'text-white' : 'group-hover:text-white'}`}>
             {icon}
           </span>
-          {/* Active dot indicator bottom */}
+          {/* Active indicator — animates between items via layoutId */}
           {isActive && (
-            <span className="absolute -bottom-0.5 left-1/2 -translate-x-1/2 w-5 h-1 rounded-full bg-[#E10600] shadow-[0_0_8px_rgba(225,6,0,0.6)]" />
+            <motion.span
+              layoutId="topnav-active-pill"
+              className="absolute -bottom-0.5 left-1/2 -translate-x-1/2 w-5 h-1 rounded-full bg-[#E10600] shadow-[0_0_8px_rgba(225,6,0,0.6)]"
+              transition={{ type: 'spring', stiffness: 380, damping: 28 }}
+            />
           )}
         </div>
         {/* Back */}
@@ -301,8 +306,15 @@ export default function TopNavBar() {
       <AuthModal open={authModalOpen} onClose={() => setAuthModalOpen(false)} />
 
       {/* Mobile Navigation Overlay */}
+      <AnimatePresence>
       {mobileMenuOpen && (
-        <div className="lg:hidden fixed inset-0 top-16 z-40 bg-[#13131b]/95 backdrop-blur-xl border-t border-[var(--theme-accent)]/10 overflow-y-auto">
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -10 }}
+          transition={{ duration: 0.25, ease: [0.25, 0.46, 0.45, 0.94] }}
+          className="lg:hidden fixed inset-0 top-16 z-40 bg-[#13131b]/95 backdrop-blur-xl border-t border-[var(--theme-accent)]/10 overflow-y-auto"
+        >
           <nav className="flex flex-col p-4 space-y-2">
             {mobileNavLinks.map((link) => (
               <Link
@@ -343,8 +355,9 @@ export default function TopNavBar() {
               <Link to="/cookies" onClick={() => setMobileMenuOpen(false)} className="text-[10px] font-['Space_Grotesk'] font-bold text-[#c7c6ca]/70 hover:text-[var(--theme-accent)] tracking-widest uppercase">Cookies</Link>
             </div>
           </nav>
-        </div>
+        </motion.div>
       )}
+      </AnimatePresence>
     </>
   );
 }

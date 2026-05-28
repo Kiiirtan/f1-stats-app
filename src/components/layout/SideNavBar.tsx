@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useSettings } from '../../context/SettingsContext';
 
 const FlipMenuItem = ({ to, icon, label, path }: { to: string; icon: string; label: string; path: string }) => {
@@ -128,9 +129,13 @@ export default function SideNavBar() {
                   >
                     {item.icon}
                   </span>
-                  {/* Active dot indicator */}
+                  {/* Active indicator — animated pill that glides between items */}
                   {isActive && (
-                    <span className="absolute -right-0.5 top-1/2 -translate-y-1/2 w-1 h-5 rounded-full bg-[#E10600] shadow-[0_0_8px_rgba(225,6,0,0.6)]" />
+                    <motion.span
+                      layoutId="sidenav-active-pill"
+                      className="absolute -right-0.5 top-1/2 -translate-y-1/2 w-1 h-5 rounded-full bg-[#E10600] shadow-[0_0_8px_rgba(225,6,0,0.6)]"
+                      transition={{ type: 'spring', stiffness: 350, damping: 30, mass: 0.8 }}
+                    />
                   )}
                   {/* Soon badge */}
                   {'soon' in item && item.soon && (
@@ -225,8 +230,13 @@ export default function SideNavBar() {
                 >
                   more_horiz
                 </span>
+                {/* Active indicator — glides between items via layoutId */}
                 {moreMenuOpen && (
-                  <span className="absolute -right-0.5 top-1/2 -translate-y-1/2 w-1 h-5 rounded-full bg-[#E10600] shadow-[0_0_8px_rgba(225,6,0,0.6)]" />
+                  <motion.span
+                    layoutId="sidenav-active-pill"
+                    className="absolute -right-0.5 top-1/2 -translate-y-1/2 w-1 h-5 rounded-full bg-[#E10600] shadow-[0_0_8px_rgba(225,6,0,0.6)]"
+                    transition={{ type: 'spring', stiffness: 380, damping: 28 }}
+                  />
                 )}
               </div>
               <div
@@ -249,15 +259,23 @@ export default function SideNavBar() {
           </button>
 
           {/* Popup Menu */}
+          <AnimatePresence>
           {moreMenuOpen && (
-            <div className="absolute left-[75px] bottom-0 w-max rounded-xl bg-[#13131b]/95 backdrop-blur-2xl border border-white/10 shadow-[0_0_40px_rgba(0,0,0,0.5)] p-1.5 flex gap-1.5 animate-search-in z-50">
+            <motion.div
+              initial={{ opacity: 0, x: -8, scale: 0.95 }}
+              animate={{ opacity: 1, x: 0, scale: 1 }}
+              exit={{ opacity: 0, x: -8, scale: 0.95 }}
+              transition={{ duration: 0.2, ease: [0.25, 0.46, 0.45, 0.94] }}
+              className="absolute left-[75px] bottom-0 w-max rounded-xl bg-[#13131b]/95 backdrop-blur-2xl border border-white/10 shadow-[0_0_40px_rgba(0,0,0,0.5)] p-1.5 flex gap-1.5 z-50"
+            >
                <FlipMenuItem to="/contact" icon="mail" label="Contact" path={path} />
                <FlipMenuItem to="/credits" icon="workspace_premium" label="Credits" path={path} />
                <FlipMenuItem to="/privacy" icon="shield" label="Privacy" path={path} />
                <FlipMenuItem to="/terms" icon="gavel" label="Terms" path={path} />
                <FlipMenuItem to="/cookies" icon="cookie" label="Cookies" path={path} />
-            </div>
+            </motion.div>
           )}
+          </AnimatePresence>
         </div>
 
         {/* Settings */}
@@ -287,7 +305,11 @@ export default function SideNavBar() {
                 settings
               </span>
               {path === '/settings' && (
-                <span className="absolute -right-0.5 top-1/2 -translate-y-1/2 w-1 h-5 rounded-full bg-[#E10600] shadow-[0_0_8px_rgba(225,6,0,0.6)]" />
+                <motion.span
+                  layoutId="sidenav-active-pill"
+                  className="absolute -right-0.5 top-1/2 -translate-y-1/2 w-1 h-5 rounded-full bg-[#E10600] shadow-[0_0_8px_rgba(225,6,0,0.6)]"
+                  transition={{ type: 'spring', stiffness: 380, damping: 28 }}
+                />
               )}
             </div>
             {/* Back */}

@@ -175,7 +175,7 @@ export interface DriverCareerStats {
 
 // ---------- Team Colors (official-ish) ----------
 
-const TEAM_COLORS: Record<string, string> = {
+export const TEAM_COLORS: Record<string, string> = {
   mercedes: '#27F4D2',
   ferrari: '#E8002D',
   mclaren: '#FF8000',
@@ -190,7 +190,7 @@ const TEAM_COLORS: Record<string, string> = {
   sauber: '#52E252',
 };
 
-function getTeamColor(constructorId: string): string {
+export function getTeamColor(constructorId: string): string {
   return TEAM_COLORS[constructorId] || '#66FCF1';
 }
 

@@ -5,7 +5,8 @@ export default function CursorGlow() {
   const { settings } = useSettings();
   const { x, y } = useMousePosition();
 
-  if (!settings.showAnimations) return null;
+  // Skip on touch devices and when animations are disabled
+  if (!settings.showAnimations || typeof window !== 'undefined' && 'ontouchstart' in window) return null;
 
   return (
     <div

@@ -7,15 +7,31 @@ interface Props {
 }
 
 const transitionVariants: Variants = {
-  hidden: { opacity: 0 },
+  hidden: { 
+    opacity: 0, 
+    y: 24,
+    scale: 0.985,
+  },
   visible: { 
     opacity: 1, 
-    transition: { duration: 0.4, ease: 'easeInOut' }
+    y: 0,
+    scale: 1,
+    transition: { 
+      type: 'spring',
+      stiffness: 260,
+      damping: 30,
+      mass: 0.8,
+    },
   },
   exit: { 
     opacity: 0, 
-    transition: { duration: 0.2, ease: 'easeInOut' }
-  }
+    y: -12,
+    scale: 0.99,
+    transition: { 
+      duration: 0.18, 
+      ease: [0.4, 0, 1, 1],
+    },
+  },
 };
 
 export default function PageTransition({ children }: Props) {
@@ -31,6 +47,7 @@ export default function PageTransition({ children }: Props) {
       animate="visible"
       exit="exit"
       variants={transitionVariants}
+      style={{ willChange: 'opacity, transform' }}
     >
       {children}
     </motion.div>

@@ -6,7 +6,7 @@ import { AuthProvider } from './context/AuthContext';
 import ErrorBoundary from './components/ui/ErrorBoundary';
 import PageTransition from './components/ui/PageTransition';
 import CursorGlow from './components/ui/CursorGlow';
-import SmoothLoaderV6 from './components/ui/SmoothLoaderV6';
+import SmoothLoaderV6 from './components/ui/SmoothLoaderV2';
 import Layout from './components/layout/Layout';
 
 // Lazy loaded routes for code-splitting
@@ -59,7 +59,7 @@ function InitialRedirect() {
 
 function AnimatedRoutes() {
   const location = useLocation();
-  
+
   return (
     <AnimatePresence mode="wait">
       <PageTransition key={location.pathname}>

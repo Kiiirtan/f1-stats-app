@@ -1,4 +1,5 @@
 import { useRef, type ReactNode } from 'react';
+import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
 
 interface Props {
   children: ReactNode;
@@ -6,51 +7,71 @@ interface Props {
   intensity?: number;
 }
 
+const springConfig = { stiffness: 300, damping: 25, mass: 0.5 };
+
 export default function TiltCard({ children, className = '', intensity = 15 }: Props) {
   const cardRef = useRef<HTMLDivElement>(null);
-  const shineRef = useRef<HTMLDivElement>(null);
+
+  // Motion values for mouse position (0-1 normalized)
+  const mouseX = useMotionValue(0.5);
+  const mouseY = useMotionValue(0.5);
+
+  // Spring-smoothed rotation
+  const rotateX = useSpring(useTransform(mouseY, [0, 1], [intensity, -intensity]), springConfig);
+  const rotateY = useSpring(useTransform(mouseX, [0, 1], [-intensity, intensity]), springConfig);
+
+  // Spring-smoothed scale
+  const rawScale = useMotionValue(1);
+  const scale = useSpring(rawScale, springConfig);
+
+  // Shine gradient position
+  const shineX = useTransform(mouseX, (v) => `${v * 100}%`);
+  const shineY = useTransform(mouseY, (v) => `${v * 100}%`);
+  const shineBackground = useTransform(
+    [shineX, shineY],
+    ([sx, sy]) => `radial-gradient(circle at ${sx} ${sy}, rgba(102,252,241,0.12) 0%, transparent 60%)`
+  );
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     const card = cardRef.current;
     if (!card) return;
 
     const rect = card.getBoundingClientRect();
-    const x = (e.clientX - rect.left) / rect.width;
-    const y = (e.clientY - rect.top) / rect.height;
+    mouseX.set((e.clientX - rect.left) / rect.width);
+    mouseY.set((e.clientY - rect.top) / rect.height);
+  };
 
-    const rotateX = (0.5 - y) * intensity;
-    const rotateY = (x - 0.5) * intensity;
-
-    card.style.transform = `perspective(800px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
-
-    if (shineRef.current) {
-      shineRef.current.style.background = `radial-gradient(circle at ${x * 100}% ${y * 100}%, rgba(102,252,241,0.12) 0%, transparent 60%)`;
-    }
+  const handleMouseEnter = () => {
+    rawScale.set(1.02);
   };
 
   const handleMouseLeave = () => {
-    const card = cardRef.current;
-    if (card) {
-      card.style.transform = 'perspective(800px) rotateX(0) rotateY(0) scale3d(1, 1, 1)';
-    }
-    if (shineRef.current) {
-      shineRef.current.style.background = 'transparent';
-    }
+    mouseX.set(0.5);
+    mouseY.set(0.5);
+    rawScale.set(1);
   };
 
   return (
-    <div
+    <motion.div
       ref={cardRef}
       onMouseMove={handleMouseMove}
+      onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      className={`relative transition-transform duration-200 ease-out ${className}`}
-      style={{ transformStyle: 'preserve-3d' }}
+      className={`relative ${className}`}
+      style={{
+        transformStyle: 'preserve-3d',
+        perspective: 800,
+        rotateX,
+        rotateY,
+        scale,
+        willChange: 'transform',
+      }}
     >
-      <div
-        ref={shineRef}
-        className="absolute inset-0 pointer-events-none rounded-sm z-10 transition-all duration-200"
+      <motion.div
+        className="absolute inset-0 pointer-events-none rounded-sm z-10"
+        style={{ background: shineBackground }}
       />
       {children}
-    </div>
+    </motion.div>
   );
 }

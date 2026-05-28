@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { fetchRaceCalendar, fetchDriverStandings } from '../../data/api';
 
 interface NotificationsTrayProps {
   open: boolean;
@@ -30,7 +31,6 @@ export default function NotificationsTray({ open, onClose }: NotificationsTrayPr
   useEffect(() => {
     async function loadNotifications() {
       try {
-        const { fetchRaceCalendar, fetchDriverStandings } = await import('../../data/api');
         const [calendar, drivers] = await Promise.all([
           fetchRaceCalendar(),
           fetchDriverStandings()
