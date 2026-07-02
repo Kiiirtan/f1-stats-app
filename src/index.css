@@ -8,7 +8,13 @@
   }
 
   body {
-    @apply bg-background text-on-surface font-body selection:bg-primary-container selection:text-on-primary-container overflow-x-hidden;
+    @apply text-on-surface font-body selection:bg-primary-container selection:text-on-primary-container overflow-x-hidden;
+    background-color: #13131b;
+    background-image: url('/bg-f1.png');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }

@@ -7,6 +7,9 @@ if (!supabaseUrl || !supabaseAnonKey) {
   console.warn('[Supabase] Missing environment variables — database fallback disabled.');
 }
 
+// ⚠️ SECURITY: The anon key is bundled into the client JS (VITE_ prefix).
+// This is safe ONLY if Row-Level Security (RLS) is ENABLED on all tables
+// (especially `api_cache`). Verify in: Supabase Dashboard → Table Editor → RLS.
 export const supabase = (supabaseUrl && supabaseAnonKey)
   ? createClient(supabaseUrl, supabaseAnonKey)
   : null;

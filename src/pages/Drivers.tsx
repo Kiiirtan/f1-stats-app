@@ -151,7 +151,7 @@ export default function Standings() {
                 <div className="flex flex-wrap items-center gap-3 md:gap-0 md:justify-start pl-10 md:pl-0">
                   <div className="md:w-48 flex items-center gap-2 truncate">
                     {getConstructorSpecs(driver.teamId).logo ? (
-                      <img src={getConstructorSpecs(driver.teamId).logo} alt={driver.team} className="w-6 h-6 object-contain bg-white/95 p-1 rounded-sm shadow-sm" />
+                      <img src={getConstructorSpecs(driver.teamId).logo} alt={driver.team} className="w-6 h-6 object-contain p-0.5 drop-shadow-sm" />
                     ) : (
                       <span className="material-symbols-outlined text-[16px] xl:text-[20px]" style={{ color: driver.teamColor || '#aaa', fontVariationSettings: "'FILL' 1" }}>
                         directions_car
@@ -186,7 +186,7 @@ export default function Standings() {
                   
                   <div className="flex items-center gap-2 md:gap-4 flex-1 min-w-0">
                     <div 
-                      className="w-10 h-10 md:w-14 md:h-14 border-2 rounded-full flex items-center justify-center bg-white/95 shadow-inner flex-shrink-0 overflow-hidden"
+                      className="w-10 h-10 md:w-14 md:h-14 border-2 rounded-full flex items-center justify-center bg-black/40 backdrop-blur-md shadow-inner flex-shrink-0 overflow-hidden"
                       style={{ borderColor: team.color || '#fff' }}
                     >
                       {getConstructorSpecs(team.constructorId).logo ? (

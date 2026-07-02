@@ -3,6 +3,18 @@
 // Uses simulated data fallback when no live session is running.
 
 const OPENF1_BASE = 'https://api.openf1.org/v1';
+const OPENF1_API_KEY = import.meta.env.VITE_OPENF1_API_KEY || '';
+
+/** Shared fetch wrapper that attaches the OpenF1 API key header when available. */
+export function openf1Fetch(url: string, init?: RequestInit): Promise<Response> {
+  const headers: Record<string, string> = {
+    ...(init?.headers as Record<string, string> || {}),
+  };
+  if (OPENF1_API_KEY) {
+    headers['Authorization'] = `Bearer ${OPENF1_API_KEY}`;
+  }
+  return fetch(url, { ...init, headers });
+}
 
 export interface TelemetryTick {
   driver_number: number;
@@ -55,7 +67,7 @@ export class OpenF1LiveClient {
     this.pollingInterval = setInterval(async () => {
       if (!this.active) return;
       try {
-        const response = await fetch(`${OPENF1_BASE}/car_data?session_key=latest&date>=${this.lastFetchDate}`);
+        const response = await openf1Fetch(`${OPENF1_BASE}/car_data?session_key=latest&date>=${this.lastFetchDate}`);
         if (!response.ok) return;
         
         const data = await response.json();
@@ -74,7 +86,7 @@ export class OpenF1LiveClient {
       
       try {
         // Fetch Race Control updates incrementally
-        const msgRes = await fetch(`${OPENF1_BASE}/race_control?session_key=latest&date>=${this.lastMsgDate}`);
+        const msgRes = await openf1Fetch(`${OPENF1_BASE}/race_control?session_key=latest&date>=${this.lastMsgDate}`);
         if (msgRes.ok) {
           const msgData = await msgRes.json();
           if (Array.isArray(msgData) && msgData.length > 0) {
@@ -87,7 +99,7 @@ export class OpenF1LiveClient {
         // Wait, OpenF1 /intervals returns huge history if we don't pass date. 
         // Best approach is date>= of the last 10 seconds.
         const recentDate = new Date(Date.now() - 10000).toISOString();
-        const intRes = await fetch(`${OPENF1_BASE}/intervals?session_key=latest&date>=${recentDate}`);
+        const intRes = await openf1Fetch(`${OPENF1_BASE}/intervals?session_key=latest&date>=${recentDate}`);
         if (intRes.ok) {
           const intData = await intRes.json();
           if (Array.isArray(intData) && intData.length > 0) {

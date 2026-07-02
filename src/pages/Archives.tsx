@@ -1,5 +1,6 @@
 import { useDocumentMeta } from '../hooks/useDocumentMeta';
 import { useSettings } from '../context/SettingsContext';
+import { Link } from 'react-router-dom';
 
 export default function Archives() {
   useDocumentMeta('Archives – Coming Soon', 'The F1 Stats historical archives are under construction. Stay tuned for 25+ years of championship data.');
@@ -52,8 +53,8 @@ export default function Archives() {
 
       {/* Return button */}
       <div className="mt-12">
-        <a 
-          href="/"
+        <Link 
+          to="/"
           className={`inline-flex items-center gap-2 px-8 py-3 rounded-xl font-headline font-bold uppercase tracking-wider transition-all ${
             glass 
               ? 'bg-white/10 hover:bg-white/20 text-white backdrop-blur-md border border-white/20' 
@@ -62,7 +63,7 @@ export default function Archives() {
         >
           <span className="material-symbols-outlined text-xl">arrow_back</span>
           Return to Dashboard
-        </a>
+        </Link>
       </div>
     </div>
   );

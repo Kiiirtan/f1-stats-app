@@ -6,6 +6,16 @@ interface NotificationsTrayProps {
   onClose: () => void;
 }
 
+interface AppNotification {
+  id: number;
+  title: string;
+  message: string;
+  time: string;
+  icon: string;
+  color: string;
+  bg: string;
+}
+
 export default function NotificationsTray({ open, onClose }: NotificationsTrayProps) {
   const trayRef = useRef<HTMLDivElement>(null);
 
@@ -25,7 +35,7 @@ export default function NotificationsTray({ open, onClose }: NotificationsTrayPr
     };
   }, [open, onClose]);
 
-  const [notifications, setNotifications] = useState<any[]>([]);
+  const [notifications, setNotifications] = useState<AppNotification[]>([]);
   const [hasLoaded, setHasLoaded] = useState(false);
 
   useEffect(() => {

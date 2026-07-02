@@ -2,6 +2,8 @@ import { useEffect } from 'react';
 
 export function useDocumentMeta(title: string, description?: string) {
   useEffect(() => {
+    const prevTitle = document.title;
+
     // Standard Title Update
     document.title = title ? `${title} | F1 Stats` : 'F1 Stats Engine';
 
@@ -25,5 +27,10 @@ export function useDocumentMeta(title: string, description?: string) {
       }
       ogDescription.setAttribute('content', description);
     }
+
+    // Cleanup: restore previous title on unmount
+    return () => {
+      document.title = prevTitle;
+    };
   }, [title, description]);
 }

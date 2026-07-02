@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useSettings } from '../../context/SettingsContext';
 
@@ -20,6 +20,10 @@ export default function AuthModal({ open, onClose }: AuthModalProps) {
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [failCount, setFailCount] = useState(0);
+  const [cooldownUntil, setCooldownUntil] = useState(0);
+  const modalRef = useRef<HTMLDivElement>(null);
+  const isCoolingDown = Date.now() < cooldownUntil;
 
   // Reset state when modal opens/closes
   useEffect(() => {
@@ -30,8 +34,34 @@ export default function AuthModal({ open, onClose }: AuthModalProps) {
       setPassword('');
       setDisplayName('');
       setShowPassword(false);
+      setFailCount(0);
+      setCooldownUntil(0);
     }
   }, [open]);
+
+  // Focus trap: keep Tab cycling within the modal (S7)
+  useEffect(() => {
+    if (!open || !modalRef.current) return;
+    const modal = modalRef.current;
+    const focusable = modal.querySelectorAll<HTMLElement>(
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+    );
+    if (focusable.length === 0) return;
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    const trap = (e: KeyboardEvent) => {
+      if (e.key !== 'Tab') return;
+      if (e.shiftKey) {
+        if (document.activeElement === first) { e.preventDefault(); last.focus(); }
+      } else {
+        if (document.activeElement === last) { e.preventDefault(); first.focus(); }
+      }
+    };
+    modal.addEventListener('keydown', trap);
+    // Auto-focus first input
+    first.focus();
+    return () => modal.removeEventListener('keydown', trap);
+  }, [open, mode]);
 
   // Close on Escape
   useEffect(() => {
@@ -47,6 +77,7 @@ export default function AuthModal({ open, onClose }: AuthModalProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (Date.now() < cooldownUntil) return;
     setError('');
     setSuccess('');
     setSubmitting(true);
@@ -55,8 +86,18 @@ export default function AuthModal({ open, onClose }: AuthModalProps) {
       if (mode === 'login') {
         const result = await signIn(email, password);
         if (result.success) {
+          setFailCount(0);
           onClose();
         } else {
+          const newFails = failCount + 1;
+          setFailCount(newFails);
+          // Rate limit: 2s base + 1s per consecutive failure, max 10s
+          const cooldownMs = Math.min(2000 + (newFails - 1) * 1000, 10000);
+          setCooldownUntil(Date.now() + cooldownMs);
+          setTimeout(() => {
+            // Force re-render to update the isCoolingDown flag when time's up
+            setCooldownUntil(0);
+          }, cooldownMs);
           setError(result.error || 'Login failed.');
         }
       } else {
@@ -91,6 +132,7 @@ export default function AuthModal({ open, onClose }: AuthModalProps) {
 
       {/* Modal */}
       <div
+        ref={modalRef}
         className={`relative w-full max-w-md rounded-2xl overflow-hidden animate-search-in ${
           glass
             ? 'bg-[#0f0f0f]/90 backdrop-blur-2xl border border-white/10'
@@ -179,7 +221,7 @@ export default function AuthModal({ open, onClose }: AuthModalProps) {
                   type={showPassword ? 'text' : 'password'}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder={mode === 'register' ? 'Min 6 characters' : '••••••••'}
+                  placeholder={mode === 'register' ? 'Min 8 characters' : '••••••••'}
                   required
                   autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
                   className="w-full bg-white/[0.04] border border-white/10 rounded-xl pl-10 pr-12 py-3 text-sm text-white placeholder-white/25 focus:outline-none focus:border-[var(--theme-accent)]/50 focus:bg-white/[0.06] transition-all font-body"
@@ -216,13 +258,18 @@ export default function AuthModal({ open, onClose }: AuthModalProps) {
             {/* Submit */}
             <button
               type="submit"
-              disabled={submitting || authLoading}
+              disabled={submitting || authLoading || isCoolingDown}
               className="w-full py-3.5 rounded-xl font-headline font-black text-xs tracking-widest uppercase bg-gradient-to-br from-[var(--theme-accent)] to-[#E10600] text-white hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 shadow-lg shadow-[var(--theme-accent)]/20 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center justify-center gap-2"
             >
               {submitting ? (
                 <>
                   <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                   {mode === 'login' ? 'SIGNING IN...' : 'CREATING ACCOUNT...'}
+                </>
+              ) : isCoolingDown ? (
+                <>
+                  <span className="material-symbols-outlined text-sm">timer</span>
+                  PLEASE WAIT...
                 </>
               ) : (
                 <>

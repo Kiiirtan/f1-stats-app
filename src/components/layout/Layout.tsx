@@ -25,9 +25,11 @@ export default function Layout({ children }: Readonly<LayoutProps>) {
       {/* Global background */}
       <div className="fixed inset-0 z-0 bg-black pointer-events-none">
         <img
-          src="/solidwhite.png"
+          src="/bg-f1.png"
           alt=""
           className="w-full h-full object-cover opacity-80"
+          loading="lazy"
+          fetchPriority="low"
         />
         {/* Subtle gradient overlay to mesh with the application UI */}
         <div className="absolute inset-0 bg-gradient-to-b from-[#13131b]/60 via-transparent to-[#13131b]/90" />

@@ -265,6 +265,13 @@ async function fetchWithCache<T>(url: string): Promise<T> {
       const data = await response.json();
       cache.set(url, { data, timestamp: now });
 
+      // 🧹 Evict stale entries to prevent unbounded memory growth
+      if (cache.size > 100) {
+        for (const [key, entry] of cache) {
+          if (now - entry.timestamp > CACHE_TTL * 2) cache.delete(key);
+        }
+      }
+
       // ✅ SYNC: Silently push fresh data to Supabase (fire-and-forget)
       syncToSupabase(cacheKey, data).catch(() => {});
 
@@ -352,11 +359,44 @@ export async function fetchRaceCalendar(): Promise<Race[]> {
 }
 
 export async function fetchRaceResults(): Promise<Race[]> {
-  const data = await fetchWithCache<{
-    MRData: { RaceTable: { season: string; Races: ApiRace[] } };
-  }>(`${BASE_URL}/current/results.json?limit=600`);
+  // Fetch bulk results and the latest completed round in parallel
+  const [data, completedRound] = await Promise.all([
+    fetchWithCache<{
+      MRData: { RaceTable: { season: string; Races: ApiRace[] } };
+    }>(`${BASE_URL}/current/results.json?limit=600`),
+    fetchCompletedRoundCount(),
+  ]);
 
-  return data.MRData.RaceTable.Races.map((r) => ({
+  const bulkRaces = data.MRData.RaceTable.Races;
+  const bulkRounds = new Set(bulkRaces.map((r) => parseInt(r.round, 10)));
+
+  // Detect missing rounds: standings say round N is done but bulk endpoint is missing some
+  const missingRounds: number[] = [];
+  for (let r = 1; r <= completedRound; r++) {
+    if (!bulkRounds.has(r)) missingRounds.push(r);
+  }
+
+  // Fetch individual round results for any gaps
+  const extraRaces: ApiRace[] = [];
+  if (missingRounds.length > 0) {
+    const fetches = missingRounds.map((round) =>
+      fetchWithCache<{
+        MRData: { RaceTable: { Races: ApiRace[] } };
+      }>(`${BASE_URL}/current/${round}/results.json`).catch(() => null)
+    );
+    const results = await Promise.all(fetches);
+    for (const res of results) {
+      if (res?.MRData.RaceTable.Races?.[0]) {
+        extraRaces.push(res.MRData.RaceTable.Races[0]);
+      }
+    }
+  }
+
+  const allRaces = [...bulkRaces, ...extraRaces].sort(
+    (a, b) => parseInt(a.round, 10) - parseInt(b.round, 10)
+  );
+
+  const mapRace = (r: ApiRace): Race => ({
     id: r.Circuit.circuitId,
     round: parseInt(r.round, 10),
     name: r.raceName,
@@ -383,7 +423,9 @@ export async function fetchRaceResults(): Promise<Race[]> {
       time: res.Time?.time || res.status,
       fastestLap: res.FastestLap?.Time?.time,
     })),
-  }));
+  });
+
+  return allRaces.map(mapRace);
 }
 
 export async function fetchQualifyingResults(round: number): Promise<QualifyingResult[]> {
@@ -581,7 +623,7 @@ export interface ConstructorProfileData {
 // ─── All-Time Constructor Metadata (Historical Data) ───
 // The Ergast API only provides stats per-season; fetching full history
 // for every team would be too slow. These values are sourced from
-// official FIA records and are correct as of end-of-2025.
+// official FIA records and updated for the 2026 season.
 interface ConstructorMeta {
   allTimeChampionships: number;
   allTimePodiums: number;
@@ -617,7 +659,7 @@ const CONSTRUCTOR_META: Record<string, ConstructorMeta> = {
     allTimePoles: 103,
     firstEntry: 2005,
     teamBase: 'Milton Keynes, United Kingdom',
-    teamPrincipal: 'Christian Horner',
+    teamPrincipal: 'Laurent Mekies',
     heroImage: 'https://upload.wikimedia.org/wikipedia/commons/2/2e/Max_Verstappen_2024_Chinese_GP.jpg',
   },
   mercedes: {
@@ -635,7 +677,7 @@ const CONSTRUCTOR_META: Record<string, ConstructorMeta> = {
     allTimePoles: 1,
     firstEntry: 2021,
     teamBase: 'Silverstone, United Kingdom',
-    teamPrincipal: 'Andy Cowell',
+    teamPrincipal: 'Adrian Newey',
     heroImage: 'https://upload.wikimedia.org/wikipedia/commons/e/e8/2024-08-24_Motorsport%2C_Formel_1%2C_Gro%C3%9Fer_Preis_der_Niederlande_2024_STP_3318_by_Stepro.jpg',
   },
   alpine: {
@@ -662,7 +704,7 @@ const CONSTRUCTOR_META: Record<string, ConstructorMeta> = {
     allTimePoles: 1,
     firstEntry: 2006,
     teamBase: 'Faenza, Italy',
-    teamPrincipal: 'Laurent Mekies',
+    teamPrincipal: 'Alan Permane',
     heroImage: 'https://upload.wikimedia.org/wikipedia/commons/1/11/Yuki_Tsunoda_Chinese_GP_2024.jpg',
   },
   haas: {
@@ -676,13 +718,14 @@ const CONSTRUCTOR_META: Record<string, ConstructorMeta> = {
   },
   audi: {
     allTimeChampionships: 0,
-    allTimePodiums: 0,
-    allTimePoles: 0,
+    allTimePodiums: 28,
+    allTimePoles: 1,
     firstEntry: 2026,
     teamBase: 'Hinwil, Switzerland',
     teamPrincipal: 'Mattia Binotto',
     heroImage: 'https://upload.wikimedia.org/wikipedia/commons/f/f0/2024-08-24_Motorsport%2C_Formel_1%2C_Gro%C3%9Fer_Preis_der_Niederlande_2024_STP_3314_by_Stepro.jpg',
   },
+  // Legacy key — API may still return 'sauber' for historical data; maps to Audi (same entity)
   sauber: {
     allTimeChampionships: 0,
     allTimePodiums: 28,
@@ -697,8 +740,8 @@ const CONSTRUCTOR_META: Record<string, ConstructorMeta> = {
     allTimePodiums: 0,
     allTimePoles: 0,
     firstEntry: 2026,
-    teamBase: 'United States',
-    teamPrincipal: 'TBC',
+    teamBase: 'Indianapolis, United States',
+    teamPrincipal: 'Graeme Lowdon',
     heroImage: 'https://images.unsplash.com/photo-1504707748692-419802cf939d?q=80&w=1600&auto=format&fit=crop',
   },
 };
@@ -1101,15 +1144,16 @@ export async function fetchCircuitRaceHistory(circuitId: string): Promise<Circui
 // ---------- Season Calendar API ----------
 
 export async function fetchSeasonCalendarDetailed(): Promise<DetailedCalendarRace[]> {
-  // Fetch both the calendar (with session times) and results in parallel
+  // Fetch calendar, results, and completed round count in parallel
   const emptyResults = { MRData: { RaceTable: { Races: [] as ApiRace[] } } };
-  const [calendarData, resultsData] = await Promise.all([
+  const [calendarData, resultsData, completedRound] = await Promise.all([
     fetchWithCache<{
       MRData: { RaceTable: { season: string; Races: ApiRace[] } };
     }>(`${BASE_URL}/current.json`),
     fetchWithCache<{
       MRData: { RaceTable: { Races: ApiRace[] } };
     }>(`${BASE_URL}/current/results.json?limit=600`).catch(() => emptyResults),
+    fetchCompletedRoundCount(),
   ]);
 
   const calendarRaces = calendarData.MRData.RaceTable.Races;
@@ -1121,9 +1165,28 @@ export async function fetchSeasonCalendarDetailed(): Promise<DetailedCalendarRac
     resultsMap.set(r.round, r);
   }
 
-  const today = new Date().toISOString().split('T')[0];
+  // Detect missing round results and fetch them individually
+  const missingRounds: number[] = [];
+  for (let r = 1; r <= completedRound; r++) {
+    if (!resultsMap.has(String(r))) missingRounds.push(r);
+  }
+  if (missingRounds.length > 0) {
+    const fetches = missingRounds.map((round) =>
+      fetchWithCache<{
+        MRData: { RaceTable: { Races: ApiRace[] } };
+      }>(`${BASE_URL}/current/${round}/results.json`).catch(() => null)
+    );
+    const extraResults = await Promise.all(fetches);
+    for (const res of extraResults) {
+      if (res?.MRData.RaceTable.Races?.[0]) {
+        const race = res.MRData.RaceTable.Races[0];
+        resultsMap.set(race.round, race);
+      }
+    }
+  }
 
   return calendarRaces.map((r) => {
+    const roundNum = parseInt(r.round, 10);
     const resultRace = resultsMap.get(r.round);
     const podium: PodiumEntry[] = [];
 
@@ -1147,7 +1210,7 @@ export async function fetchSeasonCalendarDetailed(): Promise<DetailedCalendarRac
 
     return {
       id: r.Circuit.circuitId,
-      round: parseInt(r.round, 10),
+      round: roundNum,
       name: r.raceName,
       circuit: r.Circuit.circuitName,
       circuitId: r.Circuit.circuitId,
@@ -1156,7 +1219,7 @@ export async function fetchSeasonCalendarDetailed(): Promise<DetailedCalendarRac
       flag: getCountryFlag(r.Circuit.Location.country),
       date: r.date,
       time: r.time || '',
-      completed: r.date < today,
+      completed: roundNum <= completedRound,
       isSprint: !!r.Sprint,
       firstPractice: r.FirstPractice ? { date: r.FirstPractice.date, time: r.FirstPractice.time } : undefined,
       qualifying: r.Qualifying ? { date: r.Qualifying.date, time: r.Qualifying.time } : undefined,

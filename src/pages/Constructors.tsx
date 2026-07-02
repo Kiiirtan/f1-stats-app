@@ -84,7 +84,7 @@ export default function Constructors() {
                 <div className="flex justify-between items-start mb-2 relative z-10 w-full">
                   <div className="flex items-center gap-4">
                     {teamSpecs.logo && (
-                      <div className="bg-white/95 p-1.5 rounded-lg shadow-sm flex items-center justify-center">
+                      <div className="flex items-center justify-center opacity-90">
                         <img 
                           src={teamSpecs.logo} 
                           alt={`${teamSpecs.teamName} Logo`} 
