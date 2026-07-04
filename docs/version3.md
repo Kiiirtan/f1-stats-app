@@ -18,7 +18,7 @@ As we prepare to make the repository public on GitHub, we must ensure all sensit
    - Protect against malicious use of the public `VITE_SUPABASE_ANON_KEY` by enforcing Row Level Security (RLS) on all Supabase tables. Ensure anonymous users have restricted access (e.g., read-only).
 
 4. **Clean up Temporary & Log Files**
-   - ⚠️ **Still pending:** 8 temp/debug files remain in root (`test_errors.txt`, `tmp_silverstone_debug.js`, `tsc.txt`, `search1.txt`, `search2.txt`, `scratch_meta.py`, `fix-imports.mjs`, `update-colors.mjs`). Delete before next public push.
+   - ✅ **COMPLETED:** All 8 temp/debug scripts (`test_errors.txt`, `tmp_silverstone_debug.js`, `tsc.txt`, `search1.txt`, `search2.txt`, `scratch_meta.py`, `fix-imports.mjs`, `update-colors.mjs`) have been permanently removed from the repository root.
 
 5. **Private Documentation Audit**
    - Audit `README.md` and the `docs/` directory to ensure no private IPs, local file paths, or custom deployment commands intended only for private development are exposed.
