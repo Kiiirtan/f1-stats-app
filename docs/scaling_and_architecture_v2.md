@@ -1,6 +1,6 @@
 # F1 Stats — Scaling Guide & Architecture V2 Roadmap
 
-> **Last Updated:** April 11, 2026 — Current version: v2.0.1.0
+> **Last Updated:** July 2, 2026 — Current version: v2.0.3.0
 
 This document outlines the current structural limitations and provides specific, technical architectural upgrades required to transition F1 Stats into a highly scalable, commercial-grade F1 platform.
 
@@ -20,6 +20,8 @@ F1 Stats has already addressed some critical architectural concerns since v1.0:
 | User authentication | ✅ Implemented | Supabase Auth (email/password, sessions, auto-login) |
 | Dynamic SEO | ✅ Implemented | Per-page `<title>` and meta description via `useDocumentMeta` |
 | Skeleton loading | ✅ Implemented | Page-specific shimmer loaders to prevent CLS |
+| Real-time Live Telemetry | ✅ Implemented | OpenF1 API integration with pitwall HUD, charts, and leaderboard |
+| OS Push Notifications | ✅ Implemented | Native Web Push API + `sw.js` service worker |
 
 ---
 
@@ -64,15 +66,19 @@ The `driverImages.ts` file currently hotlinks directly to exact `upload.wikimedi
 
 ---
 
-## 4. True "Live" Telemetry is Missing
+## 4. True "Live" Telemetry (✅ Implemented via OpenF1)
 
 **The Problem:**
-Relying on standard API endpoints only provides standings updates *after* the session has ended. Hardcore fans expect live, second-by-second mini-sector times, tyre degradation, and GPS track mapping during Sunday's race.
+Relying on standard Ergast/Jolpica endpoints only provides standings updates *after* the session has ended. Hardcore fans expect live, second-by-second mini-sector times, tyre degradation, and telemetry traces during race weekends.
 
-**The Solution (WebSockets & FastF1):**
-- **Architecture:** Implement a bidirectional real-time streaming protocol.
-- **Implementation:** Stand up a Python backend running the `FastF1` data library mapped to the live F1 timing servers. Connect this to the React frontend via **WebSockets (Socket.io)**.
-- **Result:** Instead of the React app "asking" for data every 5 minutes, the Python server instantly "pushes" live car GPS coordinates millisecond-by-millisecond to the frontend track map components without the user ever refreshing the page.
+**What We've Done (v2.0.3.0):**
+- ✅ Implemented real-time live telemetry via **OpenF1 API** streaming (`/telemetry`).
+- ✅ Created a rolling circular state buffer (`useLiveStore`) using Zustand.
+- ✅ Built digital pitwall steering column HUD (`TelemetryHUD`), speed/RPM charts (`TelemetryChart`), and real-time gap leaderboards.
+
+**What Still Needs to Be Done (for deep predictive ML):**
+- **Architecture:** Implement Python FastF1 offline processing and WebSockets for custom machine learning tire degradation models.
+- **Implementation:** Stand up a lightweight FastAPI Python server or offline Google Colab export pipeline to feed predictive race outcome models into the dashboard.
 
 ---
 
@@ -92,18 +98,18 @@ Because we skipped the performance lazy-loading pass, opening the News feed atte
 
 ---
 
-## 6. Authentication & User Accounts
+## 6. Authentication & User Accounts (✅ Implemented via Supabase)
 
-**The Problem:**
-The current auth system uses plaintext `localStorage` and is strictly demo-quality. It provides no security, session management, or account persistence across devices.
+**The Original Problem:**
+The original auth system used plaintext `localStorage` and was strictly demo-quality.
 
-**The Solution (Backend Auth):**
-- **Architecture:** Integrate Supabase Auth or build a custom JWT-based auth backend.
-- **Implementation:**
-  1. Use Supabase's built-in `supabase.auth` for email/password and social logins (Google, GitHub).
-  2. Gate premium features behind authenticated sessions.
-  3. Store user preferences (favorites, settings) in a Supabase `user_profiles` table.
-- **Result:** Real user accounts with secure authentication, cross-device settings sync, and the foundation for a Freemium model.
+**What We've Done (v2.0.0+):**
+- ✅ Integrated **Supabase Auth** (`supabase.auth`) for real email/password authentication.
+- ✅ Built persistent session management, auto-login, and secure user states across all pages.
+- ✅ Created custom login/register forms (`AuthModal`) with validation and error handling.
+
+**Next Steps:**
+- Add social logins (Google, GitHub) and store curated user favorites in a dedicated `user_profiles` table in Supabase.
 
 ---
 

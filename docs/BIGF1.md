@@ -5,8 +5,8 @@
 | Field | Detail |
 |---|---|
 | **Document** | BIGF1 — Master Scaling Blueprint |
-| **Date** | April 11, 2026 |
-| **Current Version** | 2.0.1.0 |
+| **Date** | July 2, 2026 |
+| **Current Version** | 2.0.3.0 |
 | **Target** | Surpass formula1.com in data depth & user engagement |
 | **Strategy** | Deeper Data + Superior Interactivity + Community |
 
@@ -16,13 +16,13 @@
 
 | Dimension | formula1.com | F1 Stats (Today) | F1 Stats (Target) |
 |---|---|---|---|
-| **Data Depth** | Proprietary AWS telemetry, surface-level stats | Jolpica API + Supabase fallback, driver/constructor profiles | OpenF1 real-time telemetry + FastF1 deep analysis + custom computed metrics |
-| **Interactivity** | Mostly static content + embedded videos | 3D tilt cards, cursor glow, scroll reveals, glassmorphism | Live timing, telemetry graphs, strategy simulators, AI chatbot |
-| **Content** | Heavy media — videos, articles, "5 Winners & Losers" | Stats-focused, clean dark UI | Stats + analytics + community content + race recaps |
-| **Community** | None (broadcast-only) | Basic auth | User profiles, fantasy league, forums, personalized dashboards |
+| **Data Depth** | Proprietary AWS telemetry, surface-level stats | Jolpica API + OpenF1 live telemetry + Supabase fallback, driver/constructor profiles | OpenF1 real-time telemetry + FastF1 deep analysis + custom computed metrics |
+| **Interactivity** | Mostly static content + embedded videos | 3D tilt cards, Framer Motion physics, 6 SmoothLoaders, OS push notifications, cursor glow, glassmorphism | Live timing, telemetry graphs, strategy simulators, AI chatbot |
+| **Content** | Heavy media — videos, articles, "5 Winners & Losers" | Stats-focused, clean dark UI with static background optimization | Stats + analytics + community content + race recaps |
+| **Community** | None (broadcast-only) | Basic auth via Supabase | User profiles, fantasy league, forums, personalized dashboards |
 | **Performance** | Slow, ad-heavy, media overload | Fast, lightweight | Ultra-fast (<1s load), SSR, edge-cached |
-| **SEO** | Strong (brand authority) | Dynamic meta tags (v2.0) | Full SSR + structured data + 100/100 Lighthouse |
-| **Mobile** | Responsive but bloated | Tailwind responsive + hamburger nav | PWA / React Native app |
+| **SEO** | Strong (brand authority) | Dynamic meta tags (v2.0+) | Full SSR + structured data + 100/100 Lighthouse |
+| **Mobile** | Responsive but bloated | Tailwind responsive + enlarged standings cards + PWA service worker | PWA / React Native app |
 
 > **Key Insight:** The official site wins on brand and media licensing. We win on **analytical depth**, **interactivity**, **performance**, and **community** — areas where no licensing restrictions apply.
 

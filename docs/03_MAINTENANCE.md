@@ -2,8 +2,8 @@
 
 | Field | Detail |
 |---|---|
-| **Document Version** | 5.0 |
-| **Date** | April 11, 2026 |
+| **Document Version** | 6.0 (v2.0.3.0) |
+| **Date** | July 2, 2026 |
 
 ---
 
@@ -16,47 +16,52 @@ demo/
 │       └── sync_f1_data.yml          # GitHub Actions CRON (Supabase sync every 30 min)
 ├── public/
 │   ├── favicon.svg
-│   └── manifest.json
+│   ├── manifest.json
+│   ├── sw.js                         # Service worker for OS push notifications
+│   └── bg-f1.png                     # Static high-res background image
 ├── scripts/
 │   └── sync-to-supabase.mjs          # Node.js sync script for GitHub Actions
 ├── src/
 │   ├── __tests__/                     # Vitest API unit tests
 │   ├── components/
 │   │   ├── features/
-│   │   │   ├── DriverCard.tsx         # TiltCard-wrapped driver card with team-color glow
-│   │   │   ├── LoginModal.tsx         # Login/Register modal form
-│   │   │   ├── MobileMenu.tsx         # Slide-out mobile navigation drawer
+│   │   │   ├── AuthModal.tsx          # Login/Register modal form
+│   │   │   ├── LiveCommentary.tsx     # Real-time pitwall commentary feed
+│   │   │   ├── LiveLeaderboard.tsx    # Live telemetry leaderboard
+│   │   │   ├── NotificationsTray.tsx  # In-app alert notifications center
 │   │   │   ├── SearchModal.tsx        # Full-screen search with real-time filtering
-│   │   │   └── TelemetryVisualizer.tsx # Telemetry visualization component
+│   │   │   ├── TelemetryChart.tsx     # Recharts speed/RPM chart visualizer
+│   │   │   └── TelemetryHUD.tsx       # Live pitwall steering column HUD
 │   │   ├── layout/
 │   │   │   ├── Footer.tsx             # Site footer
-│   │   │   ├── Layout.tsx             # Main layout wrapper (TopNav + SideNav + content)
-│   │   │   ├── SideNavBar.tsx         # Desktop left navigation
+│   │   │   ├── Layout.tsx             # Main layout wrapper
+│   │   │   ├── SideNavBar.tsx         # Desktop left navigation with spring indicator
 │   │   │   └── TopNavBar.tsx          # Fixed top navigation bar
 │   │   └── ui/
 │   │       ├── CursorGlow.tsx         # Mouse-following cyan glow effect
 │   │       ├── DataState.tsx          # Loading/error/empty state handler
 │   │       ├── ErrorBoundary.tsx      # React error boundary
-│   │       ├── PageTransition.tsx     # Route transition animations
-│   │       ├── ScrollReveal.tsx       # Viewport-triggered fade+slide entrance
-│   │       ├── SkeletonCard.tsx       # Shimmer loading placeholder
-│   │       ├── SmoothLoader.tsx       # F1-themed splash screen
-│   │       ├── TiltCard.tsx           # 3D perspective tilt on hover
+│   │       ├── PageTransition.tsx     # Framer Motion route transition animations
+│   │       ├── SkeletonLoader.tsx     # Shimmer loading placeholder
+│   │       ├── SmoothLoaderV1-V6.tsx  # 6 customizable shimmer splash screen variations
+│   │       ├── TiltCard.tsx           # Framer Motion spring 3D perspective tilt card
 │   │       └── Tooltip.tsx            # Hover tooltip component
 │   ├── context/
-│   │   ├── AuthContext.tsx            # Supabase Auth context (email/password, sessions)
-│   │   └── SettingsContext.tsx         # Settings context (theme, accent, animations, etc.)
+│   │   ├── AuthContext.tsx            # Supabase Auth context
+│   │   └── SettingsContext.tsx         # Settings context
 │   ├── data/
-│   │   ├── api.ts                     # API layer + cache + Supabase fallback (Jolpica + RSS)
+│   │   ├── api.ts                     # API layer + cache + Supabase fallback
 │   │   └── driverImages.ts           # Wikimedia Commons asset linking logic
 │   ├── hooks/
-│   │   ├── useCountUp.ts             # Animated number counter (scroll-triggered)
+│   │   ├── useCountUp.ts             # Animated number counter
 │   │   ├── useDrivers.ts             # Driver data fetching hook
 │   │   ├── useInView.ts              # Intersection Observer hook
-│   │   └── useMousePosition.ts       # Cursor tracking hook
+│   │   ├── useMousePosition.ts       # Cursor tracking hook
+│   │   └── usePushNotifications.ts   # Native OS push notification manager
 │   ├── lib/
-│   │   └── supabase.ts               # Supabase client + sync/fetch utilities
+│   │   └── supabase.ts               # Supabase client + sync utilities
 │   ├── pages/
+│   │   ├── Archives.tsx               # Historical season archives
 │   │   ├── CircuitProfile.tsx         # Individual circuit details + race history
 │   │   ├── Circuits.tsx               # All circuits browser
 │   │   ├── ConstructorProfile.tsx     # Constructor overview + career stats
@@ -68,6 +73,7 @@ demo/
 │   │   ├── Dashboard.tsx              # Home dashboard with parallax hero
 │   │   ├── DriverProfile.tsx          # Driver details + career history
 │   │   ├── Drivers.tsx                # Driver standings grid
+│   │   ├── LiveTelemetry.tsx          # Real-time pitwall telemetry dashboard (`/telemetry`)
 │   │   ├── News.tsx                   # Live RSS Breaking News Feed
 │   │   ├── NotFound.tsx               # 404 "OFF TRACK" page
 │   │   ├── Privacy.tsx                # Privacy Policy page
@@ -76,6 +82,10 @@ demo/
 │   │   ├── SeasonCalendar.tsx         # Detailed season calendar with sessions
 │   │   ├── Settings.tsx               # User settings page
 │   │   └── Terms.tsx                  # Terms of Service page
+│   ├── services/
+│   │   └── liveApi.ts                 # Streaming connection manager for OpenF1 live telemetry
+│   ├── store/
+│   │   └── useLiveStore.ts            # Zustand circular buffer state store for telemetry
 │   ├── App.tsx                        # Root routing component
 │   ├── index.css                      # Base Tailwind + custom utilities
 │   └── main.tsx                       # Entry point
@@ -175,6 +185,7 @@ Colors, fonts, and tokens are defined in `tailwind.config.js`:
 ## 7. API Dependency
 
 **Primary Endpoint**: `https://api.jolpi.ca/ergast/f1`
+**Live Telemetry Endpoint**: `https://api.openf1.org/v1`
 **Fallback**: Supabase PostgreSQL Database
 
 | Concern | Current State |
@@ -197,4 +208,3 @@ Colors, fonts, and tokens are defined in `tailwind.config.js`:
 | Cursor glow hidden on mobile | Touch devices don't have mouse hover | Effect gracefully hidden |
 | Wikipedia image dependency | Images may break if renamed/removed | Self-hosted CDN planned |
 | Supabase anon key in bundle | Exposed in browser JS by design | Mitigate with RLS policies |
-| Temp files in root | 8 debug/scratch files cluttering repo | Delete or gitignore |

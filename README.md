@@ -18,7 +18,10 @@ A premium, high-fidelity real-time Formula 1 web application designed to track t
 ## ✨ Features
 
 - **🏆 Real-Time Grid Standings:** Live tracking of all 22 active drivers and 11 constructors across the modern season relying on the Jolpica API.
+- **📡 Live Telemetry & Pitwall HUD:** Dedicated real-time telemetry dashboard (`/telemetry`) featuring an interactive telemetry HUD, live race commentary feed, dynamic leaderboard, and Recharts-powered speed & RPM visualizers.
 - **📰 Live Breaking News Feed:** Directly syncs with Motorsport.com via an RSS XML proxy, delivering instant, up-to-the-minute global coverage and breaking stories without leaving the dashboard.
+- **🔔 Native Push Notifications:** Integrated browser and device notification alerting via a custom service worker (`sw.js`) and hooks, keeping fans informed of live session updates and breaking race events.
+- **⚡ Framer Motion Physics & SmoothLoaders:** Ultra-smooth Apple TV-style 3D hover interactions (`TiltCard`), directional crossfade page transitions, spring navigation indicators, and 6 customizable shimmer loading screen variations.
 - **📚 Historical Season Analytics:** Deep-dive into any constructor's past. View season-by-season performance, exact points contributed by primary drivers, final positioning, and historic team principals.
 - **🖼️ High-Fidelity Imagery:** Seamless fallback integration with Wikimedia Commons and Unsplash for premium, globally-accessible driver portraits and hero car backgrounds.
 - **🎨 Dynamic Theming Engine:** The UI accent colors dynamically shift to match the exact hexadecimal branding of your favorite Constructor (e.g., Ferrari Red, Mercedes Teal) without touching any CSS.
@@ -39,11 +42,13 @@ A premium, high-fidelity real-time Formula 1 web application designed to track t
 
 ## 🛠️ Architecture & Tech Stack
 
-- **Frontend Core:** React 18, Vite, TypeScript, React Router DOM v6
-- **Styling:** Tailwind CSS, PostCSS, Custom Semantic Component Tokens
+- **Frontend Core:** React 18, Vite, TypeScript, React Router DOM v6, Framer Motion
+- **Styling & UI:** Tailwind CSS, PostCSS, Custom Semantic Component Tokens, 6 SmoothLoader Shimmer Components
+- **State & Notifications:** Zustand (`useLiveStore`), Service Worker Push Notifications (`sw.js`)
 - **Backend & Auth:** Supabase (PostgreSQL, GoTrue)
 - **Data Syndication & AI:** 
-  - [Jolpica F1 API](https://jolpi.ca/) (Live Telemetry & Standings)
+  - [Jolpica F1 API](https://jolpi.ca/) (Historical Standings & Calendar)
+  - OpenF1 & Recharts (Live Telemetry & Speed/RPM Visualization)
   - Motorsport.com RSS Feed via AllOrigins API Proxy (News)
   - Wikimedia Commons & Unsplash (Dynamic Media)
   - Kalcend AI (Interactive Widget)

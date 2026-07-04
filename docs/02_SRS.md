@@ -2,8 +2,8 @@
 
 | Field | Detail |
 |---|---|
-| **Document Version** | 5.0 |
-| **Date** | April 11, 2026 |
+| **Document Version** | 6.0 (v2.0.3.0) |
+| **Date** | July 2, 2026 |
 | **Project** | F1 Stats |
 | **Prepared By** | Development Team |
 
@@ -213,6 +213,20 @@ The system is a client-side Single Page Application (SPA) that fetches and displ
 | FR-17.1 | In-app notifications tray accessible from TopNavBar |
 | FR-17.2 | Real-time alert display |
 
+### 3.19 Live Telemetry (FR-18)
+| ID | Requirement |
+|---|---|
+| FR-18.1 | Dedicated `/telemetry` pitwall route featuring real-time interactive telemetry HUD |
+| FR-18.2 | Live commentary feed and real-time leaderboard |
+| FR-18.3 | Speed and RPM chart visualizers powered by Recharts and Zustand circular state buffer (`useLiveStore`) |
+
+### 3.20 OS Push Notifications (FR-19)
+| ID | Requirement |
+|---|---|
+| FR-19.1 | Native browser and device notification permission management via `usePushNotifications` hook |
+| FR-19.2 | Dedicated service worker (`public/sw.js`) for receiving local and web push alerts |
+| FR-19.3 | Test alert triggers and status indicators integrated into Settings |
+
 ---
 
 ## 4. Non-Functional Requirements
@@ -256,7 +270,8 @@ The system is a client-side Single Page Application (SPA) that fetches and displ
 ## 5. Data Requirements
 
 ### 5.1 External APIs
-- **Primary API (Telemetry)**: `https://api.jolpi.ca/ergast/f1`
+- **Primary API (Historical & Standings)**: `https://api.jolpi.ca/ergast/f1`
+- **Live Telemetry API**: `https://api.openf1.org/v1` (Live car telemetry, intervals, commentary)
 - **News Proxy**: `https://api.rss2json.com/v1/api.json`
 - **Database Fallback**: Supabase PostgreSQL (`api_cache` table)
 
@@ -303,10 +318,10 @@ The system is a client-side Single Page Application (SPA) that fetches and displ
 
 | Criteria | Status |
 |---|---|
-| All 20+ routes render without errors | ✅ |
+| All 21+ routes render without errors | ✅ |
 | TypeScript compiles with zero errors | ✅ |
-| All interactive effects functional | ✅ |
-| Responsive on mobile and desktop | ✅ |
+| All interactive effects functional (Framer Motion spring physics) | ✅ |
+| Responsive on mobile and desktop (with enlarged standings cards) | ✅ |
 | API retry logic handles failures | ✅ |
 | Supabase fallback activates when API is down | ✅ |
 | Settings persist across page reloads | ✅ |
@@ -317,5 +332,7 @@ The system is a client-side Single Page Application (SPA) that fetches and displ
 | GitHub Actions CRON syncs data to Supabase | ✅ |
 | Supabase Auth sign-up/sign-in works | ✅ |
 | Auto-login on registration works | ✅ |
-| Skeleton loaders display during data fetch | ✅ |
+| 6 SmoothLoader shimmer variations selectable and functional | ✅ |
 | Dynamic SEO meta tags per page | ✅ |
+| Live Telemetry pitwall dashboard (`/telemetry`) renders live streams cleanly | ✅ |
+| OS Push Notification authorization and service worker registration functional | ✅ |

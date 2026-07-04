@@ -28,6 +28,9 @@ Current F1 data websites suffer from severe UX bloat. They are plagued by ad-clu
 - **Season Calendar:** Detailed schedules with FP1, Qualifying, Sprint, and Race session times.
 - **Driver Career Stats:** Championships, wins, poles, and full season-by-season history for every driver.
 - **Premium UI/UX:** Built on Material Design 3 dark-mode principles with heavy contrast, semantic coloring, and high-fidelity racing photography.
+- **Real-Time Live Telemetry:** OpenF1 API streaming with digital pitwall HUD, speed/RPM charts, intervals leaderboard, and live race commentary.
+- **OS Push Notifications:** Native device alerting via Web Push API and `sw.js` service worker.
+- **SmoothLoader Suite:** 6 selectable shimmer loading variations with Framer Motion spring physics.
 - **Zero-Downtime Architecture:** Supabase database fallback + GitHub Actions CRON ensures data availability even when APIs are down.
 - **Settings & Personalization:** Theme (Dark/Light), accent colors, animation preferences, and default page configuration.
 - **Real Authentication:** Supabase Auth with email/password, input validation, and auto-login on signup.
@@ -103,12 +106,12 @@ How does F1 Stats generate revenue in the future?
 - **Zero Operating Cost:** Relies on free, robust open-source APIs (Jolpica) with Supabase free tier for fallback.
 - **Zero Downtime:** 3-tier data fallback (cache → Supabase → error) ensures consistent availability.
 - **Stunning UI:** Differentiator in a market of boring, spreadsheet-like sports websites.
-- **Comprehensive Data:** 18+ pages covering drivers, constructors, circuits, calendar, news, and settings.
+- **Comprehensive Data:** 20+ pages covering live telemetry, archives, drivers, constructors, circuits, calendar, news, and settings.
 
 ### Weaknesses
-- **API Dependency:** Reliant on third-party uptime (Jolpica F1 API), mitigated by Supabase fallback.
+- **API Dependency:** Reliant on third-party uptime (Jolpica F1 & OpenF1 API), mitigated by Supabase fallback.
 - **Image Licensing:** Relying on Wikipedia Creative Commons limits exclusive branding.
-- **No Official Telemetry:** We lack live-lap GPS data without paying exorbitant FIA commercial fees.
+- **OpenF1 Telemetry:** We integrate open-source OpenF1 API streaming, while proprietary AWS/FIA telemetry remains restricted.
 - **Client-Side Rendering:** SEO limited without SSR migration (mitigated by dynamic meta tags).
 
 ---

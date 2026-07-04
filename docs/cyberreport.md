@@ -1,8 +1,8 @@
 # F1 Stats — Cybersecurity Threat Model & Defense Report
 
 > **Classification:** Internal Engineering Reference
-> **Version:** 2.0 (Updated for v2.0.1.0)
-> **Date:** April 11, 2026
+> **Version:** 3.0 (Updated for v2.0.3.0)
+> **Date:** July 2, 2026
 > **Scope:** Threat analysis for a Vite/React SPA with Supabase Auth & DB, deployed on Render
 > **Author:** Security Audit — Dual Red/Blue Team Analysis
 
@@ -17,7 +17,7 @@
 | Authentication | ❌ None (localStorage demo) | ✅ **Supabase Auth** — real email/password, session management, input validation |
 | `dangerouslySetInnerHTML` | ✅ Not used | ✅ Still not used (verified via codebase search) |
 | Security headers (CSP, X-Frame, etc.) | ❌ Not implemented | ❌ **Still not implemented** — no CSP, no X-Frame-Options |
-| Temp/debug files in root | ⚠️ Present | ⚠️ **Still present** — 8 temp files remain in root |
+| Temp/debug files in root | ⚠️ Present | ✅ **RESOLVED** — all obsolete scripts and temp debug files removed |
 | Supabase RLS | ❌ Not configured | ❓ **Unknown** — not verifiable from client code, needs dashboard check |
 | Rate limiting | ❌ None | ❌ **Still none** — no request throttling |
 | CDN (Cloudflare) | ❌ Not configured | ❌ **Still not configured** — origin IP exposed |
@@ -152,7 +152,7 @@ Current XSS assessment:
 
 ---
 
-### Threat Matrix Summary (Updated for v2.0.1.0)
+### Threat Matrix Summary (Updated for v2.0.3.0)
 
 | Attack Vector | Likelihood | Impact | Current Exposure | Previous |
 |---|---|---|---|---|
@@ -164,7 +164,7 @@ Current XSS assessment:
 | Cache poisoning via Supabase | Medium | High | 🟡 **MEDIUM** — depends on RLS config (unverified) | Was HIGH |
 | XSS via injected data | Low | High | 🟢 LOW — React escapes, no dangerouslySetInnerHTML | Same |
 | CSRF / session attacks | Low | Medium | 🟢 LOW — Supabase handles session tokens securely | Was N/A |
-| Info disclosure (temp files) | Low | Low | 🟡 **MEDIUM — 8 temp/debug files still in root** | Same |
+| Info disclosure (temp files) | Low | Low | ✅ **RESOLVED — 0 temp files in root** | Same |
 | Missing security headers | Medium | Medium | 🔴 **HIGH — no CSP, X-Frame, HSTS** | Same |
 
 ---
@@ -314,7 +314,7 @@ The simulation will present:
 | 1 | Verify RLS is enabled on `api_cache` table in Supabase Dashboard | 5 min | Cache poisoning | 🔲 Pending |
 | 2 | Remove browser-side `syncToSupabase()` calls (rely on CRON only) | 15 min | Unauthorized writes | 🔲 Pending |
 | 3 | Add security headers via `render.yaml` (see Appendix B) | 10 min | XSS, clickjacking, MIME sniffing | 🔲 Pending |
-| 4 | Delete temp/debug files from root (see list below) | 2 min | Info disclosure | 🔲 Pending |
+| 4 | Delete temp/debug files from root (see list below) | 2 min | Info disclosure | ✅ COMPLETED |
 
 ### 🟡 Important (Do This Sprint)
 
@@ -325,18 +325,9 @@ The simulation will present:
 | 7 | Pin exact dependency versions (remove `^` from `package.json`) | 5 min | Supply chain drift | 🔲 Pending |
 | 8 | Add rate limiting / request queue to `fetchWithCache()` | 30 min | L7 DDoS / Jolpica abuse | 🔲 Pending |
 
-### Temp/Debug Files Still in Root (Should Be Deleted or Gitignored)
+### ✅ Temp/Debug Files Cleanup Completed
 
-| File | Size | Risk |
-|---|---|---|
-| `test_errors.txt` | 473 B | Stack trace / path disclosure |
-| `tmp_silverstone_debug.js` | 1,569 B | Debug script leaks internal logic |
-| `tsc.txt` | 200 B | TypeScript error output |
-| `search1.txt` | 2 B | Dev artifact |
-| `search2.txt` | 2 B | Dev artifact |
-| `scratch_meta.py` | 2,812 B | Python scraper with potential internal URLs |
-| `fix-imports.mjs` | 1,840 B | Build migration script |
-| `update-colors.mjs` | 1,017 B | One-time color migration script |
+All 8 temporary debug scripts and artifact files (`test_errors.txt`, `tmp_silverstone_debug.js`, `tsc.txt`, `search1.txt`, `search2.txt`, `scratch_meta.py`, `fix-imports.mjs`, `update-colors.mjs`) have been permanently purged from the repository root.
 
 ---
 
@@ -424,5 +415,5 @@ sequenceDiagram
 
 ---
 
-*This report is a living document. Last updated: April 11, 2026 (v2.0.1.0).*
+*This report is a living document. Last updated: July 2, 2026 (v2.0.3.0).*
 *Previous version: April 4, 2026 (v1.0.0.0).*

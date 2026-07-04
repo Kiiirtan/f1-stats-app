@@ -2,8 +2,8 @@
 
 | Field | Detail |
 |---|---|
-| **Document Version** | 4.0 |
-| **Date** | March 31, 2026 |
+| **Document Version** | 5.0 (v2.0.3.0) |
+| **Date** | July 2, 2026 |
 | **Project** | F1 Stats |
 
 ---
@@ -27,18 +27,20 @@
 | 13 | **Contact Page** — Contact form with social links | v1.0.0 | Feature |
 | 14 | **DataState Component** — Unified loading/error/empty state handler | v2.0.0 | Component |
 | 15 | **Layout Refactor** — TopNavBar + SideNavBar + Layout wrapper architecture | v2.0.0 | Architecture |
-| 16 | **Telemetry Visualizer** — Telemetry visualization component | v1.0.0 | Component |
+| 16 | **Framer Motion Physics & UI Polish** — 3D TiltCard spring physics, directional transitions, spring nav indicators | v2.0.3.0 | UI/UX |
 | 17 | **Supabase Authentication** — Real email/password auth replacing demo localStorage system | v2.0.0 | Feature |
-| 18 | **Notifications Tray** — In-app notification system with real-time alerts | v2.0.0 | Feature |
-| 19 | **Skeleton Loaders** — Premium page-specific shimmer loading states | v2.0.0 | Component |
+| 18 | **Notifications Tray & OS Push Alerts** — In-app tray + native browser/device push notifications (`sw.js`) | v2.0.3.0 | Feature |
+| 19 | **SmoothLoader Suite & Skeletons** — 6 customizable shimmer loaders + page-specific skeleton loading states | v2.0.3.0 | Component |
 | 20 | **Dynamic SEO** — Per-page dynamic `<title>` and meta tags via `useDocumentMeta` hook | v2.0.0 | Feature |
 | 21 | **Render Deployment** — Full production deployment on Render Cloud Infrastructure | v2.0.0 | Infrastructure |
 | 22 | **Cloudflare Web Analytics** — Production-grade traffic monitoring | v1.2.1 | Infrastructure |
+| 23 | **Real-Time Live Telemetry Engine** — Dedicated `/telemetry` pitwall dashboard with OpenF1 integration, HUD, leaderboard, commentary, and Recharts visualizers | v2.0.3.0 | Feature |
+| 24 | **Static Background Optimization** — Clean, high-res static imagery replacing heavy video background | v2.0.3.0 | Optimization |
 | — | **esbuild Vulnerabilities** — Resolved dependency vulnerability flags via npm audit fix | v1.0.0 | Tech Debt |
 | — | **Reserve Driver Filter** — Filtering logic to exclude reserve/test drivers from standings | v1.0.0 | Tech Debt |
 | — | **Branding Rename** — Rebranded from "F1 Precision" to "F1 Stats" across entire codebase | v1.0.0 | Tech Debt |
 | — | **API Resilience** — Implemented 3-tier fallback: in-memory cache → Supabase DB → error | v1.3.0 | Tech Debt |
-| — | **Mobile Responsiveness** — Standardized responsive padding and typography across all pages | v2.0.0 | Tech Debt |
+| — | **Mobile Responsiveness** — Standardized responsive padding and enlarged standings cards | v2.0.3.0 | Tech Debt |
 | — | **Theme System** — Implemented Dark/Light mode with CSS variable architecture | v2.0.0 | Tech Debt |
 
 ---
@@ -59,15 +61,15 @@
 | # | Enhancement | Priority | Effort | Status |
 |---|---|---|---|---|
 | 5 | **Favourites System** — Star drivers/teams to curate a personalized "My Dashboard" feed | Medium | Medium | 🔲 Pending |
-| 6 | **Push Notifications** — Automated race start and breaking news alerts | Medium | High | 🔲 Pending |
-| 7 | **Fantasy League Integration** — In-house fantasy points display overlay | Medium | Medium | 🔲 Pending |
+| 6 | **Fantasy League Integration** — In-house fantasy points display overlay | Medium | Medium | 🔲 Pending |
+| 7 | **Advanced ML Race Predictions** — Predictive algorithms for race weekend outcomes and tire deg curves | High | High | 🔲 Pending |
 
 ### Phase 3 — Long-Term (Commercialization)
 
 | # | Enhancement | Priority | Effort | Status |
 |---|---|---|---|---|
 | 8 | **Server-Side Rendering (Next.js)** — Massive SEO rewrite to guarantee 100/100 Lighthouse index scores | High | Very High | 🔲 Pending |
-| 9 | **Real-Time Telemetry (WebSockets)** — Implement Python FastF1 to broadcast live GPS car map positions | High | Very High | 🔲 Pending |
+| 9 | **Python FastF1 Offline Processing** — Integrate custom FastF1 data science models via static serverless JSON exports | High | Very High | 🔲 Pending |
 | 10 | **Self-Hosted Asset CDN** — Move all Wikipedia/Unsplash links to an owned AWS S3 Bucket for permanent stability | High | Medium | 🔲 Pending |
 | 11 | **Native Mobile App** — Compile React components using React Native / Expo for iOS/Android stores | Medium | Extreme | 🔲 Pending |
-| 12 | **Freemium Pro Tier** — $3/mo for advanced telemetry, head-to-head comparisons, and ad-free experience | Medium | High | 🔲 Pending |
+| 12 | **Freemium Pro Tier** — $3/mo for advanced analytics, head-to-head comparisons, and ad-free experience | Medium | High | 🔲 Pending |

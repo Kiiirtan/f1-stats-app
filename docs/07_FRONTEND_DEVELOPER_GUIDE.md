@@ -21,7 +21,7 @@ graph TD
     Layout --> TNB["TopNavBar (fixed top)"]
     Layout --> SNB["SideNavBar (fixed left, desktop only)"]
     Layout --> PT["PageTransition (wrapper)"]
-    PT --> Routes["19 Page Routes"]
+    PT --> Routes["21 Page Routes"]
     Layout --> Footer["Footer"]
 ```
 
@@ -210,7 +210,7 @@ On first app load, if the user has configured a non-default page in Settings (e.
 | Element | Action |
 |---|---|
 | Each **driver card** (portrait + team color overlay) | **→ `/driver/{id}`** (full card is a `<Link>`) |
-| `TelemetryVisualizer` component | Interactive telemetry canvas (no navigation) |
+| **"Live Telemetry" button** | **→ `/telemetry`** |
 
 **Hover effects:** Grayscale → color, scale 1.05, flag desaturates on hover.
 
@@ -410,6 +410,7 @@ On first app load, if the user has configured a non-default page in Settings (e.
 
 | Button | Action |
 |---|---|
+| **"TEST PUSH NOTIFICATION"** | Triggers `usePushNotifications().sendNotification()` to verify OS / browser push permissions via `sw.js`. |
 | **"SAVE PREFERENCES"** | `saveSettings()` → persists to `localStorage`. Shows "✓ SAVED" for 2 seconds. |
 | **"RESET DEFAULTS"** | `resetSettings()` → reverts all settings to factory defaults |
 
@@ -421,6 +422,31 @@ On first app load, if the user has configured a non-default page in Settings (e.
 | `ESC` | Close Modal / Go Back |
 | `↑ ↓` | Navigate Results |
 | `ENTER` | Select Result |
+
+---
+
+### `/telemetry` — Real-Time Pitwall Telemetry Dashboard
+
+[LiveTelemetry.tsx](file:///c:/Users/VICTUS/Projects/demo/src/pages/LiveTelemetry.tsx)
+
+**State & Data:** `useLiveStore()` Zustand rolling state buffer, `liveApi.ts` streaming endpoints (OpenF1 API).
+
+| Component / Element | Description | Interactive Action |
+|---|---|---|
+| **`TelemetryHUD`** | Steering column digital HUD display | Shows real-time gear, RPM lights, throttle/brake input traces |
+| **`TelemetryChart`** | Recharts visualization canvas | Renders high-frequency speed and RPM telemetry traces |
+| **`LiveLeaderboard`** | Real-time driver intervals grid | Live gap calculations and position tracking |
+| **`LiveCommentary`** | Race event ticker | Streams real-time pit stops, yellow flags, and radio transcripts |
+
+---
+
+### `/archives` — Historical Season Archives
+
+[Archives.tsx](file:///c:/Users/VICTUS/Projects/demo/src/pages/Archives.tsx)
+
+| Element | Action |
+|---|---|
+| Season cards (1950–2025) | Displays historical driver lineups, champion details, and constructor standings |
 
 ---
 

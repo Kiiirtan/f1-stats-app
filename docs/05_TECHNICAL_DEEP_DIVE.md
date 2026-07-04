@@ -2,8 +2,8 @@
 
 | Field | Detail |
 |---|---|
-| **Document Version** | 5.0 |
-| **Date** | April 11, 2026 |
+| **Document Version** | 6.0 (v2.0.3.0) |
+| **Date** | July 2, 2026 |
 | **Project** | F1 Stats |
 
 ---
@@ -28,6 +28,11 @@ F1 Stats is a client-side web application that displays real-time Formula 1 data
 | Database | Supabase (PostgreSQL) | Persistent API cache for zero-downtime fallback |
 | Authentication | Supabase Auth | Real email/password auth with session management |
 | CI/CD | GitHub Actions | Automated CRON sync to Supabase every 30 min |
+| Motion & Physics | Framer Motion | Physics-based spring animations and directional transitions |
+| State Buffer | Zustand | Circular rolling state buffer for real-time telemetry (`useLiveStore`) |
+| Charts & Visualization | Recharts | High-frequency telemetry speed/RPM charting engine |
+| Live Telemetry API | OpenF1 API / SSE | Real-time car telemetry, intervals, and pitwall commentary |
+| Push Notifications | Web Push API + `sw.js` | Native device alerting via service worker |
 | Icons | Material Symbols (Google Fonts) | Consistent icon set via CDN |
 | Typography | Space Grotesk + Inter (Google Fonts) | Modern, sporty headline + clean body text |
 | Testing | Vitest | Fast, Vite-native test runner |
@@ -60,6 +65,7 @@ App.tsx renders:
   │   │   └── PageTransition (fade/slide wrapper)
   │   │       └── Routes
   │   │           ├── /                          → Dashboard (parallax hero)
+  │   │           ├── /telemetry                 → LiveTelemetry (pitwall dashboard)
   │   │           ├── /news                      → News (live RSS feed)
   │   │           ├── /drivers                   → Drivers (staggered reveals)
   │   │           ├── /driver/:id                → DriverProfile (career stats)
@@ -68,6 +74,7 @@ App.tsx renders:
   │   │           ├── /circuit/:id               → CircuitProfile (race history)
   │   │           ├── /races                     → Races (hover-lift cards)
   │   │           ├── /results                   → Results (shimmer skeletons)
+  │   │           ├── /archives                  → Archives (historical seasons)
   │   │           ├── /constructors              → Constructors (slide reveals)
   │   │           ├── /constructor/:id           → ConstructorProfile (career stats)
   │   │           ├── /constructor/:id/season/:yr → ConstructorSeasonDetails

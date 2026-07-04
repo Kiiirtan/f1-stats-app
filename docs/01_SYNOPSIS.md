@@ -3,10 +3,10 @@
 | Field | Detail |
 |---|---|
 | **Project Title** | F1 Stats — Live F1 Dashboard |
-| **Version** | 2.0.1.0 |
-| **Date** | April 11, 2026 |
-| **Technology** | React 18, React Router v7, TypeScript, Vite 5, Tailwind CSS 3 |
-| **Data Source** | Jolpica F1 API, Supabase (DB Fallback), RSS2JSON, Wikimedia Commons |
+| **Version** | 2.0.3.0 |
+| **Date** | July 2, 2026 |
+| **Technology** | React 18, React Router v7, TypeScript, Vite 5, Tailwind CSS 3, Framer Motion, Recharts, Zustand |
+| **Data Source** | Jolpica F1 API, OpenF1 (Live Telemetry), Supabase (DB Fallback), RSS2JSON, Wikimedia Commons |
 | **Deployment** | Render (Static Site) |
 | **Status** | Production-ready |
 
@@ -14,7 +14,7 @@
 
 ## 1. Overview
 
-F1 Stats is a real-time Formula 1 web dashboard delivering live championship standings, breaking global news, historical constructor analytics, individual driver profiles, circuit encyclopedias, and a detailed season calendar. The application consumes authentic telemetry from the Jolpica F1 API and Motorsport.com, with a **Supabase database fallback** for zero-downtime resilience and **Supabase Auth** for real user authentication. Data is presented through a **premium, immersive, dark-themed interface** featuring **3D tilt cards, parallax scrolling, cursor-interactive effects, scroll-triggered reveals, and micro-animations** — fully optimized for both desktop and mobile.
+F1 Stats is a real-time Formula 1 web dashboard delivering live championship standings, breaking global news, historical constructor analytics, individual driver profiles, circuit encyclopedias, a detailed season calendar, and a **real-time pitwall live telemetry engine (`/telemetry`)**. The application consumes authentic telemetry from the Jolpica F1 API, OpenF1, and Motorsport.com, with a **Supabase database fallback** for zero-downtime resilience, **Supabase Auth** for real user authentication, and **OS Push Notifications**. Data is presented through a **premium, immersive, dark-themed interface** featuring **Framer Motion spring physics, 3D tilt cards, parallax scrolling, cursor-interactive effects, 6 shimmer SmoothLoader variations, scroll-triggered reveals, and micro-animations** — fully optimized for both desktop and mobile.
 
 ## 2. Problem Statement
 
@@ -57,6 +57,9 @@ A lightweight SPA built with modern web technologies that:
 | Skeleton Loaders | Premium page-specific shimmer loading states for every major page. |
 | Dynamic SEO | Per-page dynamic `<title>` and meta tags via `useDocumentMeta` hook. |
 | Notifications Tray | In-app notification system with real-time alerts. |
+| OS Push Notifications | Native browser and device alerting via custom `usePushNotifications` hook and service worker (`sw.js`). |
+| Live Telemetry (`/telemetry`) | Real-time pitwall dashboard with interactive HUD, live commentary feed, real-time leaderboard, and speed/RPM chart visualizers (Zustand + Recharts). |
+| SmoothLoader Suite | 6 distinct, customizable shimmer loading screen variations (`SmoothLoaderV1` through `SmoothLoaderV6`). |
 | Archives | Historical season browsing with curated data. |
 
 ## 5. Target Audience
@@ -66,14 +69,15 @@ A lightweight SPA built with modern web technologies that:
 
 ## 6. Deliverables
 
-- Fully functional SPA with 20+ routes
+- Fully functional SPA with 21+ routes
 - Deep historical data architecture (drivers & constructors)
+- Real-time pitwall live telemetry engine (`/telemetry`) with interactive charts and live commentary
 - Driver career statistics (championships, wins, poles, season history)
 - Circuit encyclopedia with race history
 - Detailed season calendar with session schedules
-- Premium interactive UI (parallax, 3D tilt, scroll reveals, cursor effects, animated counters)
-- Zero-downtime Supabase database fallback
-- Automated data sync via GitHub Actions
+- Premium interactive UI (Framer Motion spring physics, parallax, 3D tilt, scroll reveals, cursor effects, 6 SmoothLoader designs)
+- Zero-downtime Supabase database fallback & automated data sync via GitHub Actions
+- OS Push Notifications with device authorization & in-app Notifications Tray
 - Full Settings panel (theme, accent color, animations, data density)
-- Responsive mobile-first design
+- Responsive mobile-first design with enlarged standings cards
 - Legal compliance (trademark disclaimers, privacy policy, cookie policy) & full attributions page

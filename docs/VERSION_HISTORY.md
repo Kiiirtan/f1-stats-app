@@ -6,8 +6,8 @@
 |---|---|
 | **Project** | F1 Stats — Live F1 Dashboard |
 | **Repository** | [Kiiirtan/f1-stats-app](https://github.com/Kiiirtan/f1-stats-app) |
-| **Current Version** | 2.0.2.0 |
-| **Last Updated** | April 12, 2026 |
+| **Current Version** | 2.0.3.0 |
+| **Last Updated** | July 2, 2026 |
 
 ---
 
@@ -27,6 +27,7 @@
 | **2.0.0.0** | Full production overhaul — Supabase Auth, Notifications, Skeleton Loaders, Season Calendar, Archives, dynamic SEO, complete UI/UX redesign of every page, Render deployment |
 | **2.0.1.0** | Fixed auto-login on signup, email confirmation bypass, mobile horizontal scroll, missing footer links |
 | **2.0.2.0** | Framer Motion Page Transitions (Pure Crossfade) |
+| **2.0.3.0** | Added Live Telemetry engine (`/telemetry`), 6 SmoothLoader designs, OS Push Notifications (`usePushNotifications` hook + `sw.js`), Framer Motion physics-based animations (3D TiltCard, directional PageTransition, spring nav indicators), static background image, enlarged standings cards, pre-deployment QA audit fixes |
 
 ## Version Index
 
@@ -44,6 +45,7 @@
 | [2.0.0.0](#2000--production-release-v2) | 🔴 **MAJOR** | April 10, 2026 | *Production Release V2* |
 | [2.0.1.0](#2010--auth-hotfix) | 🟢 Minor | April 11, 2026 | *Auth Hotfix* |
 | [2.0.2.0](#2020--cinematic-transitions) | 🟢 Minor | April 12, 2026 | *Cinematic Transitions* |
+| [2.0.3.0](#2030--live-telemetry--ux-refinements) | 🟢 Minor | July 2, 2026 | *Live Telemetry & UX Refinements* |
 
 ---
 
@@ -365,18 +367,65 @@ Implemented simple, elegant `framer-motion` page transitions globally.
 
 ---
 
+## 2.0.3.0 — Live Telemetry & UX Refinements
+
+> 🟢 **MINOR UPDATE** · July 2, 2026
+
+Major feature expansion introducing real-time F1 Live Telemetry, comprehensive UI/UX refinements with Framer Motion spring physics, native device push notifications, and pre-deployment QA auditing.
+
+### ✨ Major Features Introduced
+
+| Feature | Description |
+|---|---|
+| **Live Telemetry Engine** | Complete real-time live telemetry dashboard (`/telemetry`) with interactive telemetry HUD, live commentary feed, real-time leaderboard, and speed/RPM chart visualizers powered by Recharts and Zustand state management (`useLiveStore`) |
+| **OS Push Notifications** | Native browser and device notification alerting via custom `usePushNotifications.ts` hook and dedicated service worker (`public/sw.js`), featuring permission management and test alert triggers in Settings |
+| **SmoothLoader Suite** | Added 6 distinct, customizable shimmer loading screen variations (`SmoothLoaderV1` through `SmoothLoaderV6`) with `SmoothLoaderV2` designated as active default |
+| **Enlarged Standings Cards** | Redesigned and enlarged driver/constructor standings cards across Dashboard and Results for superior legibility and touch-target ergonomics |
+
+### 🎨 UI/UX & Physics Polish
+
+| Change | Detail |
+|---|---|
+| **Physics-Based TiltCard** | Rewritten with Framer Motion `useSpring` physics for ultra-smooth Apple TV-style 3D hover interactions |
+| **Directional Page Transitions** | Enhanced `PageTransition.tsx` with directional blur and slide animations that seamlessly bridge route navigation |
+| **Spring Navigation Indicators** | `SideNavBar` and `TopNavBar` active indicator pills now glide between menu items using Framer Motion `layoutId` spring animations |
+| **Staggered Section Animation** | Dashboard sections stagger-animate on initial render using `motion.section` for a dynamic, premium feel |
+| **Static Background Optimization** | Replaced resource-heavy video background asset with clean, high-resolution static imagery (`bg-f1.png`, `solidwhite.png`, `solidblack.png`) |
+| **Responsive & Mobile Layouts** | Resolved mobile horizontal overflow in Dashboard and Results; improved layout constraints and padding consistency across all viewports |
+
+### 📁 New Files Introduced
+
+- `src/pages/LiveTelemetry.tsx`
+- `src/components/features/LiveCommentary.tsx`
+- `src/components/features/LiveLeaderboard.tsx`
+- `src/components/features/TelemetryChart.tsx`
+- `src/components/features/TelemetryHUD.tsx`
+- `src/services/liveApi.ts`
+- `src/store/useLiveStore.ts`
+- `src/hooks/usePushNotifications.ts`
+- `public/sw.js`, `public/bg-f1.png`
+- `docs/openf1_live_telemetry_report.md.resolved`, `docs/version4.md`, `docs/f1_api_analysis.md.resolved`
+
+### 🛡️ Pre-Deployment QA & Cleanup
+
+- Purged unused legacy scripts, obsolete test images, and temporary debug files from repository
+- Updated `.gitignore` to ensure `node_modules/` and lockfiles are cleanly managed
+- Enhanced `api.ts`, `constructorDetails.ts`, and `ErrorBoundary.tsx` with robust error handling and fallback resilience
+
+---
+
 ## Summary Statistics
 
 | Metric | Value |
 |---|---|
-| **Total Versions** | 12 |
+| **Total Versions** | 13 |
 | **Major Releases** | 2 (v1.0.0.0, v2.0.0.0) |
-| **Minor Updates** | 10 |
-| **Development Span** | March 27 → April 12, 2026 (17 days) |
-| **Total Source Files** | 40+ TypeScript/TSX files |
-| **Total Pages** | 20 routes |
-| **Total Components** | 21 components (7 features + 4 layout + 10 UI) |
-| **API Integrations** | Jolpica F1, Supabase, Motorsport.com RSS, Wikimedia Commons, Unsplash |
+| **Minor Updates** | 11 |
+| **Development Span** | March 27 → July 2, 2026 (98 days) |
+| **Total Source Files** | 60 TypeScript/TSX files |
+| **Total Pages** | 21 routes |
+| **Total Components** | 19 components (7 features + 4 layout + 8 UI) |
+| **API Integrations** | Jolpica F1, Supabase, Motorsport.com RSS, Wikimedia Commons, Unsplash, OpenF1 / Live Telemetry |
 | **Deployment** | Render Cloud Infrastructure |
 
 ---

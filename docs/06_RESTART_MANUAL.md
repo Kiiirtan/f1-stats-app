@@ -1,6 +1,7 @@
 # F1 Stats — Restart Manual
 
 > Quick reference for getting the app running after a reboot, fresh clone, or any downtime.
+> **Version:** 2.0.3.0 · **Updated:** July 2, 2026
 
 ---
 
@@ -79,11 +80,11 @@ The `.github/workflows/sync_f1_data.yml` CRON job keeps Supabase data fresh:
 
 ## What You'll See
 
-1. **SmoothLoader** — F1-themed splash screen appears for ~2 seconds
-2. **CursorGlow** — Subtle glow follows your mouse on desktop
-3. **TopNavBar + SideNavBar** — Navigation with branding and quick links
-4. **Parallax Hero** — Dashboard hero with floating car and speed lines
-5. **Scroll Reveals** — Sections animate in as you scroll down
+1. **SmoothLoader Suite** — Selectable F1 shimmer splash screens appear for ~2 seconds (default `SmoothLoaderV2`)
+2. **CursorGlow** — Subtle cyan glow follows your mouse on desktop
+3. **TopNavBar + SideNavBar** — Navigation with branding, notifications tray, and Framer Motion spring active indicator
+4. **Parallax Hero** — Dashboard hero with floating car and static background optimization (`bg-f1.png`)
+5. **Scroll Reveals & Physics** — Staggered section animations and Apple TV-style 3D TiltCard hover physics
 
 ---
 
@@ -92,6 +93,7 @@ The `.github/workflows/sync_f1_data.yml` CRON job keeps Supabase data fresh:
 | Route | What You'll See |
 |---|---|
 | `/` | Dashboard with hero, top drivers, recent results, stats |
+| `/telemetry` | Real-time pitwall live telemetry HUD, speed/RPM charts, leaderboard, commentary |
 | `/news` | Live Motorsport.com news feed |
 | `/drivers` | All driver cards with team colors |
 | `/driver/verstappen` | Max Verstappen's full career stats |
@@ -99,7 +101,8 @@ The `.github/workflows/sync_f1_data.yml` CRON job keeps Supabase data fresh:
 | `/circuits` | All F1 circuits encyclopedia |
 | `/constructors` | Constructor standings with progress bars |
 | `/constructor/ferrari` | Ferrari's complete profile and history |
-| `/settings` | Theme, accent color, and preferences |
+| `/archives` | Historical season archives and lineups |
+| `/settings` | Theme, accent color, push notifications test, and preferences |
 
 ---
 

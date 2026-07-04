@@ -1,6 +1,6 @@
 # F1 Stats — Analysis & Monitoring Guide
 
-> **Last Updated:** April 11, 2026 — Current version: v2.0.1.0
+> **Last Updated:** July 2, 2026 — Current version: v2.0.3.0
 
 This document outlines how to monitor the health, traffic, and performance of the F1 Stats application when deployed as a Static Site on [Render's Free Tier](https://render.com/).
 
@@ -89,7 +89,7 @@ Once your analytics and monitoring are set up, keep an eye on these specific met
 ### Audience Metrics
 - **Device Split (Mobile vs. Desktop):** Ensure that the intensive mobile responsiveness optimizations are holding up by verifying that mobile users stay on the site.
 - **Bounce Rate:** A high bounce rate (> 70%) on pages other than the homepage could indicate confusing navigation or slow data rendering.
-- **Popular Routes:** Determine if users care more about `/drivers`, `/races`, `/calendar`, or `/circuits` and focus future development efforts accordingly.
+- **Popular Routes:** Determine if users care more about `/telemetry`, `/drivers`, `/races`, `/calendar`, `/circuits`, or `/archives` and focus future development efforts accordingly.
 
 ### Data Resilience Metrics
 - **Supabase sync success rate:** Track GitHub Actions workflow success/failure ratio.
