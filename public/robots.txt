@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://statsf1web.onrender.com/sitemap.xml
